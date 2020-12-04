@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-
+#define CHARGE_CURRENT_1856mA               0x0740 //1536mA
 #define CHARGE_CURRENT_1536mA               0x0600 //1536mA
 #define CHARGE_CURRENT_496mA                0x01F0 //496mA
 #define CHARGE_CURRENT_256mA                0x0100 //256mA
@@ -21,7 +21,7 @@
 
 
 #define CHARGE_CURRENT_FOR_USB_Default      CHARGE_CURRENT_256mA
-#define CHARGE_CURRENT_FOR_PD               CHARGE_CURRENT_1536mA
+#define CHARGE_CURRENT_FOR_PD               CHARGE_CURRENT_1856mA
 
 
 #define CHARGE_CURRENT_LEVEL_1              CHARGE_CURRENT_256mA
@@ -40,7 +40,7 @@
 #define INPUT_VOLTAGE_LIMIT_3V2   0x0000 //3200mV
 
 
-#define CHG_OK_PIN      106
+#define CHG_OK_PIN      33
 
 
 /*

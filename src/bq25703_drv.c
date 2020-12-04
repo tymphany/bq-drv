@@ -30,7 +30,7 @@
 #include "bq40z50_interface.h"
 
 
-#define I2C_FILE_NAME   "/dev/i2c-2"
+#define I2C_FILE_NAME   "/dev/i2c-5"
 #define BQ_I2C_ADDR        0x6B
 
 static int fd_i2c;
