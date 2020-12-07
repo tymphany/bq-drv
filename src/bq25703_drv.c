@@ -1232,13 +1232,17 @@ int create_batteryTemperture_logFile(void)
 
 int system_power_off(void)
 {
-    int pin_number = 41; //system power pin
+    int pin_number = 113; //system power EN pin
 
     export_gpio(pin_number);
 
     set_direction(pin_number, "out");
+    
+    set_value(pin_number, 1);
 
-    return set_value(pin_number, 1);
+    printf("shutdown system\n");
+    system("shutdown 0");
+    return 0;
 }
 
 
