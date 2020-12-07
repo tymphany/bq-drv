@@ -84,7 +84,7 @@ uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]=
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x1e00,
-    CHARGE_CURRENT_REGISTER_WR, CHARGE_CCHARGE_CURRENT_1856mA,
+    CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
 //    OTG_VOLTAGE_REGISTER_WR,    0x0000,
 //    OTG_CURRENT_REGISTER_WR,    0x0000,
@@ -1575,7 +1575,7 @@ void led_battery_display_handle(void)
 	{
 		   fgets(buff, 128, (FILE*)fp);
 		   fclose(fp);
-		   printf("system state %s",atoi(buff));
+		   printf("system state %s",buff);
 			if(strcmp(buff, "Docked") == 0)
 			{
 				batteryManagePara.battery_is_charging = 1;
