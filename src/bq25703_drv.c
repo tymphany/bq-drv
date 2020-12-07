@@ -1513,7 +1513,8 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 
         case LED_BATTERY_LOW:
             //system("adk-message-send 'led_start_pattern{pattern:33}'");
-              static struct timeval last_time = {.tv_sec = 0, .tv_usec = 0};
+			  ;
+			  static struct timeval last_time = {.tv_sec = 0, .tv_usec = 0};
 			  struct timeval current_time;
   			  gettimeofday(&current_time, NULL);
   			  printf("seconds : %ld\nmicro seconds : %ld",
