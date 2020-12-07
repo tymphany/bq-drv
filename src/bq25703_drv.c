@@ -1269,10 +1269,10 @@ int update_fuelgauge_BatteryInfo(void)
     if(battery_relativeStateOfCharge != -1)
     {
     	FILE *fp;
-		char buff[10];
-		char cmd[27];
+		char buff[128];
+		char cmd[128];
 
-		sprintf(cmd, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
+		snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
 		system(cmd);
 			   
 		if(battery_relativeStateOfCharge < 5){
@@ -1295,7 +1295,7 @@ int update_fuelgauge_BatteryInfo(void)
 			
 			if(fp = fopen("/dev/shm/shipment_SOC", "r"))
 			{
-				   fgets(buff, 9, (FILE*)fp);
+				   fgets(buff, 128, (FILE*)fp);
 				   fclose(fp);
 				   
 					if(battery_relativeStateOfCharge >= atoi(buff))
