@@ -1544,7 +1544,8 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
             break;
 
         case LED_BATTERY_OFF:
-            system("adk-message-send 'led_start_pattern{pattern:34}'");
+			//ryder: tbd
+            //system("adk-message-send 'led_start_pattern{pattern:34}'");
 
             /*set_battery_led('r', 1);
             set_battery_led('g', 1);
