@@ -1525,12 +1525,12 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 			  //simulate action key power off
 					system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
 			  }else if(0 < batteryManagePara.low_battery_flag >> 1){
-			  	if(current_time - last_time > 120){
+			  	if(current_time.tv_sec - last_time.tv_sec > 120){
 		  			last_time = current_time;						
 					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		  
 			  	}
 			  }else if(0 < batteryManagePara.low_battery_flag){
-			  	if(current_time - last_time > 300){
+			  	if(current_time.tv_sec - last_time.tv_sec > 300){
 		  			last_time = current_time;						
 					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		  
 			  	}			  
