@@ -1274,7 +1274,7 @@ int update_fuelgauge_BatteryInfo(void)
 
 		snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
 		system(cmd);
-			   
+		
 		if(battery_relativeStateOfCharge < 5){
             batteryManagePara.low_battery_flag = 1;
 			
@@ -1297,10 +1297,14 @@ int update_fuelgauge_BatteryInfo(void)
 			{
 				   fgets(buff, 128, (FILE*)fp);
 				   fclose(fp);
-				   
+				   printf("get shipment SOC %d",atoi(buff));
 					if(battery_relativeStateOfCharge >= atoi(buff))
 					{
 							batteryManagePara.factory_shipment_charge_complete_flag = 1;
+							printf("shipment SOC reached\n");
+					}else
+					{
+						 printf("shipment SOC not not reached\n");
 					}
 			}
 		}
@@ -1966,8 +1970,8 @@ int main(int argc, char* argv[])
 
     led_battery_display_init();
 
-
-    pthread_create(&thread_check_chgok_ntid, NULL, bq25703a_chgok_irq_thread, NULL);
+   // ryder: r1 is otg, tbd
+   // pthread_create(&thread_check_chgok_ntid, NULL, bq25703a_chgok_irq_thread, NULL);
 
     pthread_create(&thread_check_gpiokey_ntid, NULL, check_gpiokey_thread, NULL);
 
