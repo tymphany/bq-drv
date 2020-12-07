@@ -1280,12 +1280,12 @@ int update_fuelgauge_BatteryInfo(void)
 			
 			if(battery_relativeStateOfCharge > 2)
 			{
-				batteryManagePara.low_battery_flag | = 1 << 1;
+				batteryManagePara.low_battery_flag |= 1 << 1;
 			}else if(battery_relativeStateOfCharge > 1)
 			{
-				batteryManagePara.low_battery_flag | = 1 << 2;
+				batteryManagePara.low_battery_flag |= 1 << 2;
 			}else{
-				batteryManagePara.low_battery_flag | = 1 << 3;
+				batteryManagePara.low_battery_flag |= 1 << 3;
 			}
         }else if(battery_relativeStateOfCharge > 5){
         
@@ -1513,7 +1513,7 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 
         case LED_BATTERY_LOW:
             //system("adk-message-send 'led_start_pattern{pattern:33}'");
-              static struct timeval last_time = {.tv_sec = 0, tv_usec0};
+              static struct timeval last_time = {.tv_sec = 0, .tv_usec = 0};
 			  struct timeval current_time;
   			  gettimeofday(&current_time, NULL);
   			  printf("seconds : %ld\nmicro seconds : %ld",
