@@ -30,7 +30,7 @@
 
 
 //12.592V for 3-cell
-#define MAX_CHARGE_VOLTAGE  0x3130 //12592mV
+#define MAX_CHARGE_VOLTAGE  0x2a30 //12592mV ryder
 
 
 

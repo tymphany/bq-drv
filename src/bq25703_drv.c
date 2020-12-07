@@ -70,7 +70,7 @@ int log_batt_temp_flag = 0;
 
 
 
-#define     CHARGE_OPTION_0_SETTING         0x020E
+#define     CHARGE_OPTION_0_SETTING         0x860E //ryder r1 configuration
 
 #define     EN_LEARN                        0x0020
 
@@ -81,24 +81,25 @@ int log_batt_temp_flag = 0;
 uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]=
 {
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
-    CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_0,
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
+    MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
+    INPUT_CURRENT_REGISTER_WR,  0x1e00,
+    CHARGE_CURRENT_REGISTER_WR, CHARGE_CCHARGE_CURRENT_1856mA,
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
-    OTG_VOLTAGE_REGISTER_WR,    0x0000,
-    OTG_CURRENT_REGISTER_WR,    0x0000,
-    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_3V2, //here should use the default value:0x0000, means 3200mV
-    MINIMUM_SYSTEM_VOLTAGE_WR,  0x2400, //The charger provides minimum system voltage, means 9216mV
-    INPUT_CURRENT_REGISTER_WR,  0x4100,
-    CHARGE_OPTION_1_WR,         0x0210,
+//    OTG_VOLTAGE_REGISTER_WR,    0x0000,
+//    OTG_CURRENT_REGISTER_WR,    0x0000,
+
+/*    CHARGE_OPTION_1_WR,         0x0210,
     CHARGE_OPTION_2_WR,         0x02B7,
     CHARGE_OPTION_3_WR,         0x0000,
     PROCHOT_OPTION_0_WR,        0x4A54,
     PROCHOT_OPTION_1_WR,        0x8120,
-    ADC_OPTION_WR,              0xE0FF
+    ADC_OPTION_WR,              0xE0FF*/
 };
 
 uint16_t OTG_REGISTER_DDR_VALUE_BUF[]=
 {
-    CHARGE_OPTION_0_WR,         0xE20E,
+    CHARGE_OPTION_0_WR,         0x860E,
     CHARGE_CURRENT_REGISTER_WR, 0x0000,
     MaxChargeVoltage_REGISTER_WR, 0x0000,
     OTG_VOLTAGE_REGISTER_WR,    0x0200,
@@ -1567,6 +1568,20 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 
 void led_battery_display_handle(void)
 {
+//ryder: consider POGO Pin charge
+	FILE* fp;
+	char buff[128];
+	if(fp = fopen("/dev/shm/ r1sysState", "r"))
+	{
+		   fgets(buff, 128, (FILE*)fp);
+		   fclose(fp);
+		   printf("system state %s",atoi(buff));
+			if(strcmp(buff, "Docked") == 0)
+			{
+				batteryManagePara.battery_is_charging = 1;
+			}
+	}
+
     if(batteryManagePara.battery_is_charging)
     {
         if(batteryManagePara.led_battery_display_state != LED_BATTERY_CHARGEING)
