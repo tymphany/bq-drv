@@ -1272,10 +1272,19 @@ int update_fuelgauge_BatteryInfo(void)
         {
             batteryManagePara.low_battery_flag = 0;
 
-			if(battery_relativeStateOfCharge >= 80)
-			{
-					batteryManagePara.factory_shipment_charge_complete_flag = 1;
-			}
+			   FILE *fp;
+			   char buff[10];
+
+			   if(fp = fopen("/dev/shm/shipment_SOC", "r"))
+			   	{
+					   fgets(buff, 9, (FILE*)fp);
+					   fclose(fp);
+					   
+						if(battery_relativeStateOfCharge >= atoi(buff))
+						{
+								batteryManagePara.factory_shipment_charge_complete_flag = 1;
+						}
+			   	}
         }
     }
 
