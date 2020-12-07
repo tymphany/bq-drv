@@ -1268,28 +1268,42 @@ int update_fuelgauge_BatteryInfo(void)
     battery_relativeStateOfCharge = fuelgauge_get_RelativeStateOfCharge();
     if(battery_relativeStateOfCharge != -1)
     {
-        if(battery_relativeStateOfCharge < 10)
-        {
+    	FILE *fp;
+		char buff[10];
+		char cmd[27];
+
+		sprintf(cmd, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
+		system(cmd);
+			   
+		if(battery_relativeStateOfCharge < 5){
             batteryManagePara.low_battery_flag = 1;
-        }
-        else
-        {
-            batteryManagePara.low_battery_flag = 0;
-
-			   FILE *fp;
-			   char buff[10];
-
-			   if(fp = fopen("/dev/shm/shipment_SOC", "r"))
-			   	{
-					   fgets(buff, 9, (FILE*)fp);
-					   fclose(fp);
-					   
-						if(battery_relativeStateOfCharge >= atoi(buff))
-						{
-								batteryManagePara.factory_shipment_charge_complete_flag = 1;
-						}
-			   	}
-        }
+			
+			if(battery_relativeStateOfCharge > 2)
+			{
+				batteryManagePara.low_battery_flag | = 1 << 1;
+			}else if(battery_relativeStateOfCharge > 1)
+			{
+				batteryManagePara.low_battery_flag | = 1 << 2;
+			}else{
+				batteryManagePara.low_battery_flag | = 1 << 3;
+			}
+        }else if(battery_relativeStateOfCharge > 5){
+        
+        	if(batteryManagePara.low_battery_flag != 0){
+				batteryManagePara.low_battery_flag = 0;
+        	}
+			
+			if(fp = fopen("/dev/shm/shipment_SOC", "r"))
+			{
+				   fgets(buff, 9, (FILE*)fp);
+				   fclose(fp);
+				   
+					if(battery_relativeStateOfCharge >= atoi(buff))
+					{
+							batteryManagePara.factory_shipment_charge_complete_flag = 1;
+					}
+			}
+		}
     }
 
     battery_temperature = fuelgauge_get_Battery_Temperature();
@@ -1498,7 +1512,28 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
             break;
 
         case LED_BATTERY_LOW:
-            system("adk-message-send 'led_start_pattern{pattern:33}'");
+            //system("adk-message-send 'led_start_pattern{pattern:33}'");
+              static struct timeval last_time = {.tv_sec = 0, tv_usec0};
+			  struct timeval current_time;
+  			  gettimeofday(&current_time, NULL);
+  			  printf("seconds : %ld\nmicro seconds : %ld",
+    				current_time.tv_sec, current_time.tv_usec);
+			  if(last_time.tv_sec == 0){
+		  			last_time = current_time;
+			  }else if(0 < batteryManagePara.low_battery_flag >> 2){
+			  //simulate action key power off
+					system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
+			  }else if(0 < batteryManagePara.low_battery_flag >> 1){
+			  	if(current_time - last_time > 120){
+		  			last_time = current_time;						
+					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		  
+			  	}
+			  }else if(0 < batteryManagePara.low_battery_flag){
+			  	if(current_time - last_time > 300){
+		  			last_time = current_time;						
+					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		  
+			  	}			  
+			  }
 
             /*set_battery_led('r', 0);
             set_battery_led('g', 1);
