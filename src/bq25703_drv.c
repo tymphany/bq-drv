@@ -133,6 +133,8 @@ struct BATTERY_MANAAGE_PARA
 
     unsigned char charger_is_plug_in;
 
+	unsigned char factory_shipment_charge_complete_flag;
+	
     LED_BATTERY_DISPLAY_STATE led_battery_display_state;
 
     int battery_temperature;
@@ -1003,6 +1005,8 @@ void batteryManagePara_init(void)
 
     batteryManagePara.charger_is_plug_in = 0;
 
+	batteryManagePara.factory_shipment_charge_complete_flag = 0;
+
     batteryManagePara.led_battery_display_state = LED_BATTERY_INVALID_VALUE;
 
     batteryManagePara.battery_temperature = 0;
@@ -1267,6 +1271,11 @@ int update_fuelgauge_BatteryInfo(void)
         else
         {
             batteryManagePara.low_battery_flag = 0;
+
+			if(battery_relativeStateOfCharge >= 80)
+			{
+					batteryManagePara.factory_shipment_charge_complete_flag = 1;
+			}
         }
     }
 
@@ -1455,7 +1464,7 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
     switch(type)
     {
         case LED_BATTERY_FULLY_CHARGED:
-            system("adk-message-send 'led_start_pattern{pattern:31}'");
+            system("adk-message-send 'led_start_pattern{pattern:32}'");
 
             //now the 0/1 is reversed
             /*set_battery_led('r', 0);
@@ -1466,7 +1475,7 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
             break;
 
         case LED_BATTERY_CHARGEING:
-            system("adk-message-send 'led_start_pattern{pattern:32}'");
+            system("adk-message-send 'led_start_pattern{pattern:30}'");
 
             /*set_battery_led('r', 1);
             set_battery_led('g', 0);
@@ -1512,6 +1521,11 @@ void led_battery_display_handle(void)
         }
 
         batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
+
+		if(batteryManagePara.factory_shipment_charge_complete_flag)
+		{
+			system("adk-message-send 'system_mode_management{name:\"trigger::factory_charge_complete\"}'");
+		}
     }
     else
     {
