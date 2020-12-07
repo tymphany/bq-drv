@@ -1571,7 +1571,7 @@ void led_battery_display_handle(void)
 //ryder: consider POGO Pin charge
 	FILE* fp;
 	char buff[128];
-	if(fp = fopen("/dev/shm/ r1sysState", "r"))
+	if(fp = fopen("/dev/shm/r1sysState", "r"))
 	{
 		   fgets(buff, 128, (FILE*)fp);
 		   fclose(fp);
