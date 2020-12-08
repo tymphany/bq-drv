@@ -1569,7 +1569,7 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 void led_battery_display_handle(void)
 {
 //ryder: consider POGO Pin charge
-	FILE* fp;
+/*	FILE* fp;
 	char buff[128];
 	if(fp = fopen("/dev/shm/r1sysState", "r"))
 	{
@@ -1581,6 +1581,12 @@ void led_battery_display_handle(void)
 				batteryManagePara.battery_is_charging = 1;
 			}
 	}
+*/
+//ryder:if charge for shipment, send message to set shipment mode.
+	if(batteryManagePara.factory_shipment_charge_complete_flag)
+	{
+		system("adk-message-send 'system_mode_management{name:\"trigger::factory_charge_complete\"}'");
+	}
 
     if(batteryManagePara.battery_is_charging)
     {
@@ -1591,10 +1597,6 @@ void led_battery_display_handle(void)
 
         batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
 
-		if(batteryManagePara.factory_shipment_charge_complete_flag)
-		{
-			system("adk-message-send 'system_mode_management{name:\"trigger::factory_charge_complete\"}'");
-		}
     }
     else
     {
