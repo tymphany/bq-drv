@@ -904,7 +904,7 @@ int bq25703_enable_charge(void)
             //disable USB default Current charger, use the Battery to discharge directly to the system
             ret = bq25703_enter_LEARN_Mode();
 			int current = 0;
-            if((current = fuelgauge_1get_Battery_Current()) <= 0)
+            if((current = fuelgauge_get_Battery_Current()) <= 0)
             {
                 batteryManagePara.battery_is_charging = 0;
             }else
@@ -1637,7 +1637,7 @@ void led_battery_display_handle(void)
             batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
         }
 
-        if(((!batteryManagePara.battery_fully_charged) && (!batteryManagePara.low_battery_flag) ||
+        if(((!batteryManagePara.battery_fully_charged) && (!batteryManagePara.low_battery_flag))||
 			batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)
         {
             if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
