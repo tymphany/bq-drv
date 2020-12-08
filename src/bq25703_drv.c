@@ -903,10 +903,14 @@ int bq25703_enable_charge(void)
 
             //disable USB default Current charger, use the Battery to discharge directly to the system
             ret = bq25703_enter_LEARN_Mode();
-
-            if(ret == 0)
+			int current =0;
+            if((current = fuelgauge_get_Battery_Current()) <= 0)
             {
                 batteryManagePara.battery_is_charging = 0;
+            }else
+            {
+            	batteryManagePara.battery_is_charging = 1;
+				printf("Battery is charging, current is %d", current);
             }
             break;
 
