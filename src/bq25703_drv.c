@@ -207,12 +207,12 @@ static int i2c_write(unsigned char dev_addr, unsigned char *val, unsigned char l
         return -1;
     }
 
-    /*printf("i2c write buf = ");
+    printf("i2c write buf = ");
     for(i=0; i< len; i++)
     {
         printf("%02x ",val[i]);
     }
-    printf("\n");*/
+    printf("\n");
 
     return 0;
 }
@@ -902,7 +902,10 @@ int bq25703_enable_charge(void)
             batteryManagePara.charger_is_plug_in = 0;
 
             //disable USB default Current charger, use the Battery to discharge directly to the system
-            ret = bq25703_enter_LEARN_Mode();
+
+			//ryder learn mode will reduce the current. curretly PD automatically do this when use inserted.
+            //ret = bq25703_enter_LEARN_Mode();
+            ret = 0;
 			int current = 0;
             if((current = fuelgauge_get_Battery_Current()) <= 0)
             {
@@ -1604,7 +1607,17 @@ void led_battery_display_handle(void)
     }
     else
     {
-        if(batteryManagePara.battery_fully_charged)
+        if(batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)
+        {
+            if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
+            {
+                led_battery_display(LED_BATTERY_OFF);
+            }
+
+            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
+        }
+			
+        if(batteryManagePara.battery_fully_charged)//ryder: to be revised
         {
             if(batteryManagePara.charger_is_plug_in)
             {
@@ -1635,17 +1648,6 @@ void led_battery_display_handle(void)
             }
 
             batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
-        }
-
-        if(((!batteryManagePara.battery_fully_charged) && (!batteryManagePara.low_battery_flag))||
-			batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)
-        {
-            if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
-            {
-                led_battery_display(LED_BATTERY_OFF);
-            }
-
-            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
         }
 
     }
