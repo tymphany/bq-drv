@@ -1272,6 +1272,14 @@ int update_fuelgauge_BatteryInfo(void)
     batteryManagePara.battery_voltage = battery_voltage;
 
     battery_current = fuelgauge_get_Battery_Current();
+	if(battery_current <= 0)
+	 {
+		 batteryManagePara.battery_is_charging = 0;
+	 }else
+	 {
+		 batteryManagePara.battery_is_charging = 1;
+		 printf("Battery is charging, current is %d", battery_current);
+	 }
 
     battery_relativeStateOfCharge = fuelgauge_get_RelativeStateOfCharge();
     if(battery_relativeStateOfCharge != -1)
