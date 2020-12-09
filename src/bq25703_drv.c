@@ -1590,6 +1590,11 @@ void led_battery_display_handle(void)
 	}
 */
 //ryder:if charge for shipment, send message to set shipment mode.
+
+	printf("ryder: battery display state is %d",batteryManagePara.led_battery_display_state);
+	printf("ryder: battery charging state is %d",batteryManagePara.battery_is_charging);
+
+
 	if(batteryManagePara.factory_shipment_charge_complete_flag)
 	{
 		system("adk-message-send 'system_mode_management{name:\"trigger::factory_charge_complete\"}'");
