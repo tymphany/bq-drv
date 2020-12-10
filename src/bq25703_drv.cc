@@ -1978,7 +1978,7 @@ int main(int argc, char* argv[])
     int tps65987_TypeC_current_type;
 
     pthread_t thread_check_chgok_ntid;
-
+    pthread_t thread_check_stdin_ntid;
     pthread_t thread_check_gpiokey_ntid;
 
     pthread_t thread_check_batteryShutdownMode_ntid;
@@ -2042,6 +2042,7 @@ int main(int argc, char* argv[])
    // ryder: r1 is otg, tbd
    // pthread_create(&thread_check_chgok_ntid, NULL, bq25703a_chgok_irq_thread, NULL);
 
+    pthread_create(&thread_check_stdin_ntid, NULL, bq25703a_stdin_thread, NULL);
     pthread_create(&thread_check_gpiokey_ntid, NULL, check_gpiokey_thread, NULL);
 
     pthread_create(&thread_check_batteryShutdownMode_ntid, NULL, check_batteryShutdownMode_thread, NULL);
