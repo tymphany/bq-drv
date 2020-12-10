@@ -28,7 +28,10 @@
 
 #include "tps65987_interface.h"
 #include "bq40z50_interface.h"
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #define I2C_FILE_NAME   "/dev/i2c-5"
 #define BQ_I2C_ADDR        0x6B
@@ -77,6 +80,7 @@ int log_batt_temp_flag = 0;
 #define     EN_LWPWR                        0x8000
 
 
+unsigned int battery_relativeStateOfCharge = 0xff;
 
 uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]=
 {
@@ -1260,7 +1264,6 @@ int update_fuelgauge_BatteryInfo(void)
     int battery_temperature;
     int battery_voltage;
     int battery_current;
-    int battery_relativeStateOfCharge;
 
 
     battery_voltage = fuelgauge_get_Battery_Voltage();
@@ -1829,6 +1832,35 @@ void *check_gpiokey_thread(void *arg)
 
                         break;
                 }
+            }
+        }
+    }
+}
+
+void *bq25703a_stdin_thread(void *arg)
+{
+    std::istream &mystream = std::cin;
+    std::string event;
+
+    while (mystream.good())
+    {
+        getline(mystream, event);
+
+        if(event.compare("button_LANTERN_DP") == 0)
+        {
+            if(battery_relativeStateOfCharge <= 100)
+            {
+                if(battery_relativeStateOfCharge >= 75)
+                {
+                 	system("adk-message-send 'led_start_pattern{pattern:34}'");
+                }else if(battery_relativeStateOfCharge >= 35){
+					system("adk-message-send 'led_start_pattern{pattern:35}'");
+
+                }else{
+					system("adk-message-send 'led_start_pattern{pattern:36}'");
+
+                }
+
             }
         }
     }
