@@ -34,6 +34,8 @@
 #include <string>
 #include <sstream>
 
+using namespace std;
+
 #define I2C_FILE_NAME   "/dev/i2c-5"
 #define BQ_I2C_ADDR        0x6B
 
@@ -1670,16 +1672,16 @@ void led_battery_display_handle(void)
 
 	    }else{
 
-        if(batteryManagePara.low_battery_flag)
-        {
-            if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)
-            {
-                led_battery_display(LED_BATTERY_LOW);
-            }
+	        if(batteryManagePara.low_battery_flag)
+	        {
+	            if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)
+	            {
+	                led_battery_display(LED_BATTERY_LOW);
+	            }
 
-            batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
-        }
-
+	            batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
+	        }
+	    }
     }
 
 }
@@ -1863,7 +1865,7 @@ void *bq25703a_stdin_thread(void *arg)
 		std::ifstream infile("/dev/shm/usbstate");
 
 		std::getline( infile, line );
-		if(string::npos != line.find(R"(ATTR{state}=="DISCONNECTED")")))
+		if(string::npos != line.find(R"(ATTR{state}=="DISCONNECTED")"))
 		{
 			batteryManagePara.charger_is_plug_in &= 0x01; 
 		}else{
@@ -1884,7 +1886,7 @@ void *bq25703a_stdin_thread(void *arg)
 
             tps65987_get_ActiveContractPDO();
 */
-            ret_val = check_Battery_allow_charge();
+           int ret_val = check_Battery_allow_charge();
 
             if(ret_val == 1)
             {
