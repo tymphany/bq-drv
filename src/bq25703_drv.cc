@@ -21,6 +21,7 @@
 #include <time.h>
 #include <linux/input.h>
 #include <sys/inotify.h>
+#include <syslog.h>
 
 
 #include "bq25703_drv.h"
@@ -82,7 +83,7 @@ int log_batt_temp_flag = 0;
 
 unsigned int battery_relativeStateOfCharge = 0xff;
 
-uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]=
+uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
 {
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
@@ -101,22 +102,41 @@ uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]=
     ADC_OPTION_WR,              0xE0FF*/
 };
 
-uint16_t OTG_REGISTER_DDR_VALUE_BUF[]=
+uint16_t OTG_REGISTER_DDR_VALUE_BUF[]= //USB Detach
+{
+
+    OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
+    OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
+    CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
+
+};
+
+
+uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
 {
     CHARGE_OPTION_0_WR,         0x860E,
-    CHARGE_CURRENT_REGISTER_WR, 0x0000,
-    MaxChargeVoltage_REGISTER_WR, 0x0000,
-    OTG_VOLTAGE_REGISTER_WR,    0x0200,
-    OTG_CURRENT_REGISTER_WR,    0x0A00,
-    INPUT_VOLTAGE_REGISTER_WR,  0x0000,
-    MINIMUM_SYSTEM_VOLTAGE_WR,  0x0000,
-    INPUT_CURRENT_REGISTER_WR,  0x4100,
-    CHARGE_OPTION_1_WR,         0x0211,
-    CHARGE_OPTION_2_WR,         0x02B7,
-    CHARGE_OPTION_3_WR,         0x1000,
-    PROCHOT_OPTION_0_WR,        0x4A54,
-    PROCHOT_OPTION_1_WR,        0x8120,
-    ADC_OPTION_WR,              0xE0FF
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
+    
+    MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
+    INPUT_CURRENT_REGISTER_WR,  0x1e00,
+
+    CHARGE_OPTION_3_WR,         0x0000,//ryder otg disable
+    CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_256mA,
+    MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
+
+    OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
+    OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
+
+	CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
+
+	CHARGE_OPTION_3_WR,         0x0000,//ryder otg disable
+    CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_256mA,
+
+	CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
+    MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
+    
+    OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
+    OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
 };
 
 
@@ -136,7 +156,7 @@ struct BATTERY_MANAAGE_PARA
 
     unsigned char battery_is_charging;
 
-    unsigned char charger_is_plug_in;
+    unsigned char charger_is_plug_in;//bit 0 indicates USB, bit 1 indicates POGO_PIN
 
 	unsigned char factory_shipment_charge_complete_flag;
 	
@@ -894,8 +914,8 @@ int bq25703_enable_charge(void)
     //check TypeC Current type to decide the charge current
     tps65987_TypeC_current_type = tps65987_get_TypeC_Current();
 
-    if((batteryManagePara.battery_fully_charged)
-       && (tps65987_TypeC_current_type != USB_Default_Current))
+    if((batteryManagePara.battery_fully_charged))
+//       && (tps65987_TypeC_current_type != USB_Default_Current))
     {
         return 0;
     }
@@ -903,26 +923,7 @@ int bq25703_enable_charge(void)
     switch(tps65987_TypeC_current_type)
     {
         case USB_Default_Current:
-            batteryManagePara.charger_is_plug_in = 0;
-
-            //disable USB default Current charger, use the Battery to discharge directly to the system
-
-			//ryder learn mode will reduce the current. curretly PD automatically do this when use inserted.
-            //ret = bq25703_enter_LEARN_Mode();
-            ret = 0;
-			int current = 0;
-            if((current = fuelgauge_get_Battery_Current()) <= 0)
-            {
-                batteryManagePara.battery_is_charging = 0;
-            }else
-            {
-            	batteryManagePara.battery_is_charging = 1;
-				printf("Battery is charging, current is %d", current);
-            }
-            break;
-
-        case C_1d5A_Current:
-            batteryManagePara.charger_is_plug_in = 1;
+            batteryManagePara.charger_is_plug_in |= 1;
 
             ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 
@@ -932,9 +933,20 @@ int bq25703_enable_charge(void)
             }
             break;
 
+        case C_1d5A_Current:
+            batteryManagePara.charger_is_plug_in |= 1;
+
+            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
+			//Ryder: Shall increase current?
+            if(ret == 0)
+            {
+                batteryManagePara.battery_is_charging = 1;
+            }
+            break;
+
         case C_3A_Current:
         case PD_contract_negotiated:
-            batteryManagePara.charger_is_plug_in = 1;
+            batteryManagePara.charger_is_plug_in |= 1;
 
             charge_current = decide_the_ChargeCurrent();
 
@@ -1195,13 +1207,13 @@ int check_TypeC_current_type(void)
     switch(tps65987_TypeC_current_type)
     {
         case USB_Default_Current:
-            batteryManagePara.charger_is_plug_in = 0;
+            //batteryManagePara.charger_is_plug_in = 0;
             break;
 
         case C_1d5A_Current:
         case C_3A_Current:
         case PD_contract_negotiated:
-            batteryManagePara.charger_is_plug_in = 1;
+            batteryManagePara.charger_is_plug_in |= 1;
             break;
     }
 
@@ -1613,13 +1625,14 @@ void led_battery_display_handle(void)
 
     if(batteryManagePara.battery_is_charging)
     {
-        if(batteryManagePara.led_battery_display_state != LED_BATTERY_CHARGEING)
+
+    	if(batteryManagePara.led_battery_display_state != LED_BATTERY_CHARGEING)
         {
             led_battery_display(LED_BATTERY_CHARGEING);
         }
 
-        batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
-
+		
+		batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
     }
     else
     {
@@ -1631,30 +1644,31 @@ void led_battery_display_handle(void)
             }
 
             batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
-        }
-			
-        if(batteryManagePara.battery_fully_charged)//ryder: to be revised
-        {
-            if(batteryManagePara.charger_is_plug_in)
-            {
+        }	
 
-                if(batteryManagePara.led_battery_display_state != LED_BATTERY_FULLY_CHARGED)
-                {
-                    led_battery_display(LED_BATTERY_FULLY_CHARGED);
-                }
 
-                batteryManagePara.led_battery_display_state = LED_BATTERY_FULLY_CHARGED;
-            }
-            else
-            {
-                if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
-                {
-                    led_battery_display(LED_BATTERY_OFF);
-                }
+		if(batteryManagePara.battery_fully_charged)//ryder:only support Doced currently
+	    {
+	        if(batteryManagePara.charger_is_plug_in)
+	        {
 
-                batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
-            }
-        }
+	            if(batteryManagePara.led_battery_display_state != LED_BATTERY_FULLY_CHARGED)
+	            {
+	                led_battery_display(LED_BATTERY_FULLY_CHARGED);
+	            }
+
+	            batteryManagePara.led_battery_display_state = LED_BATTERY_FULLY_CHARGED;
+	        }else
+	  		{
+	  			 if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
+	  			 {
+	  				 led_battery_display(LED_BATTERY_OFF);
+	  			 }
+	  		
+	  			 batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
+	  		}
+
+	    }else{
 
         if(batteryManagePara.low_battery_flag)
         {
@@ -1841,7 +1855,54 @@ void *bq25703a_stdin_thread(void *arg)
 {
     std::istream &mystream = std::cin;
     std::string event;
+	if(!system("udevadm info -a -p /devices/virtual/android_usb/android0 | grep ATTR{state} > /dev/shm/usbstate"))
+	{
+		  syslog(LOG_ERR, "usb state init Error");
+	}else{
+		std::string line;
+		std::ifstream infile("/dev/shm/usbstate");
 
+		std::getline( infile, line );
+		if(string::npos != line.find(R"(ATTR{state}=="DISCONNECTED")")))
+		{
+			batteryManagePara.charger_is_plug_in &= 0x01; 
+		}else{
+			syslog(LOG_DEBUG,"Init: USB connected.");
+			batteryManagePara.charger_is_plug_in |= 0x01; 
+/*
+			
+            if(check_TypeC_current_type() == -1)
+            {
+                if(tps_err_cnt++ > 3)
+                {
+                    break;
+                }
+
+                usleep(10*1000);
+                continue;
+            }
+
+            tps65987_get_ActiveContractPDO();
+*/
+            ret_val = check_Battery_allow_charge();
+
+            if(ret_val == 1)
+            {
+                if(bq25703_enable_charge() == 0)
+                {
+
+                }
+            }
+            else if(ret_val == 0)
+            {
+
+            }
+
+		}
+		
+	}
+	
+	
     while (mystream.good())
     {
         getline(mystream, event);
@@ -1862,6 +1923,36 @@ void *bq25703a_stdin_thread(void *arg)
                 }
 
             }
+        }else {
+			
+		        if(event.compare("trigger::GPIO115falling") == 0)
+		        {
+					batteryManagePara.charger_is_plug_in |= 0x02;
+					//to add charger configration for POGO PIN
+					if(!bq25703a_charge_function_init()){
+						syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
+					}
+
+				}else if(event.compare("trigger::GPIO115rising") == 0)
+				{
+					batteryManagePara.charger_is_plug_in &= ~0x02;
+
+				}else if(event.compare("trigger::USB_CONNECTED") == 0)
+				{
+					batteryManagePara.charger_is_plug_in |= 0x01; 
+					if(!bq25703a_charge_function_init()){
+						syslog(LOG_DEBUG, "USB CHARGE configuration");	
+					}
+					
+					//to add charger configration for USB
+				}else if(event.compare("trigger::USB_DISCONNECTED") == 0)
+				{
+					batteryManagePara.charger_is_plug_in &= ~0x01;				
+					if(!bq25703a_otg_function_init()){
+					    syslog(LOG_ERR, "POGO PIN OTA configuration Error.");
+					}
+				}
+				
         }
     }
 }
@@ -1999,6 +2090,9 @@ int main(int argc, char* argv[])
         }
     }
 
+	 openlog("slog", LOG_PID|LOG_CONS, LOG_USER);
+
+
     batteryManagePara_init();
 
     if(i2c_open_bq25703() != 0)
@@ -2063,6 +2157,7 @@ int main(int argc, char* argv[])
 
         sleep(5);
     }
+	closelog();
 
     return 0;
 }
