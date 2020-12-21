@@ -1935,9 +1935,14 @@ void *bq25703a_stdin_thread(void *arg)
 						syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
 					}
 
-				}else if(event.compare("trigger::GPIO115rising") == 0)
+				}else if(event.compare("trigger::GPIO33falling") == 0)
 				{
 					batteryManagePara.charger_is_plug_in &= ~0x02;
+					//otg configuration
+				
+					if(!bq25703a_otg_function_init()){
+						syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
+					}
 
 				}else if(event.compare("trigger::USB_CONNECTED") == 0)
 				{
@@ -1947,13 +1952,13 @@ void *bq25703a_stdin_thread(void *arg)
 					}
 					
 					//to add charger configration for USB
-				}else if(event.compare("trigger::USB_DISCONNECTED") == 0)
+				}/*else if(event.compare("trigger::USB_DISCONNECTED") == 0)
 				{
 					batteryManagePara.charger_is_plug_in &= ~0x01;				
 					if(!bq25703a_otg_function_init()){
 					    syslog(LOG_ERR, "POGO PIN OTA configuration Error.");
 					}
-				}
+				}*/ //usb disconnect can not be detected.
 				
         }
     }
