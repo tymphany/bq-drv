@@ -1968,9 +1968,10 @@ void *bq25703a_stdin_thread(void *arg)
 						}
 
 					//to add charger configration for USB
-			}/*else if(event.compare("trigger::USB_DISCONNECTED") == 0)				
+			}				
     }
 }
+
 
 
 void *bq25703a_chgok_irq_thread(void *arg)
