@@ -1857,53 +1857,6 @@ void *bq25703a_stdin_thread(void *arg)
 {
     std::istream &mystream = std::cin;
     std::string event;
-	if(!system("udevadm info -a -p /devices/virtual/android_usb/android0 | grep ATTR{state} > /dev/shm/usbstate"))
-	{
-		  syslog(LOG_ERR, "usb state init Error");
-	}else{
-		std::string line;
-		std::ifstream infile("/dev/shm/usbstate");
-
-		std::getline( infile, line );
-		if(string::npos != line.find(R"(ATTR{state}=="DISCONNECTED")"))
-		{
-			batteryManagePara.charger_is_plug_in &= 0x01; 
-		}else{
-			syslog(LOG_DEBUG,"Init: USB connected.");
-			batteryManagePara.charger_is_plug_in |= 0x01; 
-/*
-			
-            if(check_TypeC_current_type() == -1)
-            {
-                if(tps_err_cnt++ > 3)
-                {
-                    break;
-                }
-
-                usleep(10*1000);
-                continue;
-            }
-
-            tps65987_get_ActiveContractPDO();
-*/
-           int ret_val = check_Battery_allow_charge();
-
-            if(ret_val == 1)
-            {
-                if(bq25703_enable_charge() == 0)
-                {
-
-                }
-            }
-            else if(ret_val == 0)
-            {
-
-            }
-
-		}
-		
-	}
-	
 	
     while (mystream.good())
     {
@@ -1935,22 +1888,85 @@ void *bq25703a_stdin_thread(void *arg)
 						syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
 					}
 
+				}else if(event.compare("trigger::GPIO115rising") == 0){
+						if(system("cat /sys/class/gpio/gpio33/value > /dev/shm/chgOK"))
+						{
+							  syslog(LOG_ERR, "usb state init Error");
+						}else{
+							std::string line;
+							std::ifstream infile("/sys/class/gpio/gpio31/value");
+
+							std::getline( infile, line );
+							size_t charge_ok_value = 0;
+							std::stoi(line, &charge_ok_value);
+							syslog(LOG_DEBUG, "charge ok value is %d", charge_ok_value);
+							batteryManagePara.charger_is_plug_in &= ~0x02; 
+							if(charge_ok_value == 0)
+							{
+								
+							}else{
+								syslog(LOG_DEBUG,"Init: USB connected.");
+								batteryManagePara.charger_is_plug_in |= 0x01; 
+					/*
+								
+					            if(check_TypeC_current_type() == -1)
+					            {
+					                if(tps_err_cnt++ > 3)
+					                {
+					                    break;
+					                }
+
+					                usleep(10*1000);
+					                continue;
+					            }
+
+					            tps65987_get_ActiveContractPDO();
+					*/
+					           int ret_val = check_Battery_allow_charge();
+
+					            if(ret_val == 1)
+					            {
+					                if(bq25703_enable_charge() == 0)
+					                {
+
+					                }
+					            }
+					            else if(ret_val == 0)
+					            {
+
+					            }
+
+							}
+							
+						}					
 				}else if(event.compare("trigger::GPIO33falling") == 0)
 				{
-					batteryManagePara.charger_is_plug_in &= ~0x02;
+					batteryManagePara.charger_is_plug_in &= ~0x01;
 					//otg configuration
 				
 					if(!bq25703a_otg_function_init()){
 						syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
 					}
 
-				}else if(event.compare("trigger::USB_CONNECTED") == 0)
+				}else if(event.compare("trigger::GPIO33rising") == 0)
 				{
 					batteryManagePara.charger_is_plug_in |= 0x01; 
-					if(!bq25703a_charge_function_init()){
-						syslog(LOG_DEBUG, "USB CHARGE configuration");	
-					}
-					
+					if(batteryManagePara.charger_is_plug_in == 0x01){
+						int ret_val = check_Battery_allow_charge();
+
+			            if(ret_val == 1)
+			            {
+			                if(bq25703_enable_charge() == 0)
+			                {
+							syslog(LOG_DEBUG, "USB CHARGE configuration");	
+
+			                }
+			            }
+			            else if(ret_val == 0)
+			            {
+
+			            }					
+				    }
 					//to add charger configration for USB
 				}/*else if(event.compare("trigger::USB_DISCONNECTED") == 0)
 				{
