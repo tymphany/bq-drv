@@ -4,7 +4,7 @@ ADD_EXECUTABLE(bq25703-drv-r1 ${src_files})
 
 find_package(Threads)
 
-target_link_libraries(bq25703-drv-r1 ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(bq25703-drv-r1 ${CMAKE_THREAD_LIBS_INIT} systemd)
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS} -fpermissive -std=c++14")
 
