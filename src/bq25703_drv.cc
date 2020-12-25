@@ -1926,54 +1926,55 @@ void *bq25703a_stdin_thread(void *arg)
 												
 		}else if(event.compare("trigger::GPIO33falling") == 0){
 				
-					batteryManagePara.charger_is_plug_in &= ~0x01;
-					//otg configuration
-				
-					if(bq25703a_otg_function_init()){
-						syslog(LOG_ERR, "OTG configuration Error.");
-					}
+				//batteryManagePara.charger_is_plug_in &= ~0x01;
+				//otg configuration
+			
+				/*if(bq25703a_otg_function_init()){
+					syslog(LOG_ERR, "OTG configuration Error.");
+				}*/
 
-				}else if(event.compare("trigger::GPIO33rising") == 0)
+		}else if(event.compare("trigger::USB_CONNECTED") == 0)
+		{
+
+				std::string line;
+				std::ifstream infile("/sys/class/gpio/gpio115/value");
+			
+				std::getline( infile, line );
+				size_t pg_value = 0;
+				std::stoi(line, &pg_value);
+				syslog(LOG_DEBUG, "pg value is %d", pg_value);
+
+				if(pg_value == 1)
 				{
+					batteryManagePara.charger_is_plug_in &= ~0x02; 
+				}
 
-						std::string line;
-						std::ifstream infile("/sys/class/gpio/gpio115/value");
+				batteryManagePara.charger_is_plug_in |= 0x01; 
 					
-						std::getline( infile, line );
-						size_t pg_value = 0;
-						std::stoi(line, &pg_value);
-						syslog(LOG_DEBUG, "pg value is %d", pg_value);
+				if(batteryManagePara.charger_is_plug_in == 0x01){
+					int ret_val = check_Battery_allow_charge();
 
-						if(pg_value == 1)
-						{
-							batteryManagePara.charger_is_plug_in &= ~0x02; 
-							batteryManagePara.charger_is_plug_in |= 0x01; 
-							
-							if(batteryManagePara.charger_is_plug_in == 0x01){
-								int ret_val = check_Battery_allow_charge();
+		            if(ret_val == 1)
+		            {
+		                if(bq25703_enable_charge())
+		                {
+							syslog(LOG_DEBUG, "USB CHARGE configuration error");	
 
-					            if(ret_val == 1)
-					            {
-					                if(bq25703_enable_charge())
-					                {
-										syslog(LOG_DEBUG, "USB CHARGE configuration error");	
+		                }
+		            }
+		            else if(ret_val == 0)
+		            {
 
-					                }
-					            }
-					            else if(ret_val == 0)
-					            {
+		            }					
+			    }
 
-					            }					
-						    }
-						}
-
-					//to add charger configration for USB
-			}				
+			//to add charger configration for USB
+		}				
     }
 }
 
 
-
+//Not used
 void *bq25703a_chgok_irq_thread(void *arg)
 {
     int ret;
@@ -2117,6 +2118,7 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+/*
     while(bq25703a_charge_function_init() != 0)
     {
         if(err_cnt++ > 3)
@@ -2126,7 +2128,7 @@ int main(int argc, char* argv[])
 
         usleep(100*1000);
     }
-
+*/
 
     if(i2c_open_tps65987() != 0)
     {
@@ -2140,13 +2142,13 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-
+/*
     if(init_Chg_OK_Pin() != 0)
     {
         printf("init Chg_OK_Pin fail!\n");
         return -1;
     }
-
+*/
     led_battery_display_init();
 
    // ryder: r1 is otg, tbd
