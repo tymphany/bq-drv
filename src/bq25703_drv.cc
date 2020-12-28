@@ -1939,7 +1939,7 @@ void *bq25703a_stdin_thread(void *arg)
 						if(0 == tpStatus.VbusStatus)
 							//USB disconnected
 							 if(batteryManagePara.charger_is_plug_in & 0x01){
-									batteryManagePara.charger_is_plug_in &= ~0x01
+									batteryManagePara.charger_is_plug_in &= ~0x01;
 							 }else{
 							 }
 						}else{
