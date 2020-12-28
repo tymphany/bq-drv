@@ -133,4 +133,7 @@ int tps65987_get_PortRole(void);
 int tps65987_get_RXSourceNumValidPDOs(void);
 int tps65987_get_ActiveContractPDO(void);
 int tps65987_get_TypeC_Current(void);
+int tps65987_clear_Intevents();
+int tps65987_get_Intevents(char tps_IntEvents[11]);
+
 
