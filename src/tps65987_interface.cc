@@ -378,7 +378,7 @@ int ResetPDController()
     return 0;
 }
 
-int tps65987_get_Intevents(char buf tps_IntEvents[11])
+int tps65987_get_Intevents(char tps_IntEvents[11])
 {
     unsigned char buf[64] = {0};
 
