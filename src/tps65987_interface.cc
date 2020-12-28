@@ -378,6 +378,32 @@ int ResetPDController()
     return 0;
 }
 
+int tps65987_get_Intevents(char buf tps_IntEvents[11])
+{
+    unsigned char buf[64] = {0};
+
+    if(tps65987_i2c_read(I2C_ADDR, 0x14, (unsigned char*)tps_IntEvents, 11) == 0)
+    {
+
+        return 0;
+    }
+
+    return -1;
+}
+
+int tps65987_clear_Intevents()
+{
+    unsigned char tps_IntEvents[11]={0xff, 0xff, 0xff,0xff, 0xff, 0xff,0xff, 0xff, 0xff,0xff, 0xff};
+
+    if(tps65987_i2c_write(I2C_ADDR, 0x18, tps_IntEvents, 11) == 0)
+    {
+
+        return 0;
+    }
+
+    return -1;
+}
+
 
 int tps65987_get_Status(s_TPS_status *p_tps_status)
 {

@@ -1928,7 +1928,33 @@ void *bq25703a_stdin_thread(void *arg)
 
 					}
 												
-		}else if(event.compare("trigger::GPIO33falling") == 0){
+		}else if(event.compare("trigger::GPIO31rising") == 0){
+				//clear all interrupts
+				char buf[11];
+				if(0 == tps65987_get_Intevents(buf))
+				{
+					s_TPS_status tpStatus;
+
+					if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus){
+						if(0 == tpStatus.VbusStatus)
+							//USB disconnected
+							 if(batteryManagePara.charger_is_plug_in & 0x01){
+									batteryManagePara.charger_is_plug_in &= ~0x01
+							 }else{
+							 }
+						}else{
+				    		syslog(LOG_DEBUG, "Error get pdstatus");
+						}
+					usleep(100000);	//give PD time to send commands.
+					if(0 == tps65987_clear_Intevents())
+					{
+					}else{
+						syslog(LOG_DEBUG, "Error clear intstatus");
+					}
+				}else
+				{
+					syslog(LOG_DEBUG, "Error get intstatus");
+				}
 				
 				//batteryManagePara.charger_is_plug_in &= ~0x01;
 				//otg configuration
