@@ -1935,7 +1935,7 @@ void *bq25703a_stdin_thread(void *arg)
 				{
 					s_TPS_status tpStatus;
 
-					if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus){
+					if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus)){
 						if(0 == tpStatus.VbusStatus)
 							//USB disconnected
 							 if(batteryManagePara.charger_is_plug_in & 0x01){
