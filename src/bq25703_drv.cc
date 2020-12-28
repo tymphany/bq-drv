@@ -160,6 +160,7 @@ struct BATTERY_MANAAGE_PARA
 
     unsigned char charger_is_plug_in;//bit 0 indicates USB, bit 1 indicates POGO_PIN
 
+	unsigned char i2c_silent;
 	unsigned char factory_shipment_charge_complete_flag;
 	
     LED_BATTERY_DISPLAY_STATE led_battery_display_state;
@@ -1037,6 +1038,9 @@ void batteryManagePara_init(void)
 
     batteryManagePara.battery_temperature = 0;
     batteryManagePara.battery_voltage = 0;
+
+    batteryManagePara.i2c_silent = 0;
+	
 
 }
 
@@ -1969,7 +1973,10 @@ void *bq25703a_stdin_thread(void *arg)
 			    }
 
 			//to add charger configration for USB
-		}				
+		}else if(event.compare("Test::bqdrv_ic_silent_toggle") == 0){
+			batteryManagePara.i2c_silent ^= 1;
+			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
+		}
     }
 }
 
@@ -2161,16 +2168,17 @@ int main(int argc, char* argv[])
 
     while(1)
     {
-        bq25703a_get_ChargeOption0_Setting();
-        bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
-        charge_current_set = bq25703a_get_ChargeCurrentSetting();
+    	if(batteryManagePara.i2c_silent == 0){
+	        bq25703a_get_ChargeOption0_Setting();
+	        bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
+	        charge_current_set = bq25703a_get_ChargeCurrentSetting();
+			
+	        check_BatteryFullyCharged_Task();
 
-        check_BatteryFullyCharged_Task();
+	        batteryTemperature_handle_Task();
 
-        batteryTemperature_handle_Task();
-
-        led_battery_display_handle();
-
+	        led_battery_display_handle();
+    	}
         printf("\n\n\n");
 
         sleep(5);
