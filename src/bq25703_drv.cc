@@ -1380,7 +1380,7 @@ void batteryCharge_handle_Task(int battery_temperature)
     {
         if(!batteryManagePara.battery_fully_charged)
         {
-            if(get_Chg_OK_Pin_value() == '1')
+            if(batteryManagePara.charger_is_plug_in & 0x01)
             {
                 unsigned char charge_level = 0;
 
