@@ -2168,7 +2168,7 @@ int main(int argc, char* argv[])
 
     while(1)
     {
-    	if(batteryManagePara.i2c_silent == 0){
+    	if(!batteryManagePara.i2c_silent){
 	        bq25703a_get_ChargeOption0_Setting();
 	        bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
 	        charge_current_set = bq25703a_get_ChargeCurrentSetting();
