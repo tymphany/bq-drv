@@ -1345,9 +1345,11 @@ int update_fuelgauge_BatteryInfo(void)
 					}
 			}
 
-			if(battery_relativeStateOfCharge == 100)
+			if(battery_relativeStateOfCharge == 100 && batteryManagePara.charger_is_plug_in)
 			{
-					batteryManagePara.battery_fully_charged = 1;
+					batteryManagePara.battery_fully_charged |= 0x01;
+			}else{
+					batteryManagePara.battery_fully_charged &= ~0x01;
 			}
 		}
     }
@@ -1901,7 +1903,8 @@ void *bq25703a_stdin_thread(void *arg)
 						}
 					}
 		}else if(event.compare("trigger::GPIO115rising") == 0){
-
+		
+					batteryManagePara.charger_is_plug_in &= ~0x02;
 					if(batteryManagePara.charger_is_plug_in & 0x01)
 					{
 						int ret_val = check_Battery_allow_charge();
@@ -1996,6 +1999,8 @@ void *bq25703a_stdin_thread(void *arg)
 			batteryManagePara.i2c_silent ^= 1;
 			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
 		}
+
+		led_battery_display_handle();
     }
 }
 
