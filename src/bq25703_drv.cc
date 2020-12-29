@@ -1344,6 +1344,11 @@ int update_fuelgauge_BatteryInfo(void)
 						 printf("shipment SOC not not reached\n");
 					}
 			}
+
+			if(battery_relativeStateOfCharge == 100)
+			{
+					batteryManagePara.battery_fully_charged = 1;
+			}
 		}
     }
 
@@ -1653,7 +1658,7 @@ void led_battery_display_handle(void)
         }	
 
 
-		if(batteryManagePara.battery_fully_charged)//ryder:only support Doced currently
+		if(batteryManagePara.battery_fully_charged)
 	    {
 	        if(batteryManagePara.charger_is_plug_in)
 	        {
@@ -1897,35 +1902,23 @@ void *bq25703a_stdin_thread(void *arg)
 					}
 		}else if(event.compare("trigger::GPIO115rising") == 0){
 
-					std::string line;
-					std::ifstream infile("/sys/class/gpio/gpio33/value");
-
-					std::getline( infile, line );
-					size_t charge_ok_value = 0;
-					std::stoi(line, &charge_ok_value);
-					syslog(LOG_DEBUG, "charge ok value is %d", charge_ok_value);
-					batteryManagePara.charger_is_plug_in &= ~0x02; 
-					if(charge_ok_value == 0)
+					if(batteryManagePara.charger_is_plug_in & 0x01)
 					{
+						int ret_val = check_Battery_allow_charge();
 						
-					}else{
-						syslog(LOG_DEBUG,"Init: USB connected.");
-						batteryManagePara.charger_is_plug_in |= 0x01; 
+						if(ret_val == 1)
+						{
+							if(bq25703_enable_charge() == 0)
+							{
 
-			           int ret_val = check_Battery_allow_charge();
-
-			            if(ret_val == 1)
-			            {
-			                if(bq25703_enable_charge() == 0)
-			                {
-
-			                }
-			            }
-			            else if(ret_val == 0)
-			            {
-
-			            }
-
+							}else{
+								syslog(LOG_ERR, "USB　charge configuration Error.");
+							}
+						}
+						else if(ret_val == 0)
+						{
+							syslog(LOG_DEBUG, "charge not allowed.");
+						}
 					}
 												
 		}else if(event.compare("trigger::GPIO31rising") == 0){
