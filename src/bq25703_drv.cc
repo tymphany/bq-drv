@@ -932,7 +932,7 @@ int bq25703_enable_charge(void)
 
             if(ret == 0)
             {
-                batteryManagePara.battery_is_charging = 1;
+                //batteryManagePara.battery_is_charging = 1;
             }
             break;
 
@@ -943,7 +943,7 @@ int bq25703_enable_charge(void)
 			//Ryder: Shall increase current?
             if(ret == 0)
             {
-                batteryManagePara.battery_is_charging = 1;
+               // batteryManagePara.battery_is_charging = 1;
             }
             break;
 
@@ -957,7 +957,7 @@ int bq25703_enable_charge(void)
 
             if(ret == 0)
             {
-                batteryManagePara.battery_is_charging = 1;
+                //batteryManagePara.battery_is_charging = 1;
             }
             break;
 
