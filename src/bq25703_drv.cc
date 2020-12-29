@@ -1925,9 +1925,9 @@ void *bq25703a_stdin_thread(void *arg)
 						}
 					}
 												
-		}else if(event.compare("trigger::GPIO31rising") == 0){
+		}else if(event.compare("trigger::GPIO33falling") == 0){
 				//clear all interrupts
-				char buf[11];
+		/*		char buf[11];
 				if(0 == tps65987_get_Intevents(buf))
 				{
 					s_TPS_status tpStatus;
@@ -1951,7 +1951,7 @@ void *bq25703a_stdin_thread(void *arg)
 				}else
 				{
 					syslog(LOG_DEBUG, "Error get intstatus");
-				}
+				}*/
 				
 				//batteryManagePara.charger_is_plug_in &= ~0x01;
 				//otg configuration
@@ -1959,6 +1959,8 @@ void *bq25703a_stdin_thread(void *arg)
 				/*if(bq25703a_otg_function_init()){
 					syslog(LOG_ERR, "OTG configuration Error.");
 				}*/
+
+			batteryManagePara.charger_is_plug_in &= ~0x01;	
 
 		}else if(event.compare("trigger::USB_CONNECTED") == 0)
 		{
