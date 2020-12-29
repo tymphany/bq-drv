@@ -157,6 +157,8 @@ struct BATTERY_MANAAGE_PARA
     unsigned char low_battery_flag;
 
     unsigned char battery_is_charging;
+	
+    unsigned char battery_is_discharging;
 
     unsigned char charger_is_plug_in;//bit 0 indicates USB, bit 1 indicates POGO_PIN
 
@@ -165,6 +167,7 @@ struct BATTERY_MANAAGE_PARA
 	
     LED_BATTERY_DISPLAY_STATE led_battery_display_state;
 
+	int battery_current;
     int battery_temperature;
     int battery_voltage;
 
@@ -799,7 +802,7 @@ int bq25703_stop_charge(void)
 {
     if(bq25703_set_ChargeCurrent(CHARGE_CURRENT_0) == 0)
     {
-        batteryManagePara.battery_is_charging = 0;
+        //batteryManagePara.battery_is_charging = 0;
 
         return 0;
     }
@@ -1293,12 +1296,19 @@ int update_fuelgauge_BatteryInfo(void)
     batteryManagePara.battery_voltage = battery_voltage;
 
     battery_current = fuelgauge_get_Battery_Current();
-	if(battery_current <= 0)
+	if(battery_current == 0)
 	 {
 		 batteryManagePara.battery_is_charging = 0;
-	 }else
+		 batteryManagePara.battery_is_discharging = 0;
+	 }else if(battery_current < 0)
+	 {
+	 	batteryManagePara.battery_is_discharging = 1;
+	 	batteryManagePara.battery_is_charging = 0;
+	 }
+	 else
 	 {
 		 batteryManagePara.battery_is_charging = 1;
+		 batteryManagePara.battery_is_discharging = 0;
 		 printf("Battery is charging, current is %d", battery_current);
 	 }
 
@@ -1558,6 +1568,16 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 
             printf("display LED_BATTERY_CHARGEING\n\n");
             break;
+			
+        case LED_BATTERY_DISCHARGEING:
+            system("adk-message-send 'led_start_pattern{pattern:31}'");
+
+            /*set_battery_led('r', 1);
+            set_battery_led('g', 0);
+            set_battery_led('b', 1);*/
+
+            printf("display LED_BATTERY_DISCHARGEING\n\n");
+            break;
 
         case LED_BATTERY_LOW:
             //system("adk-message-send 'led_start_pattern{pattern:33}'");
@@ -1648,21 +1668,15 @@ void led_battery_display_handle(void)
 		
 		batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
     }
-    else
-    {
-        if(batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)
+    else if(batteryManagePara.battery_is_discharging && batteryManagePara.charger_is_plug_in)
+	{
+	    if(batteryManagePara.led_battery_display_state != LED_BATTERY_DISCHARGEING)
         {
-            if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
-            {
-                led_battery_display(LED_BATTERY_OFF);
-            }
-
-            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
-        }	
-
-
-		if(batteryManagePara.battery_fully_charged)
-	    {
+            led_battery_display(LED_BATTERY_DISCHARGEING);
+        }
+		
+		batteryManagePara.led_battery_display_state = LED_BATTERY_DISCHARGEING;
+	}else if(batteryManagePara.battery_fully_charged){
 	        if(batteryManagePara.charger_is_plug_in)
 	        {
 
@@ -1682,20 +1696,22 @@ void led_battery_display_handle(void)
 	  			 batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
 	  		}
 
-	    }else{
+	}else if(batteryManagePara.low_battery_flag){
+            /*if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)*/
+            {
+                led_battery_display(LED_BATTERY_LOW);
+            }
 
-	        if(batteryManagePara.low_battery_flag)
-	        {
-	            if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)
-	            {
-	                led_battery_display(LED_BATTERY_LOW);
-	            }
+            //batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
+			
+	}else/* if(batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)*/{
+            if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
+            {
+                led_battery_display(LED_BATTERY_OFF);
+            }
 
-	            batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
-	        }
-	    }
+            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
     }
-
 }
 
 
