@@ -1076,7 +1076,7 @@ void check_BatteryFullyCharged_Task(void)
             {
                 if(batteryManagePara.temperature_allow_charge)
                 {
-                    if(get_Chg_OK_Pin_value() == '1')
+                    if(batteryManagePara.charger_is_plug_in & 0x01)
                     {
                         if(bq25703_enable_charge() != 0)
                         {
@@ -1629,6 +1629,7 @@ void led_battery_display_handle(void)
 
 	printf("ryder: battery display state is %d",batteryManagePara.led_battery_display_state);
 	printf("ryder: battery charging state is %d",batteryManagePara.battery_is_charging);
+	printf("ryder: battery plugged state is %d",batteryManagePara.charger_is_plug_in);
 
 
 	if(batteryManagePara.factory_shipment_charge_complete_flag)
