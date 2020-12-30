@@ -1978,7 +1978,10 @@ void *bq25703a_stdin_thread(void *arg)
 
 			batteryManagePara.charger_is_plug_in &= ~0x01;	
 
-		}else if(event.compare("trigger::USB_CONNECTED") == 0)
+		}else if(
+			(event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
+			(event.compare("trigger::GPIO33rising")&& ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
+			)
 		{
 
 				std::string line;
