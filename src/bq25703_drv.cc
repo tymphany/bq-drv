@@ -2072,7 +2072,9 @@ void *bq25703a_stdin_thread(void *arg)
 			OVERCOOL2 = std::stoi(event.substr(25,3));
 			OVERCOOL1 = std::stoi(event.substr(29,3));
 			printf("fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
-			
+
+		}else{
+			printf("event not identified.\n");
 		}
 
 		led_battery_display_handle();
