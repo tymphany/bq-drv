@@ -1487,6 +1487,7 @@ void batteryCharge_handle_Task(int battery_temperature)
 
 void batteryFault_handle_Task(int battery_temperature)
 {
+	printf("temrature is %d\n", battery_temperature);
 
 	if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != Overheat2)
 	{
