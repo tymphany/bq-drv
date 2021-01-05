@@ -1939,7 +1939,7 @@ void *bq25703a_stdin_thread(void *arg)
     while (mystream.good())
     {
         getline(mystream, event);
-
+		printf("got event: %s\n", event.c_str());
         if(event.compare("button_LANTERN_DP") == 0)
         {
             if(battery_relativeStateOfCharge <= 100)
