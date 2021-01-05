@@ -2026,7 +2026,7 @@ void *bq25703a_stdin_thread(void *arg)
 
 		}else if(
 			(event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
-			(event.compare("trigger::GPIO33rising")&& ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
+			(event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
 			)
 		{
 
@@ -2198,7 +2198,7 @@ int main(int argc, char* argv[])
     pthread_t thread_check_gpiokey_ntid;
 
     pthread_t thread_check_batteryShutdownMode_ntid;
-	printf("Version:developing 001\n");
+	printf("Version:developing 002\n");
     if(argc > 1)
     {
         for(i = 0; i < argc; i++)
