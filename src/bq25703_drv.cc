@@ -1501,7 +1501,7 @@ void batteryFault_handle_Task(int battery_temperature)
 	}else if(battery_temperature < OVERCOOL1 && batteryManagePara.fault != Overcool1){
 		batteryManagePara.fault = Overcool1;
 		system("adk-message-send 'system_mode_management {name: \"batfault::overcool1\"}'");
-	}else if(batteryManagePara.fault != No_Fault){
+	}else if(battery_temperature < OVERHEAT1 && battery_temperature > OVERCOOL1 && batteryManagePara.fault != No_Fault){
 		batteryManagePara.fault = No_Fault;
 		system("adk-message-send 'system_mode_management {name: \"batfault::nofault\"}'");
 	}else{
