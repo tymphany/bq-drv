@@ -141,6 +141,19 @@ uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
     OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
 };
 
+enum faultStatus
+{
+	No_Fault = 0,
+	Overheat1,
+	Overheat2,
+	Overcool1,
+	Overcool2
+};
+
+int OVERHEAT1 = 50;
+int OVERHEAT2 = 60;
+int OVERCOOL1 = 0;
+int OVERCOOL2 = -20;
 
 struct BATTERY_MANAAGE_PARA
 {
@@ -170,6 +183,7 @@ struct BATTERY_MANAAGE_PARA
 	int battery_current;
     int battery_temperature;
     int battery_voltage;
+	faultStatus fault;
 
 } batteryManagePara;
 
@@ -1043,6 +1057,7 @@ void batteryManagePara_init(void)
     batteryManagePara.battery_voltage = 0;
 
     batteryManagePara.i2c_silent = 0;
+	batteryManagePara.fault = No_Fault;
 	
 
 }
@@ -1467,6 +1482,35 @@ void batteryCharge_handle_Task(int battery_temperature)
 }
 
 
+
+
+
+void batteryFault_handle_Task(int battery_temperature)
+{
+
+	if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != OVERHEAT2)
+	{
+		batteryManagePara.fault = Overheat2;
+		system("adk-message-send 'system_mode_management {name: \"batfault::overheat2\"}'");
+	}else if(battery_temperature > OVERHEAT1 && batteryManagePara.fault != OVERHEAT1){
+		batteryManagePara.fault = Overheat1;
+		system("adk-message-send 'system_mode_management {name: \"batfault::overheat1\"}'");
+	}else if(battery_temperature < OVERCOOL2 && batteryManagePara.fault != OVERCOOL2){
+		batteryManagePara.fault = Overcool2;
+		system("adk-message-send 'system_mode_management {name: \"batfault::overcool2\"}'");
+	}else if(battery_temperature < OVERCOOL1 && batteryManagePara.fault != OVERCOOL1){
+		batteryManagePara.fault = Overcool1;
+		system("adk-message-send 'system_mode_management {name: \"batfault::overcool1\"}'");
+	}else if(batteryManagePara.fault != No_Fault){
+		batteryManagePara.fault = No_Fault;
+		system("adk-message-send 'system_mode_management {name: \"batfault::nofault\"}'");
+	}else{
+		printf("fault status not changed.\n");
+	}
+	
+	return;
+}
+
 void batteryDisCharge_handle_Task(int battery_temperature)
 {
     //when Adapter is pluged, no need to adjust EQ
@@ -1528,6 +1572,8 @@ void batteryTemperature_handle_Task(void)
     batteryCharge_handle_Task(batteryManagePara.battery_temperature);
 
     batteryDisCharge_handle_Task(batteryManagePara.battery_temperature);
+
+	batteryFault_handle_Task(batteryManagePara.battery_temperature);
 }
 
 
@@ -2020,6 +2066,13 @@ void *bq25703a_stdin_thread(void *arg)
 		}else if(event.compare("Test::bqdrv_ic_silent_toggle") == 0){
 			batteryManagePara.i2c_silent ^= 1;
 			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
+		}else if(event.find("setval::FaultVal:")){
+			OVERHEAT2 = std::stoi(event.substr(17,3));
+			OVERHEAT1 = std::stoi(event.substr(21,3));
+			OVERCOOL2 = std::stoi(event.substr(25,3));
+			OVERCOOL1 = std::stoi(event.substr(29,3));
+			printf("fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
+			
 		}
 
 		led_battery_display_handle();
