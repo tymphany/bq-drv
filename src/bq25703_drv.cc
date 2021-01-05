@@ -2066,7 +2066,7 @@ void *bq25703a_stdin_thread(void *arg)
 		}else if(event.compare("Test::bqdrv_ic_silent_toggle") == 0){
 			batteryManagePara.i2c_silent ^= 1;
 			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
-		}else if(event.find("setval::FaultVal:")){
+		}else if(event.find("setval::FaultVal:") != string::npos){
 			OVERHEAT2 = std::stoi(event.substr(17,3));
 			OVERHEAT1 = std::stoi(event.substr(21,3));
 			OVERCOOL2 = std::stoi(event.substr(25,3));
