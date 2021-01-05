@@ -1488,17 +1488,17 @@ void batteryCharge_handle_Task(int battery_temperature)
 void batteryFault_handle_Task(int battery_temperature)
 {
 
-	if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != OVERHEAT2)
+	if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != Overheat2)
 	{
 		batteryManagePara.fault = Overheat2;
 		system("adk-message-send 'system_mode_management {name: \"batfault::overheat2\"}'");
-	}else if(battery_temperature > OVERHEAT1 && batteryManagePara.fault != OVERHEAT1){
+	}else if(battery_temperature > OVERHEAT1 && batteryManagePara.fault != Overheat1){
 		batteryManagePara.fault = Overheat1;
 		system("adk-message-send 'system_mode_management {name: \"batfault::overheat1\"}'");
-	}else if(battery_temperature < OVERCOOL2 && batteryManagePara.fault != OVERCOOL2){
+	}else if(battery_temperature < OVERCOOL2 && batteryManagePara.fault != Overcool2){
 		batteryManagePara.fault = Overcool2;
 		system("adk-message-send 'system_mode_management {name: \"batfault::overcool2\"}'");
-	}else if(battery_temperature < OVERCOOL1 && batteryManagePara.fault != OVERCOOL1){
+	}else if(battery_temperature < OVERCOOL1 && batteryManagePara.fault != Overcool1){
 		batteryManagePara.fault = Overcool1;
 		system("adk-message-send 'system_mode_management {name: \"batfault::overcool1\"}'");
 	}else if(batteryManagePara.fault != No_Fault){
