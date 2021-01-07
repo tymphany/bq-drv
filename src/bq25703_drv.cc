@@ -1387,6 +1387,8 @@ int update_fuelgauge_BatteryInfo(void)
 
     batteryManagePara.battery_temperature = battery_temperature;
 
+	
+
     return 0;
 }
 
@@ -2074,7 +2076,20 @@ void *bq25703a_stdin_thread(void *arg)
 			OVERCOOL1 = std::stoi(event.substr(29,3));
 			printf("fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
 
-		}else{
+		}else if(event.find("getval::battery")){
+        std::string payload;
+        std::stringstream ps;
+
+        ps << "adk-message-send 'system_mode_management {name:\"battery::" <<  batteryManagePara.battery_current << ":" <<  batteryManagePara.battery_voltage
+        <<  batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
+
+        std::string s = ps.str();
+        char payloadstr[strlen(s.c_str()) + 1];
+        strcpy(payloadstr,s.c_str());
+        
+        system(payloadstr);
+
+    	}else{
 			printf("event not identified.\n");
 		}
 
