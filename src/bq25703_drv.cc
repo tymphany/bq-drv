@@ -1311,6 +1311,7 @@ int update_fuelgauge_BatteryInfo(void)
     batteryManagePara.battery_voltage = battery_voltage;
 
     battery_current = fuelgauge_get_Battery_Current();
+	batteryManagePara.battery_current = battery_current;
 	if(battery_current == 0)
 	 {
 		 batteryManagePara.battery_is_charging = 0;
