@@ -2076,7 +2076,7 @@ void *bq25703a_stdin_thread(void *arg)
 			OVERCOOL1 = std::stoi(event.substr(29,3));
 			printf("fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
 
-		}else if(event.find("getval::battery")){
+		}else if(event.find("getval::battery") != string::npos){
         std::string payload;
         std::stringstream ps;
 
