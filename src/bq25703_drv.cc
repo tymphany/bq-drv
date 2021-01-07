@@ -2081,7 +2081,7 @@ void *bq25703a_stdin_thread(void *arg)
         std::stringstream ps;
 
         ps << "adk-message-send 'system_mode_management {name:\"battery::" <<  batteryManagePara.battery_current << ":" <<  batteryManagePara.battery_voltage
-        <<  batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
+        << ":" << batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
 
         std::string s = ps.str();
         char payloadstr[strlen(s.c_str()) + 1];
