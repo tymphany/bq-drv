@@ -88,20 +88,21 @@ unsigned int battery_relativeStateOfCharge = 0xff;
 uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
 {
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
-    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x1e00,
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
-//    OTG_VOLTAGE_REGISTER_WR,    0x0000,
+    CHARGE_OPTION_1_WR
+    OTG_VOLTAGE_REGISTER_WR,    0x0000,
 //    OTG_CURRENT_REGISTER_WR,    0x0000,
 
-/*    CHARGE_OPTION_1_WR,         0x0210,
+    CHARGE_OPTION_1_WR,         0x1250,
     CHARGE_OPTION_2_WR,         0x02B7,
-    CHARGE_OPTION_3_WR,         0x0000,
+    CHARGE_OPTION_3_WR,         0x1000,
     PROCHOT_OPTION_0_WR,        0x4A54,
     PROCHOT_OPTION_1_WR,        0x8120,
-    ADC_OPTION_WR,              0xE0FF*/
+    ADC_OPTION_WR,              0xE0FF
 };
 
 uint16_t OTG_REGISTER_DDR_VALUE_BUF[]= //USB Detach
@@ -117,7 +118,7 @@ uint16_t OTG_REGISTER_DDR_VALUE_BUF[]= //USB Detach
 uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
 {
     CHARGE_OPTION_0_WR,         0x860E,
-    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V0, //here should use the default value:0x0000, means 3200mV
     
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x1e00,
