@@ -1935,6 +1935,8 @@ void *bq25703a_stdin_thread(void *arg)
 {
     std::istream &mystream = std::cin;
     std::string event;
+
+	bq25703a_charge_function_init();
     sd_notifyf(0, "READY=1\n"
     "STATUS=Processing requests...\n"
     "MAINPID=%lu",
