@@ -90,7 +90,7 @@ uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
-    INPUT_CURRENT_REGISTER_WR,  0x1e00,
+    INPUT_CURRENT_REGISTER_WR,  0x4100,
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
     OTG_VOLTAGE_REGISTER_WR,    0x0000,
@@ -120,7 +120,7 @@ uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
     
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
-    INPUT_CURRENT_REGISTER_WR,  0x1e00,
+    INPUT_CURRENT_REGISTER_WR,  0x4100,
 
     CHARGE_OPTION_3_WR,         0x0000,//ryder otg disable
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_256mA,
