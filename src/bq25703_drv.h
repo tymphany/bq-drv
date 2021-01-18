@@ -20,7 +20,7 @@
 #define CHARGE_CURRENT_0                    0x0000 //0mA
 
 
-#define CHARGE_CURRENT_FOR_USB_Default      CHARGE_CURRENT_256mA
+#define CHARGE_CURRENT_FOR_USB_Default      CHARGE_CURRENT_1856mA //increase USB charging current.
 #define CHARGE_CURRENT_FOR_PD               CHARGE_CURRENT_1856mA
 
 
