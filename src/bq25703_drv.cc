@@ -90,7 +90,7 @@ uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
-    INPUT_CURRENT_REGISTER_WR,  0x2A00,
+    INPUT_CURRENT_REGISTER_WR,  0x1e00, //Ryder: here only for POGO Pin configuration
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
     OTG_VOLTAGE_REGISTER_WR,    0x0000,
@@ -510,6 +510,26 @@ int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
            BQ_I2C_ADDR,
            CHARGE_CURRENT_REGISTER_WR,
            ((unsigned char*)(&input_voltage_limit)),
+           2)
+      )
+    {
+        printf("write Current eer\n");
+        return -1;
+    }
+
+    return 0;
+}
+
+int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
+{
+    int input_voltage_limit = input_current_limit_set;
+
+    printf("set charge input currnet limit: %dmA\n",input_current_limit_set*50);
+
+    if(0 != bq25703a_i2c_write(
+           BQ_I2C_ADDR,
+           INPUT_CURRENT_REGISTER_WR,
+           ((unsigned char*)(&input_current_limit_set)),
            2)
       )
     {
@@ -943,38 +963,55 @@ int bq25703_enable_charge(void)
     switch(tps65987_TypeC_current_type)
     {
         case USB_Default_Current:
-/* Ryder: use input voltage to restrict USB current.
        		batteryManagePara.charger_is_plug_in |= 1;
 
-            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
-
+			//input current set to 2.1A 
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00)){
+            	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
+			}
+			
             if(ret == 0)
             {
                 //batteryManagePara.battery_is_charging = 1;
             }
             break;
-*/
+
         case C_1d5A_Current:
-/* Ryder: use input voltage to restrict USB current.
-
             batteryManagePara.charger_is_plug_in |= 1;
-
-            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
-			//Ryder: Shall increase current?
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00)){
+	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
+			}
+			
             if(ret == 0)
             {
                // batteryManagePara.battery_is_charging = 1;
             }
             break;
-*/
+
         case C_3A_Current:
+            batteryManagePara.charger_is_plug_in |= 1;
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00)){
+				
+				charge_current = decide_the_ChargeCurrent();
+				
+				ret = bq25703_set_ChargeCurrent(charge_current);
+			}		
+			
+			if(ret == 0)
+			{
+				//batteryManagePara.battery_is_charging = 1;
+			}
+
+				break;
         case PD_contract_negotiated:
             batteryManagePara.charger_is_plug_in |= 1;
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x1e00)){
 
-            charge_current = decide_the_ChargeCurrent();
+	            charge_current = decide_the_ChargeCurrent();
 
-            ret = bq25703_set_ChargeCurrent(charge_current);
-
+	            ret = bq25703_set_ChargeCurrent(charge_current);
+			}
+			
             if(ret == 0)
             {
                 //batteryManagePara.battery_is_charging = 1;
@@ -1987,6 +2024,7 @@ void *bq25703a_stdin_thread(void *arg)
 						
 						if(ret_val == 1)
 						{
+
 							if(bq25703_enable_charge() == 0)
 							{
 
