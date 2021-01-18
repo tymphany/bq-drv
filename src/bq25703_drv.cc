@@ -421,7 +421,7 @@ int bq25703_set_ChargeCurrent(unsigned int charge_current_set)
            2)
       )
     {
-        printf("write Current eer\n");
+        printf("write Current err\n");
         return -1;
     }
 
@@ -2080,6 +2080,7 @@ void *bq25703a_stdin_thread(void *arg)
 			(event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
 			)
 		{
+				printf("usb connected.\n");
 
 				std::string line;
 				std::ifstream infile("/sys/class/gpio/gpio115/value");
