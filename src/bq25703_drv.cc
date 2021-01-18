@@ -966,7 +966,7 @@ int bq25703_enable_charge(void)
        		batteryManagePara.charger_is_plug_in |= 1;
 
 			//input current set to 2.1A 
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00)){
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00))){
             	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -978,7 +978,7 @@ int bq25703_enable_charge(void)
 
         case C_1d5A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00)){
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00))){
 	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -990,7 +990,7 @@ int bq25703_enable_charge(void)
 
         case C_3A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00)){
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00))){
 				
 				charge_current = decide_the_ChargeCurrent();
 				
@@ -1005,7 +1005,7 @@ int bq25703_enable_charge(void)
 				break;
         case PD_contract_negotiated:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x1e00)){
+			if(0 == (ret = bq25703_set_InputCurrentLimit(0x1e00))){
 
 	            charge_current = decide_the_ChargeCurrent();
 
