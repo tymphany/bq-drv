@@ -966,7 +966,7 @@ int bq25703_enable_charge(void)
        		batteryManagePara.charger_is_plug_in |= 1;
 
 			//input current set to 2.1A 
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(2100))){//2.1A
             	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -978,7 +978,7 @@ int bq25703_enable_charge(void)
 
         case C_1d5A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(2100))){//2.1A
 	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -1978,7 +1978,7 @@ void check_usb_disconnected()
 	{
 		s_TPS_status tpStatus;
 	
-		if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus)){
+		if((buf[0] & 0x04) && !tps65987_get_Status(&tpStatus)){
 			if(0 == tpStatus.VbusStatus){
 				//USB disconnected
 				syslog(LOG_DEBUG, "USB disconnected.");	
