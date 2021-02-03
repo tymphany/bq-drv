@@ -1978,7 +1978,7 @@ void check_usb_disconnected()
 	{
 		s_TPS_status tpStatus;
 	
-		if((buf[0] & 0x04) && !tps65987_get_Status(&tpStatus)){
+		if((buf[0] & 0x08) && !tps65987_get_Status(&tpStatus)){
 			if(0 == tpStatus.VbusStatus){
 				//USB disconnected
 				syslog(LOG_DEBUG, "USB disconnected.");	
