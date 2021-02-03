@@ -1981,26 +1981,32 @@ void check_usb_disconnected()
 		if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus)){
 			if(0 == tpStatus.VbusStatus){
 				//USB disconnected
+				syslog(LOG_DEBUG, "USB disconnected.");	
 				 if(batteryManagePara.charger_is_plug_in & 0x01){
 						batteryManagePara.charger_is_plug_in &= ~0x01;
+					syslog(LOG_DEBUG, "Configuring OTG");
 					if(bq25703a_otg_function_init()){
 						syslog(LOG_ERR, "OTG configuration Error.");
 					}
 					 }else{
 					 }
 			}
+			
 		}else{
 				syslog(LOG_DEBUG, "Error get pdstatus");
 		}
 		//usleep(100000); //give PD time to send commands.
-		if(0 == tps65987_clear_Intevents())
-		{
-		}else{
-			syslog(LOG_DEBUG, "Error clear intstatus");
-		}
+
 	}else
 	{
 		syslog(LOG_DEBUG, "Error get intstatus");
+	}
+
+	syslog(LOG_DEBUG, "Clearing PD interrupts."); 
+	if(0 == tps65987_clear_Intevents())
+	{
+	}else{
+		syslog(LOG_DEBUG, "Error clear intstatus");
 	}
 }
 
