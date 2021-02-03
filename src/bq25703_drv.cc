@@ -107,9 +107,9 @@ uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
 uint16_t OTG_REGISTER_DDR_VALUE_BUF[]= //USB Detach
 {
 
+    CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
     OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
     OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
-    CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
 
 };
 
