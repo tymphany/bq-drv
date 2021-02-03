@@ -1971,6 +1971,39 @@ void *check_gpiokey_thread(void *arg)
     }
 }
 
+void check_usb_disconnected()
+{
+	char buf[11];
+	if(0 == tps65987_get_Intevents(buf))
+	{
+		s_TPS_status tpStatus;
+	
+		if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus)){
+			if(0 == tpStatus.VbusStatus){
+				//USB disconnected
+				 if(batteryManagePara.charger_is_plug_in & 0x01){
+						batteryManagePara.charger_is_plug_in &= ~0x01;
+					if(bq25703a_otg_function_init()){
+						syslog(LOG_ERR, "OTG configuration Error.");
+					}
+					 }else{
+					 }
+			}
+		}else{
+				syslog(LOG_DEBUG, "Error get pdstatus");
+		}
+		//usleep(100000); //give PD time to send commands.
+		if(0 == tps65987_clear_Intevents())
+		{
+		}else{
+			syslog(LOG_DEBUG, "Error clear intstatus");
+		}
+	}else
+	{
+		syslog(LOG_DEBUG, "Error get intstatus");
+	}
+}
+
 void *bq25703a_stdin_thread(void *arg)
 {
     std::istream &mystream = std::cin;
@@ -1979,6 +2012,8 @@ void *bq25703a_stdin_thread(void *arg)
 	/* Enable so that POGO pin can shart charging.
 	bq25703a_charge_function_init();
 	*/
+//init USB connect status
+	check_usb_disconnected();
 
 	
     sd_notifyf(0, "READY=1\n"
@@ -2038,42 +2073,10 @@ void *bq25703a_stdin_thread(void *arg)
 						}
 					}
 												
-		}else if(event.compare("trigger::GPIO33falling") == 0){
+		}else if(event.compare("trigger::GPIO31falling") == 0){
+		//check usb disconnect event
 				//clear all interrupts
-		/*		char buf[11];
-				if(0 == tps65987_get_Intevents(buf))
-				{
-					s_TPS_status tpStatus;
-
-					if((buf[4] & 0x04) && !tps65987_get_Status(&tpStatus)){
-						if(0 == tpStatus.VbusStatus)
-							//USB disconnected
-							 if(batteryManagePara.charger_is_plug_in & 0x01){
-									batteryManagePara.charger_is_plug_in &= ~0x01;
-							 }else{
-							 }
-						}else{
-				    		syslog(LOG_DEBUG, "Error get pdstatus");
-						}
-					usleep(100000);	//give PD time to send commands.
-					if(0 == tps65987_clear_Intevents())
-					{
-					}else{
-						syslog(LOG_DEBUG, "Error clear intstatus");
-					}
-				}else
-				{
-					syslog(LOG_DEBUG, "Error get intstatus");
-				}*/
-				
-				//batteryManagePara.charger_is_plug_in &= ~0x01;
-				//otg configuration
-			
-				/*if(bq25703a_otg_function_init()){
-					syslog(LOG_ERR, "OTG configuration Error.");
-				}*/
-
-			batteryManagePara.charger_is_plug_in &= ~0x01;	
+			check_usb_disconnected();
 
 		}else if(
 			(event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
