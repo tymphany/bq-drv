@@ -1974,24 +1974,37 @@ void *check_gpiokey_thread(void *arg)
 void check_usb_disconnected()
 {
 	char buf[11];
+
 	if(0 == tps65987_get_Intevents(buf))
 	{
 		s_TPS_status tpStatus;
-	
+		if(0 == tps65987_clear_Intevents())
+		{
+		}else{
+			syslog(LOG_DEBUG, "Error clear intstatus");
+		}
+		//plug insert/remove interrupt
 		if((buf[0] & 0x08) && !tps65987_get_Status(&tpStatus)){
+			//VBus status
 			if(0 == tpStatus.VbusStatus){
 				//USB disconnected
 				syslog(LOG_DEBUG, "USB disconnected.");	
+
+				syslog(LOG_DEBUG, "Configuring OTG");
+				 if(bq25703a_otg_function_init()){
+					 syslog(LOG_ERR, "OTG configuration Error.");
+				 }
+				 
 				 if(batteryManagePara.charger_is_plug_in & 0x01){
 						batteryManagePara.charger_is_plug_in &= ~0x01;
-					syslog(LOG_DEBUG, "Configuring OTG");
-					if(bq25703a_otg_function_init()){
-						syslog(LOG_ERR, "OTG configuration Error.");
-					}
-					 }else{
-					 }
+
+				 }else{
+				 //charger already configured to be unplugged.
+				 }
+			}else{
+			//usb connected
+			//detect in another way as in below function.
 			}
-			
 		}else{
 				syslog(LOG_DEBUG, "Error get pdstatus");
 		}
@@ -2003,11 +2016,7 @@ void check_usb_disconnected()
 	}
 
 	syslog(LOG_DEBUG, "Clearing PD interrupts."); 
-	if(0 == tps65987_clear_Intevents())
-	{
-	}else{
-		syslog(LOG_DEBUG, "Error clear intstatus");
-	}
+
 }
 
 void *bq25703a_stdin_thread(void *arg)
