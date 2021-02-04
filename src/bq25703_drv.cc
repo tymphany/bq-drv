@@ -2071,7 +2071,7 @@ void *bq25703a_stdin_thread(void *arg)
 					if(batteryManagePara.charger_is_plug_in & 0x01)
 					{
 						char databuf[2] = {0x00, 0x00};
-						bq25703a_i2c_write(I2C_ADDR, 0x34, databuf, 2);
+						bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
 						int ret_val = check_Battery_allow_charge();
 						
 						if(ret_val == 1)
@@ -2111,7 +2111,7 @@ void *bq25703a_stdin_thread(void *arg)
 				syslog(LOG_DEBUG, "pg value is %d", pg_value);
 				//disable otg
 				char databuf[2] = {0x00, 0x00};
-				bq25703a_i2c_write(I2C_ADDR, 0x34, databuf, 2);
+				bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
 				
 				if(pg_value == 1)
 				{
