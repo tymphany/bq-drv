@@ -88,7 +88,7 @@ unsigned int battery_relativeStateOfCharge = 0xff;
 uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
 {
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
-    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V2, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x1e00, //Ryder: here only for POGO Pin configuration
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
@@ -524,7 +524,7 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
 {
     int input_voltage_limit = input_current_limit_set;
 
-    printf("set charge input currnet limit: %dmA\n",input_current_limit_set*50);
+    printf("set charge input currnet limit: %dmA\n",input_current_limit_set);
 
     if(0 != bq25703a_i2c_write(
            BQ_I2C_ADDR,
@@ -966,7 +966,7 @@ int bq25703_enable_charge(void)
        		batteryManagePara.charger_is_plug_in |= 1;
 
 			//input current set to 2.1A 
-			if(0 == (ret = bq25703_set_InputCurrentLimit(2100))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_Default_Limit))){
             	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -978,7 +978,7 @@ int bq25703_enable_charge(void)
 
         case C_1d5A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(2100))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_1d5A_Limit))){//2.1A
 	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -990,7 +990,7 @@ int bq25703_enable_charge(void)
 
         case C_3A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x2a00))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_3A_Limit))){//2.1A
 				
 				charge_current = decide_the_ChargeCurrent();
 				
@@ -1005,7 +1005,7 @@ int bq25703_enable_charge(void)
 				break;
         case PD_contract_negotiated:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(0x1e00))){//1.5A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_PD_Limit))){//1.5A
 
 	            charge_current = decide_the_ChargeCurrent();
 
