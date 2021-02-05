@@ -1990,11 +1990,11 @@ void check_usb_disconnected()
 				//USB disconnected
 				syslog(LOG_DEBUG, "USB disconnected.");	
 
-				syslog(LOG_DEBUG, "Configuring OTG");
+/*				syslog(LOG_DEBUG, "Configuring OTG");
 				 if(bq25703a_otg_function_init()){
 					 syslog(LOG_ERR, "OTG configuration Error.");
 				 }
-				 
+*/				 
 				 if(batteryManagePara.charger_is_plug_in & 0x01){
 						batteryManagePara.charger_is_plug_in &= ~0x01;
 
@@ -2070,8 +2070,10 @@ void *bq25703a_stdin_thread(void *arg)
 					batteryManagePara.charger_is_plug_in &= ~0x02;
 					if(batteryManagePara.charger_is_plug_in & 0x01)
 					{
-						char databuf[2] = {0x00, 0x00};
+					//disable OTG
+/*						char databuf[2] = {0x00, 0x00};
 						bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
+*/						
 						int ret_val = check_Battery_allow_charge();
 						
 						if(ret_val == 1)
@@ -2110,17 +2112,19 @@ void *bq25703a_stdin_thread(void *arg)
 				std::stoi(line, &pg_value);
 				syslog(LOG_DEBUG, "pg value is %d", pg_value);
 				//disable otg
-				char databuf[2] = {0x00, 0x00};
+/*				char databuf[2] = {0x00, 0x00};
 				bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
-				
+*/				
 				if(pg_value == 1)
 				{
 					batteryManagePara.charger_is_plug_in &= ~0x02; 
 				}
 
 				batteryManagePara.charger_is_plug_in |= 0x01; 
-					
+/*PD will config*/
+/*					
 				if(batteryManagePara.charger_is_plug_in == 0x01){
+
 					int ret_val = check_Battery_allow_charge();
 
 		            if(ret_val == 1)
@@ -2136,7 +2140,7 @@ void *bq25703a_stdin_thread(void *arg)
 
 		            }					
 			    }
-
+*/
 			//to add charger configration for USB
 		}else if(event.compare("Test::bqdrv_ic_silent_toggle") == 0){
 			batteryManagePara.i2c_silent ^= 1;
