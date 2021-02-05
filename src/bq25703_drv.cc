@@ -170,14 +170,14 @@ struct BATTERY_MANAAGE_PARA
     unsigned char low_battery_flag;
 
     unsigned char battery_is_charging;
-	
+
     unsigned char battery_is_discharging;
 
     unsigned char charger_is_plug_in;//bit 0 indicates USB, bit 1 indicates POGO_PIN
 
 	unsigned char i2c_silent;
 	unsigned char factory_shipment_charge_complete_flag;
-	
+
     LED_BATTERY_DISPLAY_STATE led_battery_display_state;
 
 	int battery_current;
@@ -969,7 +969,7 @@ int bq25703_enable_charge(void)
 			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit))){
             	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
-			
+
             if(ret == 0)
             {
                 //batteryManagePara.battery_is_charging = 1;
@@ -981,7 +981,7 @@ int bq25703_enable_charge(void)
 			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit))){//2.1A
 	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
-			
+
             if(ret == 0)
             {
                // batteryManagePara.battery_is_charging = 1;
@@ -991,12 +991,12 @@ int bq25703_enable_charge(void)
         case C_3A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
 			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))){//2.1A
-				
+
 				charge_current = decide_the_ChargeCurrent();
-				
+
 				ret = bq25703_set_ChargeCurrent(charge_current);
-			}		
-			
+			}
+
 			if(ret == 0)
 			{
 				//batteryManagePara.battery_is_charging = 1;
@@ -1012,7 +1012,7 @@ int bq25703_enable_charge(void)
 
 	            ret = bq25703_set_ChargeCurrent(charge_current);
 			}
-			
+
             if(ret == 0)
             {
                 //batteryManagePara.battery_is_charging = 1;
@@ -1099,7 +1099,7 @@ void batteryManagePara_init(void)
 
     batteryManagePara.i2c_silent = 0;
 	batteryManagePara.fault = No_Fault;
-	
+
 
 }
 
@@ -1378,10 +1378,10 @@ int update_fuelgauge_BatteryInfo(void)
 
 		snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
 		system(cmd);
-		
+
 		if(battery_relativeStateOfCharge < 5){
             batteryManagePara.low_battery_flag = 1;
-			
+
 			if(battery_relativeStateOfCharge > 2)
 			{
 				batteryManagePara.low_battery_flag |= 1 << 1;
@@ -1396,7 +1396,7 @@ int update_fuelgauge_BatteryInfo(void)
         	if(batteryManagePara.low_battery_flag != 0){
 				batteryManagePara.low_battery_flag = 0;
         	}
-			
+
 			if(fp = fopen("/dev/shm/shipment_SOC", "r"))
 			{
 				   fgets(buff, 128, (FILE*)fp);
@@ -1429,7 +1429,7 @@ int update_fuelgauge_BatteryInfo(void)
 
     batteryManagePara.battery_temperature = battery_temperature;
 
-	
+
 
     return 0;
 }
@@ -1552,7 +1552,7 @@ void batteryFault_handle_Task(int battery_temperature)
 	}else{
 		printf("fault status not changed.\n");
 	}
-	
+
 	return;
 }
 
@@ -1659,7 +1659,7 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 
             printf("display LED_BATTERY_CHARGEING\n\n");
             break;
-			
+
         case LED_BATTERY_DISCHARGEING:
             system("adk-message-send 'led_start_pattern{pattern:31}'");
 
@@ -1685,14 +1685,14 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 					system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
 			  }else if(0 < batteryManagePara.low_battery_flag >> 1){
 			  	if(current_time.tv_sec - last_time.tv_sec > 120){
-		  			last_time = current_time;						
-					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		
+		  			last_time = current_time;
+					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");
 			  	}
 			  }else if(0 < batteryManagePara.low_battery_flag){
 			  	if(current_time.tv_sec - last_time.tv_sec > 300){
-		  			last_time = current_time;						
-					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		
-			  	}			
+		  			last_time = current_time;
+					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");
+			  	}
 			  }
 
             /*set_battery_led('r', 0);
@@ -1756,7 +1756,7 @@ void led_battery_display_handle(void)
             led_battery_display(LED_BATTERY_CHARGEING);
         }
 
-		
+
 		batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
     }
     else if(batteryManagePara.battery_is_discharging && batteryManagePara.charger_is_plug_in)
@@ -1765,7 +1765,7 @@ void led_battery_display_handle(void)
         {
             led_battery_display(LED_BATTERY_DISCHARGEING);
         }
-		
+
 		batteryManagePara.led_battery_display_state = LED_BATTERY_DISCHARGEING;
 	}else if(batteryManagePara.battery_fully_charged){
 	        if(batteryManagePara.charger_is_plug_in)
@@ -1783,7 +1783,7 @@ void led_battery_display_handle(void)
 	  			 {
 	  				 led_battery_display(LED_BATTERY_OFF);
 	  			 }
-	  		
+
 	  			 batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
 	  		}
 
@@ -1794,7 +1794,7 @@ void led_battery_display_handle(void)
             }
 
             //batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
-			
+
 	}else/* if(batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)*/{
             if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
             {
@@ -1972,6 +1972,7 @@ void *check_gpiokey_thread(void *arg)
     }
 }
 
+
 void check_usb_disconnected()
 {
 	char buf[11];
@@ -1989,13 +1990,13 @@ void check_usb_disconnected()
 			//VBus status
 			if(0 == tpStatus.VbusStatus){
 				//USB disconnected
-				syslog(LOG_DEBUG, "USB disconnected.");	
+				syslog(LOG_DEBUG, "USB disconnected.");
 
 /*				syslog(LOG_DEBUG, "Configuring OTG");
 				 if(bq25703a_otg_function_init()){
 					 syslog(LOG_ERR, "OTG configuration Error.");
 				 }
-*/				
+*/
 				 if(batteryManagePara.charger_is_plug_in & 0x01){
 						batteryManagePara.charger_is_plug_in &= ~0x01;
 
@@ -2020,6 +2021,41 @@ void check_usb_disconnected()
 
 }
 
+void bq25703_configure_input_current_limit()
+{
+	int tps65987_TypeC_current_type;
+	tps65987_TypeC_current_type = tps65987_get_TypeC_Current();
+	switch(tps65987_TypeC_current_type)
+	{
+		case USB_Default_Current:
+			//input current set to 1500mA
+			bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
+
+			break;
+
+		case C_1d5A_Current:
+			bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
+
+			break;
+
+		case C_3A_Current:
+			bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit);
+
+
+				break;
+		case PD_contract_negotiated:
+			 ;
+			bq25703_set_InputCurrentLimit(tps65987_get_ActiveContractPDO());
+			break;
+
+		default:
+
+			break;
+
+	}
+
+}
+
 void *bq25703a_stdin_thread(void *arg)
 {
     std::istream &mystream = std::cin;
@@ -2031,7 +2067,7 @@ void *bq25703a_stdin_thread(void *arg)
 //init USB connect status
 	check_usb_disconnected();
 
-	
+
     sd_notifyf(0, "READY=1\n"
     "STATUS=Processing requests...\n"
     "MAINPID=%lu",
@@ -2067,16 +2103,16 @@ void *bq25703a_stdin_thread(void *arg)
 						}
 					}
 		}else if(event.compare("trigger::GPIO115rising") == 0){
-		
+
 					batteryManagePara.charger_is_plug_in &= ~0x02;
 					if(batteryManagePara.charger_is_plug_in & 0x01)
 					{
 					//disable OTG
 /*						char databuf[2] = {0x00, 0x00};
 						bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
-*/						
+*/
 						int ret_val = check_Battery_allow_charge();
-						
+
 						if(ret_val == 1)
 						{
 
@@ -2087,12 +2123,13 @@ void *bq25703a_stdin_thread(void *arg)
 								syslog(LOG_ERR, "USB　charge configuration Error.");
 							}
 						}
-						else if(ret_val == 0)
+						else//error or charge not allowed
 						{
+							bq25703_configure_input_current_limit();
 							syslog(LOG_DEBUG, "charge not allowed.");
 						}
 					}
-												
+
 		}else if(event.compare("trigger::GPIO31falling") == 0){
 		//check usb disconnect event
 				//clear all interrupts
@@ -2107,7 +2144,7 @@ void *bq25703a_stdin_thread(void *arg)
 
 				std::string line;
 				std::ifstream infile("/sys/class/gpio/gpio115/value");
-			
+
 				std::getline( infile, line );
 				size_t pg_value = 0;
 				std::stoi(line, &pg_value);
@@ -2115,7 +2152,7 @@ void *bq25703a_stdin_thread(void *arg)
 				//disable otg
 /*				char databuf[2] = {0x00, 0x00};
 				bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
-*/				
+*/
 				if(pg_value == 1)
 				{
 					batteryManagePara.charger_is_plug_in &= ~0x02;
@@ -2123,7 +2160,7 @@ void *bq25703a_stdin_thread(void *arg)
 
 				batteryManagePara.charger_is_plug_in |= 0x01;
 /*PD will config, but has to configure it another time so that more power can be drawn*/
-				
+
 				if(batteryManagePara.charger_is_plug_in == 0x01){
 
 					int ret_val = check_Battery_allow_charge();
@@ -2132,14 +2169,15 @@ void *bq25703a_stdin_thread(void *arg)
 		            {
 		                if(bq25703_enable_charge())
 		                {
-							syslog(LOG_DEBUG, "USB CHARGE configuration error");	
+							syslog(LOG_DEBUG, "USB CHARGE configuration error");
 
 		                }
 		            }
-		            else if(ret_val == 0)
+		            else// read error, or not allow charging if(ret_val == 0)
 		            {
+						bq25703_configure_input_current_limit();
+		            }
 
-		            }					
 			    }
 
 			//to add charger configration for USB
@@ -2366,7 +2404,7 @@ int main(int argc, char* argv[])
 	        bq25703a_get_ChargeOption0_Setting();
 	        bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
 	        charge_current_set = bq25703a_get_ChargeCurrentSetting();
-			
+
 	        check_BatteryFullyCharged_Task();
 
 	        batteryTemperature_handle_Task();

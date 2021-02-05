@@ -549,17 +549,20 @@ int tps65987_get_ActiveContractPDO(void)
     if(memcmp(buf, PDO_15V_3A, 4) == 0)
     {
         printf("ActiveContractPDO is 15V/3A\n\n");
+		return INPUT_CURRENT__USB_3A_Limit;
     }
     else if(memcmp(buf, PDO_20V_2d25A, 4) == 0)
     {
         printf("ActiveContractPDO is 20V/2.25A\n\n");
+		return INPUT_CURRENT__USB_2d25A_Limit;
     }
     else if(memcmp(buf, PDO_20V_3d25A, 4) == 0)
     {
         printf("ActiveContractPDO is 20V/3.25A\n\n");
+		return INPUT_CURRENT__USB_3d25A_Limit;	
     }
 
-    return 0;
+    return INPUT_CURRENT__USB_3A_Limit;
 }
 
 

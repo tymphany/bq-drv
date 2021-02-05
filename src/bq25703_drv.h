@@ -31,6 +31,8 @@
 #define INPUT_CURRENT__USB_Default_Limit			0x1e00 //2100mA
 #define INPUT_CURRENT__USB_1d5A_Limit				0x1e00 //2100mA
 #define INPUT_CURRENT__USB_3A_Limit					0x3c00
+#define INPUT_CURRENT__USB_2d25A_Limit					0x2d00
+#define INPUT_CURRENT__USB_3d25A_Limit					0x4100
 
 
 //12.592V for 3-cell
