@@ -118,7 +118,7 @@ uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
 {
     CHARGE_OPTION_0_WR,         0x860E,
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
-    
+
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x2A00,
 
@@ -136,7 +136,7 @@ uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
 
 	CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
-    
+
     OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
     OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
 };
@@ -965,7 +965,7 @@ int bq25703_enable_charge(void)
         case USB_Default_Current:
        		batteryManagePara.charger_is_plug_in |= 1;
 
-			//input current set to 2.1A 
+			//input current set to 2.1A
 			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_Default_Limit))){
             	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
@@ -1325,7 +1325,7 @@ int system_power_off(void)
     export_gpio(pin_number);
 
     set_direction(pin_number, "out");
-    
+
     set_value(pin_number, 1);
 
     printf("shutdown system\n");
@@ -1391,7 +1391,7 @@ int update_fuelgauge_BatteryInfo(void)
 				batteryManagePara.low_battery_flag |= 1 << 3;
 			}
         }else if(battery_relativeStateOfCharge > 5){
-        
+
         	if(batteryManagePara.low_battery_flag != 0){
 				batteryManagePara.low_battery_flag = 0;
         	}
@@ -1685,13 +1685,13 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 			  }else if(0 < batteryManagePara.low_battery_flag >> 1){
 			  	if(current_time.tv_sec - last_time.tv_sec > 120){
 		  			last_time = current_time;						
-					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		  
+					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		
 			  	}
 			  }else if(0 < batteryManagePara.low_battery_flag){
 			  	if(current_time.tv_sec - last_time.tv_sec > 300){
 		  			last_time = current_time;						
-					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		  
-			  	}			  
+					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");		
+			  	}			
 			  }
 
             /*set_battery_led('r', 0);
@@ -1994,7 +1994,7 @@ void check_usb_disconnected()
 				 if(bq25703a_otg_function_init()){
 					 syslog(LOG_ERR, "OTG configuration Error.");
 				 }
-*/				 
+*/				
 				 if(batteryManagePara.charger_is_plug_in & 0x01){
 						batteryManagePara.charger_is_plug_in &= ~0x01;
 
@@ -2015,7 +2015,7 @@ void check_usb_disconnected()
 		syslog(LOG_DEBUG, "Error get intstatus");
 	}
 
-	syslog(LOG_DEBUG, "Clearing PD interrupts."); 
+	syslog(LOG_DEBUG, "Clearing PD interrupts.");
 
 }
 
@@ -2035,7 +2035,7 @@ void *bq25703a_stdin_thread(void *arg)
     "STATUS=Processing requests...\n"
     "MAINPID=%lu",
     (unsigned long) getpid());
-    
+
     while (mystream.good())
     {
         getline(mystream, event);
@@ -2117,10 +2117,10 @@ void *bq25703a_stdin_thread(void *arg)
 */				
 				if(pg_value == 1)
 				{
-					batteryManagePara.charger_is_plug_in &= ~0x02; 
+					batteryManagePara.charger_is_plug_in &= ~0x02;
 				}
 
-				batteryManagePara.charger_is_plug_in |= 0x01; 
+				batteryManagePara.charger_is_plug_in |= 0x01;
 /*PD will config*/
 /*					
 				if(batteryManagePara.charger_is_plug_in == 0x01){
@@ -2162,7 +2162,7 @@ void *bq25703a_stdin_thread(void *arg)
         std::string s = ps.str();
         char payloadstr[strlen(s.c_str()) + 1];
         strcpy(payloadstr,s.c_str());
-        
+
         system(payloadstr);
 
     	}else{
