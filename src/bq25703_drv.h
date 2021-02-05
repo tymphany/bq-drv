@@ -28,10 +28,9 @@
 #define CHARGE_CURRENT_LEVEL_2              CHARGE_CURRENT_496mA
 #define CHARGE_CURRENT_LEVEL_3              CHARGE_CURRENT_1536mA
 
-#define CHARGE_CURRENT__USB_Default_Limit				0x1e00 //2100mA
-#define CHARGE_CURRENT__USB_1d5A_Limit					0x1e00 //2100mA
-#define CHARGE_CURRENT__USB_3A_Limit					0x1e00
-#define CHARGE_CURRENT__USB_PD_Limit					0x1e00
+#define INPUT_CURRENT__USB_Default_Limit			0x1e00 //2100mA
+#define INPUT_CURRENT__USB_1d5A_Limit				0x1e00 //2100mA
+#define INPUT_CURRENT__USB_3A_Limit					0x3c00
 
 
 //12.592V for 3-cell

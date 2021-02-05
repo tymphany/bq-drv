@@ -966,7 +966,7 @@ int bq25703_enable_charge(void)
        		batteryManagePara.charger_is_plug_in |= 1;
 
 			//input current set to 2.1A
-			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_Default_Limit))){
+			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit))){
             	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -978,7 +978,7 @@ int bq25703_enable_charge(void)
 
         case C_1d5A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_1d5A_Limit))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit))){//2.1A
 	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
 			}
 			
@@ -990,7 +990,7 @@ int bq25703_enable_charge(void)
 
         case C_3A_Current:
             batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_3A_Limit))){//2.1A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))){//2.1A
 				
 				charge_current = decide_the_ChargeCurrent();
 				
@@ -1005,6 +1005,7 @@ int bq25703_enable_charge(void)
 				break;
         case PD_contract_negotiated:
             batteryManagePara.charger_is_plug_in |= 1;
+			 tps65987_get_ActiveContractPDO();
 			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_PD_Limit))){//1.5A
 
 	            charge_current = decide_the_ChargeCurrent();
@@ -2121,8 +2122,8 @@ void *bq25703a_stdin_thread(void *arg)
 				}
 
 				batteryManagePara.charger_is_plug_in |= 0x01;
-/*PD will config*/
-/*					
+/*PD will config, but has to configure it another time so that more power can be drawn*/
+				
 				if(batteryManagePara.charger_is_plug_in == 0x01){
 
 					int ret_val = check_Battery_allow_charge();
@@ -2140,7 +2141,7 @@ void *bq25703a_stdin_thread(void *arg)
 
 		            }					
 			    }
-*/
+
 			//to add charger configration for USB
 		}else if(event.compare("Test::bqdrv_ic_silent_toggle") == 0){
 			batteryManagePara.i2c_silent ^= 1;
