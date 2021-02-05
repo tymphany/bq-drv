@@ -1006,7 +1006,7 @@ int bq25703_enable_charge(void)
         case PD_contract_negotiated:
             batteryManagePara.charger_is_plug_in |= 1;
 			 tps65987_get_ActiveContractPDO();
-			if(0 == (ret = bq25703_set_InputCurrentLimit(CHARGE_CURRENT__USB_PD_Limit))){//1.5A
+			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))){//1.5A
 
 	            charge_current = decide_the_ChargeCurrent();
 
