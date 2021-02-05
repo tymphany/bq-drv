@@ -88,7 +88,7 @@ unsigned int battery_relativeStateOfCharge = 0xff;
 uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
 {
     CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
-    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V2, //here should use the default value:0x0000, means 3200mV
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V4, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x1e00, //Ryder: here only for POGO Pin configuration
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
@@ -117,7 +117,7 @@ uint16_t OTG_REGISTER_DDR_VALUE_BUF[]= //USB Detach
 uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
 {
     CHARGE_OPTION_0_WR,         0x860E,
-    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V1, //here should use the default value:0x0000, means 3200mV
+    INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V4, //here should use the default value:0x0000, means 3200mV
 
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x2A00,
