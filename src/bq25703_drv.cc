@@ -2029,12 +2029,12 @@ void bq25703_configure_input_current_limit()
 	{
 		case USB_Default_Current:
 			//input current set to 1500mA
-			bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
+			//bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
 
 			break;
 
 		case C_1d5A_Current:
-			bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
+			//bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
 
 			break;
 
