@@ -524,7 +524,7 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
 {
     int input_voltage_limit = input_current_limit_set;
 
-    printf("set charge input currnet limit: %dmA\n",input_current_limit_set);
+    printf("set charge input currnet limit: %dmA\n",input_current_limit_set/50);
 
     if(0 != bq25703a_i2c_write(
            BQ_I2C_ADDR,
@@ -2103,7 +2103,7 @@ void *bq25703a_stdin_thread(void *arg)
 			(event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
 			)
 		{
-				printf("usb connected.\n");
+				//printf("usb connected.\n");
 
 				std::string line;
 				std::ifstream infile("/sys/class/gpio/gpio115/value");
@@ -2111,7 +2111,7 @@ void *bq25703a_stdin_thread(void *arg)
 				std::getline( infile, line );
 				size_t pg_value = 0;
 				std::stoi(line, &pg_value);
-				syslog(LOG_DEBUG, "pg value is %d", pg_value);
+				//syslog(LOG_DEBUG, "pg value is %d", pg_value);
 				//disable otg
 /*				char databuf[2] = {0x00, 0x00};
 				bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
@@ -2151,7 +2151,7 @@ void *bq25703a_stdin_thread(void *arg)
 			OVERHEAT1 = std::stoi(event.substr(21,3));
 			OVERCOOL2 = std::stoi(event.substr(25,3));
 			OVERCOOL1 = std::stoi(event.substr(29,3));
-			printf("fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
+			syslog(LOG_DEBUG, "fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
 
 		}else if(event.find("getval::battery") != string::npos){
         std::string payload;
@@ -2167,7 +2167,7 @@ void *bq25703a_stdin_thread(void *arg)
         system(payloadstr);
 
     	}else{
-			printf("event not identified.\n");
+			//printf("event not identified.\n");
 		}
 
 		led_battery_display_handle();
