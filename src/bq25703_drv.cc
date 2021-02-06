@@ -2204,12 +2204,16 @@ void *bq25703a_stdin_thread(void *arg)
 
         system(payloadstr);
 
-    	}else{
+		}else if(event.compare("system::Docked:checkBat")== 0){
+			batteryTemperature_handle_Task();
+		}else{
 			//printf("event not identified.\n");
 		}
 
-		led_battery_display_handle();
-    }
+		if(!batteryManagePara.i2c_silent){
+			led_battery_display_handle();
+		}
+	}
 }
 
 
