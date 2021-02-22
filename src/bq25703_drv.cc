@@ -2181,8 +2181,11 @@ void *bq25703a_stdin_thread(void *arg)
 			    }
 
 			//to add charger configration for USB
-		}else if(event.compare("Test::bqdrv_ic_silent_toggle") == 0){
-			batteryManagePara.i2c_silent ^= 1;
+		}else if(event.compare("Test::bqdrv_ic_silent_toggle_on") == 0){
+			batteryManagePara.i2c_silent = 1;
+			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
+		}else if(event.compare("Test::bqdrv_ic_silent_toggle_off") == 0){
+			batteryManagePara.i2c_silent = 0;
 			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
 		}else if(event.find("setval::FaultVal:") != string::npos){
 			OVERHEAT2 = std::stoi(event.substr(17,3));
