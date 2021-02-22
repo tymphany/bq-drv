@@ -2211,7 +2211,7 @@ void *bq25703a_stdin_thread(void *arg)
 			batteryTemperature_handle_Task();
 			printf("sending batchecked\n");
 			//indicate that battery is checked.
-	        system("adk-message-send 'system_mode_management {charger::bat_checked}'");
+	        system("adk-message-send 'system_mode_management {name: \"charger::bat_checked\"}'");
 		}else{
 			printf("event not identified.\n");
 		}
