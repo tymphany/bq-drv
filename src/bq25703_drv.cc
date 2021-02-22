@@ -2209,6 +2209,18 @@ void *bq25703a_stdin_thread(void *arg)
 
 		}else if(event.compare("system::Docked:checkBat")== 0){
 			batteryTemperature_handle_Task();
+
+		//indicate that battery is checked.
+        std::string payload;
+        std::stringstream ps;
+
+        ps << "adk-message-send 'system_mode_management {charger::\"bat_checked\"}'";
+
+        std::string s = ps.str();
+        char payloadstr[strlen(s.c_str()) + 1];
+        strcpy(payloadstr,s.c_str());
+
+        system(payloadstr);
 		}else{
 			//printf("event not identified.\n");
 		}
