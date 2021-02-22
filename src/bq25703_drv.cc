@@ -2195,34 +2195,25 @@ void *bq25703a_stdin_thread(void *arg)
 			syslog(LOG_DEBUG, "fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
 
 		}else if(event.find("getval::battery") != string::npos){
-        std::string payload;
-        std::stringstream ps;
+	        std::string payload;
+	        std::stringstream ps;
 
-        ps << "adk-message-send 'system_power_data {battery:\"" <<  batteryManagePara.battery_current << ":" <<  batteryManagePara.battery_voltage
-        << ":" << batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
+	        ps << "adk-message-send 'system_power_data {battery:\"" <<  batteryManagePara.battery_current << ":" <<  batteryManagePara.battery_voltage
+	        << ":" << batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
 
-        std::string s = ps.str();
-        char payloadstr[strlen(s.c_str()) + 1];
-        strcpy(payloadstr,s.c_str());
+	        std::string s = ps.str();
+	        char payloadstr[strlen(s.c_str()) + 1];
+	        strcpy(payloadstr,s.c_str());
 
-        system(payloadstr);
+	        system(payloadstr);
 
 		}else if(event.compare("system::Docked:checkBat")== 0){
 			batteryTemperature_handle_Task();
-
-		//indicate that battery is checked.
-        std::string payload;
-        std::stringstream ps;
-
-        ps << "adk-message-send 'system_mode_management {charger::\"bat_checked\"}'";
-
-        std::string s = ps.str();
-        char payloadstr[strlen(s.c_str()) + 1];
-        strcpy(payloadstr,s.c_str());
-
-        system(payloadstr);
+			printf("sending batchecked\n");
+			//indicate that battery is checked.
+	        system("adk-message-send 'system_mode_manangement {charger::bat_checked}'");
 		}else{
-			//printf("event not identified.\n");
+			printf("event not identified.\n");
 		}
 
 		if(!batteryManagePara.i2c_silent){
