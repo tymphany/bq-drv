@@ -1682,7 +1682,10 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 		  			last_time = current_time;
 			  }else if(0 < batteryManagePara.low_battery_flag >> 2){
 			  //simulate action key power off
-					system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
+					if(current_time.tv_sec - last_time.tv_sec > 5){
+						last_time = current_time;
+						system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
+					}
 			  }else if(0 < batteryManagePara.low_battery_flag >> 1){
 			  	if(current_time.tv_sec - last_time.tv_sec > 120){
 		  			last_time = current_time;
