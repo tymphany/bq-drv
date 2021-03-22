@@ -129,12 +129,12 @@ uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
     OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
     OTG_CURRENT_REGISTER_WR,    0x3C00,//ryder
 
-	CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
+    CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
 
-	CHARGE_OPTION_3_WR,         0x0000,//ryder otg disable
+    CHARGE_OPTION_3_WR,         0x0000,//ryder otg disable
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
 
-	CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
+    CHARGE_OPTION_3_WR,         0x1000,//ryder otg enable
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
 
     OTG_VOLTAGE_REGISTER_WR,    0x0280,//ryder
@@ -143,11 +143,11 @@ uint16_t USB_TYPEA_VALUE_BUF[]= //support for  USB A 5V adapto, Hard Reset Event
 
 enum faultStatus
 {
-	No_Fault = 0,
-	Overheat1,
-	Overheat2,
-	Overcool1,
-	Overcool2
+    No_Fault = 0,
+    Overheat1,
+    Overheat2,
+    Overcool1,
+    Overcool2
 };
 
 int OVERHEAT1 = 50;
@@ -175,15 +175,15 @@ struct BATTERY_MANAAGE_PARA
 
     unsigned char charger_is_plug_in;//bit 0 indicates USB, bit 1 indicates POGO_PIN
 
-	unsigned char i2c_silent;
-	unsigned char factory_shipment_charge_complete_flag;
+    unsigned char i2c_silent;
+    unsigned char factory_shipment_charge_complete_flag;
 
     LED_BATTERY_DISPLAY_STATE led_battery_display_state;
 
-	int battery_current;
+    int battery_current;
     int battery_temperature;
     int battery_voltage;
-	faultStatus fault;
+    faultStatus fault;
 
 } batteryManagePara;
 
@@ -361,10 +361,10 @@ int bq25703a_otg_function_init()
 int bq25703a_set_otg_vol_and_current()
 {
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           OTG_REGISTER_DDR_VALUE_BUF[2],
-           ((unsigned char*)(&OTG_REGISTER_DDR_VALUE_BUF[3])),
-           2)
+                BQ_I2C_ADDR,
+                OTG_REGISTER_DDR_VALUE_BUF[2],
+                ((unsigned char*)(&OTG_REGISTER_DDR_VALUE_BUF[3])),
+                2)
       )
     {
         printf("write %d eer\n",OTG_REGISTER_DDR_VALUE_BUF[2]);
@@ -372,10 +372,10 @@ int bq25703a_set_otg_vol_and_current()
     }
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           OTG_REGISTER_DDR_VALUE_BUF[4],
-           ((unsigned char*)(&OTG_REGISTER_DDR_VALUE_BUF[5])),
-           2)
+                BQ_I2C_ADDR,
+                OTG_REGISTER_DDR_VALUE_BUF[4],
+                ((unsigned char*)(&OTG_REGISTER_DDR_VALUE_BUF[5])),
+                2)
       )
     {
         printf("write register addr %d eer\n",OTG_REGISTER_DDR_VALUE_BUF[4]);
@@ -415,10 +415,10 @@ int bq25703_set_ChargeCurrent(unsigned int charge_current_set)
     printf("set charge current: %dmA\n",charge_current);
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           CHARGE_CURRENT_REGISTER_WR,
-           ((unsigned char*)(&charge_current)),
-           2)
+                BQ_I2C_ADDR,
+                CHARGE_CURRENT_REGISTER_WR,
+                ((unsigned char*)(&charge_current)),
+                2)
       )
     {
         printf("write Current err\n");
@@ -507,10 +507,10 @@ int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
     printf("set charge input voltage limit: %dmA\n",input_voltage_limit + 3200);
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           CHARGE_CURRENT_REGISTER_WR,
-           ((unsigned char*)(&input_voltage_limit)),
-           2)
+                BQ_I2C_ADDR,
+                CHARGE_CURRENT_REGISTER_WR,
+                ((unsigned char*)(&input_voltage_limit)),
+                2)
       )
     {
         printf("write Current eer\n");
@@ -527,10 +527,10 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
     printf("set charge input currnet limit: %dmA\n",input_current_limit_set/50);
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           INPUT_CURRENT_REGISTER_WR,
-           ((unsigned char*)(&input_current_limit_set)),
-           2)
+                BQ_I2C_ADDR,
+                INPUT_CURRENT_REGISTER_WR,
+                ((unsigned char*)(&input_current_limit_set)),
+                2)
       )
     {
         printf("write Current eer\n");
@@ -740,10 +740,10 @@ int bq25703_init_ChargeOption_0(void)
     printf("charge_option_0_setting: %04x\n",charge_option_0_setting);
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           CHARGE_OPTION_0_WR,
-           ((unsigned char*)(&charge_option_0_setting)),
-           2)
+                BQ_I2C_ADDR,
+                CHARGE_OPTION_0_WR,
+                ((unsigned char*)(&charge_option_0_setting)),
+                2)
       )
     {
         printf("write reg eer\n");
@@ -768,10 +768,10 @@ int bq25703_enter_LEARN_Mode(void)
     printf("charge_option_0_setting: %04x\n",charge_option_0_setting);
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           CHARGE_OPTION_0_WR,
-           ((unsigned char*)(&charge_option_0_setting)),
-           2)
+                BQ_I2C_ADDR,
+                CHARGE_OPTION_0_WR,
+                ((unsigned char*)(&charge_option_0_setting)),
+                2)
       )
     {
         printf("write reg eer\n");
@@ -791,10 +791,10 @@ int bq25703_enter_LowPowerMode(void)
     printf("charge_option_0_setting: %04x\n",charge_option_0_setting);
 
     if(0 != bq25703a_i2c_write(
-           BQ_I2C_ADDR,
-           CHARGE_OPTION_0_WR,
-           ((unsigned char*)(&charge_option_0_setting)),
-           2)
+                BQ_I2C_ADDR,
+                CHARGE_OPTION_0_WR,
+                ((unsigned char*)(&charge_option_0_setting)),
+                2)
       )
     {
         printf("write reg eer\n");
@@ -852,7 +852,7 @@ unsigned char decide_the_ChargeLevel(void)
     if(batteryManagePara.battery_voltage <= BATTERY_LOW_VOLTAGE_THRESHOLD)
     {
         if((batteryManagePara.battery_temperature >= BATTERY_CHARGE_ALLOW_TEMPERATURE_LOW_THRESHOLD)
-           && (batteryManagePara.battery_temperature < BATTERY_LOW_TEMPERATURE_THRESHOLD))
+                && (batteryManagePara.battery_temperature < BATTERY_LOW_TEMPERATURE_THRESHOLD))
         {
             charge_level = 1;
         }
@@ -870,7 +870,7 @@ unsigned char decide_the_ChargeLevel(void)
     if((batteryManagePara.battery_voltage > BATTERY_LOW_VOLTAGE_THRESHOLD) && (batteryManagePara.battery_voltage <= BATTERY_MAX_VOLTAGE_THRESHOLD))
     {
         if((batteryManagePara.battery_temperature >= BATTERY_CHARGE_ALLOW_TEMPERATURE_LOW_THRESHOLD)
-           && (batteryManagePara.battery_temperature < BATTERY_LOW_TEMPERATURE_THRESHOLD))
+                && (batteryManagePara.battery_temperature < BATTERY_LOW_TEMPERATURE_THRESHOLD))
         {
             charge_level = 2;
         }
@@ -906,22 +906,22 @@ int decide_the_ChargeCurrent(void)
 
     switch(charge_level)
     {
-        case 1:
-            charge_current = CHARGE_CURRENT_LEVEL_1;
-            break;
+    case 1:
+        charge_current = CHARGE_CURRENT_LEVEL_1;
+        break;
 
-        case 2:
-            charge_current = CHARGE_CURRENT_LEVEL_2;
-            break;
+    case 2:
+        charge_current = CHARGE_CURRENT_LEVEL_2;
+        break;
 
-        case 3:
-            charge_current = CHARGE_CURRENT_LEVEL_3;
-            break;
+    case 3:
+        charge_current = CHARGE_CURRENT_LEVEL_3;
+        break;
 
-        case 0:
-        default:
-            charge_current = CHARGE_CURRENT_0;
-            break;
+    case 0:
+    default:
+        charge_current = CHARGE_CURRENT_0;
+        break;
     }
 
     printf("decide_the_ChargeCurrent: %dmA\n",charge_current);
@@ -962,66 +962,66 @@ int bq25703_enable_charge(void)
 
     switch(tps65987_TypeC_current_type)
     {
-        case USB_Default_Current:
-       		batteryManagePara.charger_is_plug_in |= 1;
+    case USB_Default_Current:
+        batteryManagePara.charger_is_plug_in |= 1;
 
-			//input current set to 2.1A
-			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit))){
-            	ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
-			}
+        //input current set to 2.1A
+        if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit))) {
+            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
+        }
 
-            if(ret == 0)
-            {
-                //batteryManagePara.battery_is_charging = 1;
-            }
-            break;
+        if(ret == 0)
+        {
+            //batteryManagePara.battery_is_charging = 1;
+        }
+        break;
 
-        case C_1d5A_Current:
-            batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit))){//2.1A
-	            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
-			}
+    case C_1d5A_Current:
+        batteryManagePara.charger_is_plug_in |= 1;
+        if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit))) { //2.1A
+            ret = bq25703_set_ChargeCurrent(CHARGE_CURRENT_FOR_USB_Default);
+        }
 
-            if(ret == 0)
-            {
-               // batteryManagePara.battery_is_charging = 1;
-            }
-            break;
+        if(ret == 0)
+        {
+            // batteryManagePara.battery_is_charging = 1;
+        }
+        break;
 
-        case C_3A_Current:
-            batteryManagePara.charger_is_plug_in |= 1;
-			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))){//2.1A
+    case C_3A_Current:
+        batteryManagePara.charger_is_plug_in |= 1;
+        if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))) { //2.1A
 
-				charge_current = decide_the_ChargeCurrent();
+            charge_current = decide_the_ChargeCurrent();
 
-				ret = bq25703_set_ChargeCurrent(charge_current);
-			}
+            ret = bq25703_set_ChargeCurrent(charge_current);
+        }
 
-			if(ret == 0)
-			{
-				//batteryManagePara.battery_is_charging = 1;
-			}
+        if(ret == 0)
+        {
+            //batteryManagePara.battery_is_charging = 1;
+        }
 
-				break;
-        case PD_contract_negotiated:
-            batteryManagePara.charger_is_plug_in |= 1;
-			 tps65987_get_ActiveContractPDO();
-			if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))){//1.5A
+        break;
+    case PD_contract_negotiated:
+        batteryManagePara.charger_is_plug_in |= 1;
+        tps65987_get_ActiveContractPDO();
+        if(0 == (ret = bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit))) { //1.5A
 
-	            charge_current = decide_the_ChargeCurrent();
+            charge_current = decide_the_ChargeCurrent();
 
-	            ret = bq25703_set_ChargeCurrent(charge_current);
-			}
+            ret = bq25703_set_ChargeCurrent(charge_current);
+        }
 
-            if(ret == 0)
-            {
-                //batteryManagePara.battery_is_charging = 1;
-            }
-            break;
+        if(ret == 0)
+        {
+            //batteryManagePara.battery_is_charging = 1;
+        }
+        break;
 
-        default:
-            ret = -1;
-            break;
+    default:
+        ret = -1;
+        break;
 
     }
 
@@ -1090,7 +1090,7 @@ void batteryManagePara_init(void)
 
     batteryManagePara.charger_is_plug_in = 0;
 
-	batteryManagePara.factory_shipment_charge_complete_flag = 0;
+    batteryManagePara.factory_shipment_charge_complete_flag = 0;
 
     batteryManagePara.led_battery_display_state = LED_BATTERY_INVALID_VALUE;
 
@@ -1098,7 +1098,7 @@ void batteryManagePara_init(void)
     batteryManagePara.battery_voltage = 0;
 
     batteryManagePara.i2c_silent = 0;
-	batteryManagePara.fault = No_Fault;
+    batteryManagePara.fault = No_Fault;
 
 
 }
@@ -1114,43 +1114,43 @@ void check_BatteryFullyCharged_Task(void)
 {
     switch(fuelgauge_check_BatteryFullyCharged())
     {
-        case 1:
-            if(!batteryManagePara.battery_fully_charged)
+    case 1:
+        if(!batteryManagePara.battery_fully_charged)
+        {
+            if(bq25703_stop_charge() != 0)
             {
-                if(bq25703_stop_charge() != 0)
-                {
-                    break;
-                }
-
-                printf("fully charged, stop charging!\n");
+                break;
             }
 
-            batteryManagePara.battery_fully_charged = 1;
-            batteryManagePara.need_charge_flag = 0;
-            batteryManagePara.charge_level = 0;
-            break;
+            printf("fully charged, stop charging!\n");
+        }
 
-        case 0:
-            if(!batteryManagePara.need_charge_flag)
+        batteryManagePara.battery_fully_charged = 1;
+        batteryManagePara.need_charge_flag = 0;
+        batteryManagePara.charge_level = 0;
+        break;
+
+    case 0:
+        if(!batteryManagePara.need_charge_flag)
+        {
+            if(batteryManagePara.temperature_allow_charge)
             {
-                if(batteryManagePara.temperature_allow_charge)
+                if(batteryManagePara.charger_is_plug_in & 0x01)
                 {
-                    if(batteryManagePara.charger_is_plug_in & 0x01)
+                    if(bq25703_enable_charge() != 0)
                     {
-                        if(bq25703_enable_charge() != 0)
-                        {
-                            return;
-                        }
+                        return;
                     }
                 }
             }
+        }
 
-            batteryManagePara.battery_fully_charged = 0;
-            batteryManagePara.need_charge_flag = 1;
-            break;
+        batteryManagePara.battery_fully_charged = 0;
+        batteryManagePara.need_charge_flag = 1;
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
 }
 
@@ -1158,7 +1158,7 @@ void check_BatteryFullyCharged_Task(void)
 int batteryTemperature_is_overstep_ChargeStopThreshold(int battery_temperature)
 {
     if((battery_temperature >= BATTERY_CHARGE_STOP_TEMPERATURE_HIGH_THRESHOLD)
-       || (battery_temperature <= BATTERY_CHARGE_STOP_TEMPERATURE_LOW_THRESHOLD))
+            || (battery_temperature <= BATTERY_CHARGE_STOP_TEMPERATURE_LOW_THRESHOLD))
     {
         return 1;
     }
@@ -1169,7 +1169,7 @@ int batteryTemperature_is_overstep_ChargeStopThreshold(int battery_temperature)
 int batteryTemperature_is_in_ChargeAllowThreshold(int battery_temperature)
 {
     if(( battery_temperature < BATTERY_CHARGE_ALLOW_TEMPERATURE_HIGH_THRESHOLD)
-       && (battery_temperature > BATTERY_CHARGE_ALLOW_TEMPERATURE_LOW_THRESHOLD))
+            && (battery_temperature > BATTERY_CHARGE_ALLOW_TEMPERATURE_LOW_THRESHOLD))
     {
         return 1;
     }
@@ -1180,7 +1180,7 @@ int batteryTemperature_is_in_ChargeAllowThreshold(int battery_temperature)
 int batteryTemperature_is_overstep_AdjustEQThreshold(int battery_temperature)
 {
     if((battery_temperature >= BATTERY_DISCHARGE_ADJUST_EQ_TEMPERATURE_HIGH_THRESHOLD)
-       && (battery_temperature < BATTERY_DISCHARGE_STOP_TEMPERATURE_HIGH_THRESHOLD))
+            && (battery_temperature < BATTERY_DISCHARGE_STOP_TEMPERATURE_HIGH_THRESHOLD))
     {
         return 1;
     }
@@ -1191,7 +1191,7 @@ int batteryTemperature_is_overstep_AdjustEQThreshold(int battery_temperature)
 int batteryTemperature_is_in_RecoveryEQThreshold(int battery_temperature)
 {
     if(( battery_temperature < BATTERY_DISCHARGE_RECOVERY_EQ_TEMPERATURE_HIGH_THRESHOLD)
-       && (battery_temperature > BATTERY_DISCHARGE_STOP_TEMPERATURE_LOW_THRESHOLD))
+            && (battery_temperature > BATTERY_DISCHARGE_STOP_TEMPERATURE_LOW_THRESHOLD))
     {
         return 1;
     }
@@ -1202,7 +1202,7 @@ int batteryTemperature_is_in_RecoveryEQThreshold(int battery_temperature)
 int batteryTemperature_is_overstep_DischargeStopThreshold(int battery_temperature)
 {
     if((battery_temperature >= BATTERY_DISCHARGE_STOP_TEMPERATURE_HIGH_THRESHOLD)
-       || (battery_temperature <= BATTERY_DISCHARGE_STOP_TEMPERATURE_LOW_THRESHOLD))
+            || (battery_temperature <= BATTERY_DISCHARGE_STOP_TEMPERATURE_LOW_THRESHOLD))
     {
         return 1;
     }
@@ -1246,7 +1246,7 @@ int check_Battery_allow_charge(void)
 
 
     if(batteryTemperature_is_in_ChargeAllowThreshold(batteryManagePara.battery_temperature)
-       && (!batteryVoltage_is_over_MaxThreshold(batteryManagePara.battery_voltage)))
+            && (!batteryVoltage_is_over_MaxThreshold(batteryManagePara.battery_voltage)))
     {
         printf("battery allow charging!, temperature %d, voltage %dmV\n",batteryManagePara.battery_temperature, batteryManagePara.battery_voltage);
         return 1;
@@ -1271,15 +1271,15 @@ int check_TypeC_current_type(void)
 
     switch(tps65987_TypeC_current_type)
     {
-        case USB_Default_Current:
-            //batteryManagePara.charger_is_plug_in = 0;
-            break;
+    case USB_Default_Current:
+        //batteryManagePara.charger_is_plug_in = 0;
+        break;
 
-        case C_1d5A_Current:
-        case C_3A_Current:
-        case PD_contract_negotiated:
-            batteryManagePara.charger_is_plug_in |= 1;
-            break;
+    case C_1d5A_Current:
+    case C_3A_Current:
+    case PD_contract_negotiated:
+        batteryManagePara.charger_is_plug_in |= 1;
+        break;
     }
 
     return 0;
@@ -1352,73 +1352,73 @@ int update_fuelgauge_BatteryInfo(void)
     batteryManagePara.battery_voltage = battery_voltage;
 
     battery_current = fuelgauge_get_Battery_Current();
-	batteryManagePara.battery_current = battery_current;
-	if(battery_current == 0)
-	 {
-		 batteryManagePara.battery_is_charging = 0;
-		 batteryManagePara.battery_is_discharging = 0;
-	 }else if(battery_current < 0)
-	 {
-	 	batteryManagePara.battery_is_discharging = 1;
-	 	batteryManagePara.battery_is_charging = 0;
-	 }
-	 else
-	 {
-		 batteryManagePara.battery_is_charging = 1;
-		 batteryManagePara.battery_is_discharging = 0;
-		 printf("Battery is charging, current is %d", battery_current);
-	 }
+    batteryManagePara.battery_current = battery_current;
+    if(battery_current == 0)
+    {
+        batteryManagePara.battery_is_charging = 0;
+        batteryManagePara.battery_is_discharging = 0;
+    } else if(battery_current < 0)
+    {
+        batteryManagePara.battery_is_discharging = 1;
+        batteryManagePara.battery_is_charging = 0;
+    }
+    else
+    {
+        batteryManagePara.battery_is_charging = 1;
+        batteryManagePara.battery_is_discharging = 0;
+        printf("Battery is charging, current is %d", battery_current);
+    }
 
     battery_relativeStateOfCharge = fuelgauge_get_RelativeStateOfCharge();
     if(battery_relativeStateOfCharge != -1)
     {
-    	FILE *fp;
-		char buff[128];
-		char cmd[128];
+        FILE *fp;
+        char buff[128];
+        char cmd[128];
 
-		snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
-		system(cmd);
+        snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
+        system(cmd);
 
-		if(battery_relativeStateOfCharge < 5){
+        if(battery_relativeStateOfCharge < 5) {
             batteryManagePara.low_battery_flag = 1;
 
-			if(battery_relativeStateOfCharge > 2)
-			{
-				batteryManagePara.low_battery_flag |= 1 << 1;
-			}else if(battery_relativeStateOfCharge > 1)
-			{
-				batteryManagePara.low_battery_flag |= 1 << 2;
-			}else{
-				batteryManagePara.low_battery_flag |= 1 << 3;
-			}
-        }else if(battery_relativeStateOfCharge > 5){
+            if(battery_relativeStateOfCharge > 2)
+            {
+                batteryManagePara.low_battery_flag |= 1 << 1;
+            } else if(battery_relativeStateOfCharge > 1)
+            {
+                batteryManagePara.low_battery_flag |= 1 << 2;
+            } else {
+                batteryManagePara.low_battery_flag |= 1 << 3;
+            }
+        } else if(battery_relativeStateOfCharge > 5) {
 
-        	if(batteryManagePara.low_battery_flag != 0){
-				batteryManagePara.low_battery_flag = 0;
-        	}
+            if(batteryManagePara.low_battery_flag != 0) {
+                batteryManagePara.low_battery_flag = 0;
+            }
 
-			if(fp = fopen("/dev/shm/shipment_SOC", "r"))
-			{
-				   fgets(buff, 128, (FILE*)fp);
-				   fclose(fp);
-				   printf("get shipment SOC %d",atoi(buff));
-					if(battery_relativeStateOfCharge >= atoi(buff))
-					{
-							batteryManagePara.factory_shipment_charge_complete_flag = 1;
-							printf("shipment SOC reached\n");
-					}else
-					{
-						 printf("shipment SOC not not reached\n");
-					}
-			}
+            if(fp = fopen("/dev/shm/shipment_SOC", "r"))
+            {
+                fgets(buff, 128, (FILE*)fp);
+                fclose(fp);
+                printf("get shipment SOC %d",atoi(buff));
+                if(battery_relativeStateOfCharge >= atoi(buff))
+                {
+                    batteryManagePara.factory_shipment_charge_complete_flag = 1;
+                    printf("shipment SOC reached\n");
+                } else
+                {
+                    printf("shipment SOC not not reached\n");
+                }
+            }
 
-			if(battery_relativeStateOfCharge == 100 && batteryManagePara.charger_is_plug_in)
-			{
-					batteryManagePara.battery_fully_charged |= 0x01;
-			}else{
-					batteryManagePara.battery_fully_charged &= ~0x01;
-			}
-		}
+            if(battery_relativeStateOfCharge == 100 && batteryManagePara.charger_is_plug_in)
+            {
+                batteryManagePara.battery_fully_charged |= 0x01;
+            } else {
+                batteryManagePara.battery_fully_charged &= ~0x01;
+            }
+        }
     }
 
     battery_temperature = fuelgauge_get_Battery_Temperature();
@@ -1464,58 +1464,58 @@ void batteryCharge_handle_Task(int battery_temperature)
 
                 switch(charge_level)
                 {
-                    case 1:
-                        if(batteryManagePara.charge_level == 1)
-                        {
-                            break;
-                        }
-
-                        printf("\ndecide_the_ChargeLevel 1 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
-
-                        if(bq25703_enable_charge() != 0)
-                        {
-                            break;
-                        }
-
-                        batteryManagePara.charge_level = 1;
+                case 1:
+                    if(batteryManagePara.charge_level == 1)
+                    {
                         break;
+                    }
 
-                    case 2:
-                        if(batteryManagePara.charge_level == 2)
-                        {
-                            break;
-                        }
+                    printf("\ndecide_the_ChargeLevel 1 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
 
-                        printf("\ndecide_the_ChargeLevel 2 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
-
-                        if(bq25703_enable_charge() != 0)
-                        {
-                            break;
-                        }
-
-                        batteryManagePara.charge_level = 2;
+                    if(bq25703_enable_charge() != 0)
+                    {
                         break;
+                    }
 
-                    case 3:
-                        if(batteryManagePara.charge_level == 3)
-                        {
-                            break;
-                        }
+                    batteryManagePara.charge_level = 1;
+                    break;
 
-                        printf("\ndecide_the_ChargeLevel 3 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
-
-                        if(bq25703_enable_charge() != 0)
-                        {
-                            break;
-                        }
-
-                        batteryManagePara.charge_level = 3;
+                case 2:
+                    if(batteryManagePara.charge_level == 2)
+                    {
                         break;
+                    }
 
-                    case 0:
-                    default:
-                        batteryManagePara.charge_level = 0;
+                    printf("\ndecide_the_ChargeLevel 2 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
+
+                    if(bq25703_enable_charge() != 0)
+                    {
                         break;
+                    }
+
+                    batteryManagePara.charge_level = 2;
+                    break;
+
+                case 3:
+                    if(batteryManagePara.charge_level == 3)
+                    {
+                        break;
+                    }
+
+                    printf("\ndecide_the_ChargeLevel 3 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
+
+                    if(bq25703_enable_charge() != 0)
+                    {
+                        break;
+                    }
+
+                    batteryManagePara.charge_level = 3;
+                    break;
+
+                case 0:
+                default:
+                    batteryManagePara.charge_level = 0;
+                    break;
                 }
             }
         }
@@ -1531,29 +1531,29 @@ void batteryCharge_handle_Task(int battery_temperature)
 
 void batteryFault_handle_Task(int battery_temperature)
 {
-	printf("temrature is %d\n", battery_temperature);
+    printf("temrature is %d\n", battery_temperature);
 
-	if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != Overheat2)
-	{
-		batteryManagePara.fault = Overheat2;
-		system("adk-message-send 'system_mode_management {name: \"batfault::overheat2\"}'");
-	}else if(battery_temperature > OVERHEAT1 && batteryManagePara.fault != Overheat1){
-		batteryManagePara.fault = Overheat1;
-		system("adk-message-send 'system_mode_management {name: \"batfault::overheat1\"}'");
-	}else if(battery_temperature < OVERCOOL2 && batteryManagePara.fault != Overcool2){
-		batteryManagePara.fault = Overcool2;
-		system("adk-message-send 'system_mode_management {name: \"batfault::overcool2\"}'");
-	}else if(battery_temperature < OVERCOOL1 && batteryManagePara.fault != Overcool1){
-		batteryManagePara.fault = Overcool1;
-		system("adk-message-send 'system_mode_management {name: \"batfault::overcool1\"}'");
-	}else if(battery_temperature < OVERHEAT1 && battery_temperature > OVERCOOL1 && batteryManagePara.fault != No_Fault){
-		batteryManagePara.fault = No_Fault;
-		system("adk-message-send 'system_mode_management {name: \"batfault::nofault\"}'");
-	}else{
-		printf("fault status not changed.\n");
-	}
+    if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != Overheat2)
+    {
+        batteryManagePara.fault = Overheat2;
+        system("adk-message-send 'system_mode_management {name: \"batfault::overheat2\"}'");
+    } else if(battery_temperature > OVERHEAT1 && batteryManagePara.fault != Overheat1) {
+        batteryManagePara.fault = Overheat1;
+        system("adk-message-send 'system_mode_management {name: \"batfault::overheat1\"}'");
+    } else if(battery_temperature < OVERCOOL2 && batteryManagePara.fault != Overcool2) {
+        batteryManagePara.fault = Overcool2;
+        system("adk-message-send 'system_mode_management {name: \"batfault::overcool2\"}'");
+    } else if(battery_temperature < OVERCOOL1 && batteryManagePara.fault != Overcool1) {
+        batteryManagePara.fault = Overcool1;
+        system("adk-message-send 'system_mode_management {name: \"batfault::overcool1\"}'");
+    } else if(battery_temperature < OVERHEAT1 && battery_temperature > OVERCOOL1 && batteryManagePara.fault != No_Fault) {
+        batteryManagePara.fault = No_Fault;
+        system("adk-message-send 'system_mode_management {name: \"batfault::nofault\"}'");
+    } else {
+        printf("fault status not changed.\n");
+    }
 
-	return;
+    return;
 }
 
 void batteryDisCharge_handle_Task(int battery_temperature)
@@ -1618,7 +1618,7 @@ void batteryTemperature_handle_Task(void)
 
     batteryDisCharge_handle_Task(batteryManagePara.battery_temperature);
 
-	batteryFault_handle_Task(batteryManagePara.battery_temperature);
+    batteryFault_handle_Task(batteryManagePara.battery_temperature);
 }
 
 
@@ -1639,85 +1639,85 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 {
     switch(type)
     {
-        case LED_BATTERY_FULLY_CHARGED:
-            system("adk-message-send 'led_start_pattern{pattern:32}'");
+    case LED_BATTERY_FULLY_CHARGED:
+        system("adk-message-send 'led_start_pattern{pattern:32}'");
 
-            //now the 0/1 is reversed
-            /*set_battery_led('r', 0);
-            set_battery_led('g', 0);
-            set_battery_led('b', 0);*/
+        //now the 0/1 is reversed
+        /*set_battery_led('r', 0);
+        set_battery_led('g', 0);
+        set_battery_led('b', 0);*/
 
-            printf("display LED_BATTERY_FULLY_CHARGED\n\n");
-            break;
+        printf("display LED_BATTERY_FULLY_CHARGED\n\n");
+        break;
 
-        case LED_BATTERY_CHARGEING:
-            system("adk-message-send 'led_start_pattern{pattern:30}'");
+    case LED_BATTERY_CHARGEING:
+        system("adk-message-send 'led_start_pattern{pattern:30}'");
 
-            /*set_battery_led('r', 1);
-            set_battery_led('g', 0);
-            set_battery_led('b', 1);*/
+        /*set_battery_led('r', 1);
+        set_battery_led('g', 0);
+        set_battery_led('b', 1);*/
 
-            printf("display LED_BATTERY_CHARGEING\n\n");
-            break;
+        printf("display LED_BATTERY_CHARGEING\n\n");
+        break;
 
-        case LED_BATTERY_DISCHARGEING:
-            system("adk-message-send 'led_start_pattern{pattern:31}'");
+    case LED_BATTERY_DISCHARGEING:
+        system("adk-message-send 'led_start_pattern{pattern:31}'");
 
-            /*set_battery_led('r', 1);
-            set_battery_led('g', 0);
-            set_battery_led('b', 1);*/
+        /*set_battery_led('r', 1);
+        set_battery_led('g', 0);
+        set_battery_led('b', 1);*/
 
-            printf("display LED_BATTERY_DISCHARGEING\n\n");
-            break;
+        printf("display LED_BATTERY_DISCHARGEING\n\n");
+        break;
 
-        case LED_BATTERY_LOW:
-            //system("adk-message-send 'led_start_pattern{pattern:33}'");
-			  ;
-			  static struct timeval last_time = {.tv_sec = 0, .tv_usec = 0};
-			  struct timeval current_time;
-  			  gettimeofday(&current_time, NULL);
-  			  printf("seconds : %ld\nmicro seconds : %ld",
-    				current_time.tv_sec, current_time.tv_usec);
-			  if(last_time.tv_sec == 0){
-		  			last_time = current_time;
-			  }else if(0 < batteryManagePara.low_battery_flag >> 2){
-			  //simulate action key power off
-					if(current_time.tv_sec - last_time.tv_sec > 5){
-						last_time = current_time;
-						system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
-					}
-			  }else if(0 < batteryManagePara.low_battery_flag >> 1){
-			  	if(current_time.tv_sec - last_time.tv_sec > 120){
-		  			last_time = current_time;
-					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");
-			  	}
-			  }else if(0 < batteryManagePara.low_battery_flag){
-			  	if(current_time.tv_sec - last_time.tv_sec > 300){
-		  			last_time = current_time;
-					system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");
-			  	}
-			  }
+    case LED_BATTERY_LOW:
+        //system("adk-message-send 'led_start_pattern{pattern:33}'");
+        ;
+        static struct timeval last_time = {.tv_sec = 0, .tv_usec = 0};
+        struct timeval current_time;
+        gettimeofday(&current_time, NULL);
+        printf("seconds : %ld\nmicro seconds : %ld",
+               current_time.tv_sec, current_time.tv_usec);
+        if(last_time.tv_sec == 0) {
+            last_time = current_time;
+        } else if(0 < batteryManagePara.low_battery_flag >> 2) {
+            //simulate action key power off
+            if(current_time.tv_sec - last_time.tv_sec > 5) {
+                last_time = current_time;
+                system("adk-message-send 'system_mode_management{name:\"trigger::lowbattery_power_off\"}'");
+            }
+        } else if(0 < batteryManagePara.low_battery_flag >> 1) {
+            if(current_time.tv_sec - last_time.tv_sec > 120) {
+                last_time = current_time;
+                system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");
+            }
+        } else if(0 < batteryManagePara.low_battery_flag) {
+            if(current_time.tv_sec - last_time.tv_sec > 300) {
+                last_time = current_time;
+                system("adk-message-send 'audio_prompt_play{type : \"tone\" name : \"r1-BatteryWarning\" }'");
+            }
+        }
 
-            /*set_battery_led('r', 0);
-            set_battery_led('g', 1);
-            set_battery_led('b', 1);*/
+        /*set_battery_led('r', 0);
+        set_battery_led('g', 1);
+        set_battery_led('b', 1);*/
 
-            printf("display LED_BATTERY_LOW\n\n");
-            break;
+        printf("display LED_BATTERY_LOW\n\n");
+        break;
 
-        case LED_BATTERY_OFF:
-			//ryder: light off charging indication
-            system("adk-message-send 'led_start_pattern{pattern:33}'");
+    case LED_BATTERY_OFF:
+        //ryder: light off charging indication
+        system("adk-message-send 'led_start_pattern{pattern:33}'");
 
-            /*set_battery_led('r', 1);
-            set_battery_led('g', 1);
-            set_battery_led('b', 1);*/
+        /*set_battery_led('r', 1);
+        set_battery_led('g', 1);
+        set_battery_led('b', 1);*/
 
-            printf("display LED_BATTERY_OFF\n\n");
-            break;
+        printf("display LED_BATTERY_OFF\n\n");
+        break;
 
-        default:
-            break;
+    default:
+        break;
 
     }
 }
@@ -1726,88 +1726,81 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
 void led_battery_display_handle(void)
 {
 //ryder: consider POGO Pin charge
-/*	FILE* fp;
-	char buff[128];
-	if(fp = fopen("/dev/shm/r1sysState", "r"))
-	{
-		   fgets(buff, 128, (FILE*)fp);
-		   fclose(fp);
-		   printf("system state %s",buff);
-			if(strcmp(buff, "Docked") == 0)
-			{
-				batteryManagePara.battery_is_charging = 1;
-			}
-	}
-*/
+    /*	FILE* fp;
+    	char buff[128];
+    	if(fp = fopen("/dev/shm/r1sysState", "r"))
+    	{
+    		   fgets(buff, 128, (FILE*)fp);
+    		   fclose(fp);
+    		   printf("system state %s",buff);
+    			if(strcmp(buff, "Docked") == 0)
+    			{
+    				batteryManagePara.battery_is_charging = 1;
+    			}
+    	}
+    */
 //ryder:if charge for shipment, send message to set shipment mode.
 
-	printf("ryder: battery display state is %d",batteryManagePara.led_battery_display_state);
-	printf("ryder: battery charging state is %d",batteryManagePara.battery_is_charging);
-	printf("ryder: battery plugged state is %d",batteryManagePara.charger_is_plug_in);
+    printf("ryder: battery display state is %d",batteryManagePara.led_battery_display_state);
+    printf("ryder: battery charging state is %d",batteryManagePara.battery_is_charging);
+    printf("ryder: battery plugged state is %d",batteryManagePara.charger_is_plug_in);
 
 
-	if(batteryManagePara.factory_shipment_charge_complete_flag)
-	{
-		system("adk-message-send 'system_mode_management{name:\"trigger::factory_charge_complete\"}'");
-	}
+    if(batteryManagePara.factory_shipment_charge_complete_flag)
+    {
+        system("adk-message-send 'system_mode_management{name:\"trigger::factory_charge_complete\"}'");
+    }
 
     if(batteryManagePara.battery_is_charging)
     {
 
-    	if(batteryManagePara.led_battery_display_state != LED_BATTERY_CHARGEING)
+        if(batteryManagePara.led_battery_display_state != LED_BATTERY_CHARGEING)
         {
             led_battery_display(LED_BATTERY_CHARGEING);
+            batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
         }
 
+    } else {
 
-		batteryManagePara.led_battery_display_state = LED_BATTERY_CHARGEING;
-    }
-    else if(batteryManagePara.battery_is_discharging && batteryManagePara.charger_is_plug_in)
-	{
-	    if(batteryManagePara.led_battery_display_state != LED_BATTERY_DISCHARGEING)
+        if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
         {
-            led_battery_display(LED_BATTERY_DISCHARGEING);
+            led_battery_display(LED_BATTERY_OFF);
+            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
+        } else if(batteryManagePara.low_battery_flag) {
+            /*if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)*/
+            led_battery_display(LED_BATTERY_LOW);
         }
 
-		batteryManagePara.led_battery_display_state = LED_BATTERY_DISCHARGEING;
-	}else if(batteryManagePara.battery_fully_charged){
-	        if(batteryManagePara.charger_is_plug_in)
-	        {
-
-	            if(batteryManagePara.led_battery_display_state != LED_BATTERY_FULLY_CHARGED)
-	            {
-	                led_battery_display(LED_BATTERY_FULLY_CHARGED);
-	            }
-
-	            batteryManagePara.led_battery_display_state = LED_BATTERY_FULLY_CHARGED;
-	        }else
-	  		{
-	  			 if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
-	  			 {
-	  				 led_battery_display(LED_BATTERY_OFF);
-	  			 }
-
-	  			 batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
-	  		}
-
-	}else if(batteryManagePara.low_battery_flag){
-            /*if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)*/
+        if(batteryManagePara.battery_is_discharging && batteryManagePara.charger_is_plug_in)
+        {
+            if(batteryManagePara.led_battery_display_state != LED_BATTERY_DISCHARGEING)
             {
-                led_battery_display(LED_BATTERY_LOW);
+                led_battery_display(LED_BATTERY_DISCHARGEING);
+                batteryManagePara.led_battery_display_state = LED_BATTERY_DISCHARGEING;
             }
 
-            //batteryManagePara.led_battery_display_state = LED_BATTERY_LOW;
-
-	}else/* if(batteryManagePara.led_battery_display_state == LED_BATTERY_CHARGEING)*/{
-            if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
+        } else if(batteryManagePara.battery_fully_charged) {
+            if(batteryManagePara.charger_is_plug_in)
             {
-                led_battery_display(LED_BATTERY_OFF);
-            }
 
-            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
+                if(batteryManagePara.led_battery_display_state != LED_BATTERY_FULLY_CHARGED)
+                {
+                    led_battery_display(LED_BATTERY_FULLY_CHARGED);
+                }
+
+                batteryManagePara.led_battery_display_state = LED_BATTERY_FULLY_CHARGED;
+            } else
+            {
+                if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
+                {
+                    led_battery_display(LED_BATTERY_OFF);
+                }
+
+                batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
+            }
+        }
     }
 }
-
 
 
 
@@ -1931,44 +1924,44 @@ void *check_gpiokey_thread(void *arg)
             {
                 switch(event.value)
                 {
-                    case 1:
-                        key_power_pressed = 1;
+                case 1:
+                    key_power_pressed = 1;
 
-                        gettimeofday(&tBeginTime, NULL);
+                    gettimeofday(&tBeginTime, NULL);
+                    break;
+
+                case 0:
+                    if(key_power_pressed != 1)
+                    {
                         break;
+                    }
 
-                    case 0:
-                        if(key_power_pressed != 1)
+                    key_power_pressed = 0;
+
+                    gettimeofday(&tEndTime, NULL);
+
+                    fCostTime = 1000000*(tEndTime.tv_sec-tBeginTime.tv_sec) + (tEndTime.tv_usec-tBeginTime.tv_usec);
+                    fCostTime /= 1000000;
+
+                    printf("[gettimeofday]Cost Time = %fSec\n", fCostTime);
+
+                    if(fCostTime > 5 && fCostTime < 10)
+                    {
+                        printf("system power_off\n\n");
+
+                        system("adk-message-send 'led_start_pattern{pattern:35}'");
+
+                        for(err_cnt = 0; bq25703_enter_LowPowerMode()!= 0; err_cnt++)
                         {
-                            break;
+                            if(err_cnt > 3)
+                                break;
                         }
 
-                        key_power_pressed = 0;
+                        sleep(2);
+                        system_power_off();
+                    }
 
-                        gettimeofday(&tEndTime, NULL);
-
-                        fCostTime = 1000000*(tEndTime.tv_sec-tBeginTime.tv_sec) + (tEndTime.tv_usec-tBeginTime.tv_usec);
-                        fCostTime /= 1000000;
-
-                        printf("[gettimeofday]Cost Time = %fSec\n", fCostTime);
-
-                        if(fCostTime > 5 && fCostTime < 10)
-                        {
-                            printf("system power_off\n\n");
-
-                            system("adk-message-send 'led_start_pattern{pattern:35}'");
-
-                            for(err_cnt = 0; bq25703_enter_LowPowerMode()!= 0; err_cnt++)
-                            {
-                                if(err_cnt > 3)
-                                    break;
-                            }
-
-                            sleep(2);
-                            system_power_off();
-                        }
-
-                        break;
+                    break;
                 }
             }
         }
@@ -1978,84 +1971,84 @@ void *check_gpiokey_thread(void *arg)
 
 void check_usb_disconnected()
 {
-	char buf[11];
+    char buf[11];
 
-	if(0 == tps65987_get_Intevents(buf))
-	{
-		s_TPS_status tpStatus;
-		if(0 == tps65987_clear_Intevents())
-		{
-		}else{
-			syslog(LOG_DEBUG, "Error clear intstatus");
-		}
-		//plug insert/remove interrupt
-		if((buf[0] & 0x08) && !tps65987_get_Status(&tpStatus)){
-			//VBus status
-			if(0 == tpStatus.VbusStatus){
-				//USB disconnected
-				syslog(LOG_DEBUG, "USB disconnected.");
+    if(0 == tps65987_get_Intevents(buf))
+    {
+        s_TPS_status tpStatus;
+        if(0 == tps65987_clear_Intevents())
+        {
+        } else {
+            syslog(LOG_DEBUG, "Error clear intstatus");
+        }
+        //plug insert/remove interrupt
+        if((buf[0] & 0x08) && !tps65987_get_Status(&tpStatus)) {
+            //VBus status
+            if(0 == tpStatus.VbusStatus) {
+                //USB disconnected
+                syslog(LOG_DEBUG, "USB disconnected.");
 
-/*				syslog(LOG_DEBUG, "Configuring OTG");
-				 if(bq25703a_otg_function_init()){
-					 syslog(LOG_ERR, "OTG configuration Error.");
-				 }
-*/
-				 if(batteryManagePara.charger_is_plug_in & 0x01){
-						batteryManagePara.charger_is_plug_in &= ~0x01;
+                /*				syslog(LOG_DEBUG, "Configuring OTG");
+                				 if(bq25703a_otg_function_init()){
+                					 syslog(LOG_ERR, "OTG configuration Error.");
+                				 }
+                */
+                if(batteryManagePara.charger_is_plug_in & 0x01) {
+                    batteryManagePara.charger_is_plug_in &= ~0x01;
 
-				 }else{
-				 //charger already configured to be unplugged.
-				 }
-			}else{
-			//usb connected
-			//detect in another way as in below function.
-			}
-		}else{
-				syslog(LOG_DEBUG, "Error get pdstatus");
-		}
-		//usleep(100000); //give PD time to send commands.
+                } else {
+                    //charger already configured to be unplugged.
+                }
+            } else {
+                //usb connected
+                //detect in another way as in below function.
+            }
+        } else {
+            syslog(LOG_DEBUG, "Error get pdstatus");
+        }
+        //usleep(100000); //give PD time to send commands.
 
-	}else
-	{
-		syslog(LOG_DEBUG, "Error get intstatus");
-	}
+    } else
+    {
+        syslog(LOG_DEBUG, "Error get intstatus");
+    }
 
-	syslog(LOG_DEBUG, "Clearing PD interrupts.");
+    syslog(LOG_DEBUG, "Clearing PD interrupts.");
 
 }
 
 void bq25703_configure_input_current_limit()
 {
-	int tps65987_TypeC_current_type;
-	tps65987_TypeC_current_type = tps65987_get_TypeC_Current();
-	switch(tps65987_TypeC_current_type)
-	{
-		case USB_Default_Current:
-			//input current set to 1500mA
-			//bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
+    int tps65987_TypeC_current_type;
+    tps65987_TypeC_current_type = tps65987_get_TypeC_Current();
+    switch(tps65987_TypeC_current_type)
+    {
+    case USB_Default_Current:
+        //input current set to 1500mA
+        //bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
 
-			break;
+        break;
 
-		case C_1d5A_Current:
-			//bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
+    case C_1d5A_Current:
+        //bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
 
-			break;
+        break;
 
-		case C_3A_Current:
-			bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit);
+    case C_3A_Current:
+        bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_3A_Limit);
 
 
-				break;
-		case PD_contract_negotiated:
-			 ;
-			bq25703_set_InputCurrentLimit(tps65987_get_ActiveContractPDO());
-			break;
+        break;
+    case PD_contract_negotiated:
+        ;
+        bq25703_set_InputCurrentLimit(tps65987_get_ActiveContractPDO());
+        break;
 
-		default:
+    default:
 
-			break;
+        break;
 
-	}
+    }
 
 }
 
@@ -2064,165 +2057,165 @@ void *bq25703a_stdin_thread(void *arg)
     std::istream &mystream = std::cin;
     std::string event;
 
-	/* Enable so that POGO pin can shart charging.
-	bq25703a_charge_function_init();
-	*/
+    /* Enable so that POGO pin can shart charging.
+    bq25703a_charge_function_init();
+    */
 //init USB connect status
-	check_usb_disconnected();
+    check_usb_disconnected();
 
 
     sd_notifyf(0, "READY=1\n"
-    "STATUS=Processing requests...\n"
-    "MAINPID=%lu",
-    (unsigned long) getpid());
+               "STATUS=Processing requests...\n"
+               "MAINPID=%lu",
+               (unsigned long) getpid());
 
     while (mystream.good())
     {
         getline(mystream, event);
-		printf("got event: %s\n", event.c_str());
+        printf("got event: %s\n", event.c_str());
         if(event.compare("button_LANTERN_DP") == 0)
         {
             if(battery_relativeStateOfCharge <= 100)
             {
                 if(battery_relativeStateOfCharge >= 75)
                 {
-                 	system("adk-message-send 'led_start_pattern{pattern:34}'");
-                }else if(battery_relativeStateOfCharge >= 35){
-					system("adk-message-send 'led_start_pattern{pattern:35}'");
+                    system("adk-message-send 'led_start_pattern{pattern:34}'");
+                } else if(battery_relativeStateOfCharge >= 35) {
+                    system("adk-message-send 'led_start_pattern{pattern:35}'");
 
-                }else{
-					system("adk-message-send 'led_start_pattern{pattern:36}'");
+                } else {
+                    system("adk-message-send 'led_start_pattern{pattern:36}'");
 
                 }
 
             }
-        }else if(event.compare("trigger::GPIO115falling") == 0){
-					batteryManagePara.charger_is_plug_in |= 0x02;
-					//to add charger configration for POGO PIN
-					int ret_val = check_Battery_allow_charge();
-					if(ret_val == 1){
-						if(!bq25703a_charge_function_init()){
-							syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
-						}
-					}
-		}else if(event.compare("trigger::GPIO115rising") == 0){
+        } else if(event.compare("trigger::GPIO115falling") == 0) {
+            batteryManagePara.charger_is_plug_in |= 0x02;
+            //to add charger configration for POGO PIN
+            int ret_val = check_Battery_allow_charge();
+            if(ret_val == 1) {
+                if(!bq25703a_charge_function_init()) {
+                    syslog(LOG_ERR, "POGO PIN CHARGE configuration Error.");
+                }
+            }
+        } else if(event.compare("trigger::GPIO115rising") == 0) {
 
-					batteryManagePara.charger_is_plug_in &= ~0x02;
-					if(batteryManagePara.charger_is_plug_in & 0x01)
-					{
-					//disable OTG
-/*						char databuf[2] = {0x00, 0x00};
-						bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
-*/
-						int ret_val = check_Battery_allow_charge();
+            batteryManagePara.charger_is_plug_in &= ~0x02;
+            if(batteryManagePara.charger_is_plug_in & 0x01)
+            {
+                //disable OTG
+                /*						char databuf[2] = {0x00, 0x00};
+                						bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
+                */
+                int ret_val = check_Battery_allow_charge();
 
-						if(ret_val == 1)
-						{
+                if(ret_val == 1)
+                {
 
-							if(bq25703_enable_charge() == 0)
-							{
+                    if(bq25703_enable_charge() == 0)
+                    {
 
-							}else{
-								syslog(LOG_ERR, "USB　charge configuration Error.");
-							}
-						}
-						else//error or charge not allowed
-						{
-							bq25703_configure_input_current_limit();
-							syslog(LOG_DEBUG, "charge not allowed.");
-						}
-					}
+                    } else {
+                        syslog(LOG_ERR, "USB　charge configuration Error.");
+                    }
+                }
+                else//error or charge not allowed
+                {
+                    bq25703_configure_input_current_limit();
+                    syslog(LOG_DEBUG, "charge not allowed.");
+                }
+            }
 
-		}else if(event.compare("trigger::GPIO31falling") == 0){
-		//check usb disconnect event
-				//clear all interrupts
-			check_usb_disconnected();
+        } else if(event.compare("trigger::GPIO31falling") == 0) {
+            //check usb disconnect event
+            //clear all interrupts
+            check_usb_disconnected();
 
-		}else if(
-			(event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
-			(event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
-			)
-		{
-				//printf("usb connected.\n");
+        } else if(
+            (event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
+            (event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
+        )
+        {
+            //printf("usb connected.\n");
 
-				std::string line;
-				std::ifstream infile("/sys/class/gpio/gpio115/value");
+            std::string line;
+            std::ifstream infile("/sys/class/gpio/gpio115/value");
 
-				std::getline( infile, line );
-				size_t pg_value = 0;
-				std::stoi(line, &pg_value);
-				//syslog(LOG_DEBUG, "pg value is %d", pg_value);
-				//disable otg
-/*				char databuf[2] = {0x00, 0x00};
-				bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
-*/
-				if(pg_value == 1)
-				{
-					batteryManagePara.charger_is_plug_in &= ~0x02;
-				}
+            std::getline( infile, line );
+            size_t pg_value = 0;
+            std::stoi(line, &pg_value);
+            //syslog(LOG_DEBUG, "pg value is %d", pg_value);
+            //disable otg
+            /*				char databuf[2] = {0x00, 0x00};
+            				bq25703a_i2c_write(BQ_I2C_ADDR, 0x34, databuf, 2);
+            */
+            if(pg_value == 1)
+            {
+                batteryManagePara.charger_is_plug_in &= ~0x02;
+            }
 
-				batteryManagePara.charger_is_plug_in |= 0x01;
-/*PD will config, but has to configure it another time so that more power can be drawn*/
+            batteryManagePara.charger_is_plug_in |= 0x01;
+            /*PD will config, but has to configure it another time so that more power can be drawn*/
 
-				if(batteryManagePara.charger_is_plug_in == 0x01){
+            if(batteryManagePara.charger_is_plug_in == 0x01) {
 
-					int ret_val = check_Battery_allow_charge();
+                int ret_val = check_Battery_allow_charge();
 
-		            if(ret_val == 1)
-		            {
-		                if(bq25703_enable_charge())
-		                {
-							syslog(LOG_DEBUG, "USB CHARGE configuration error");
+                if(ret_val == 1)
+                {
+                    if(bq25703_enable_charge())
+                    {
+                        syslog(LOG_DEBUG, "USB CHARGE configuration error");
 
-		                }
-		            }
-		            else// read error, or not allow charging if(ret_val == 0)
-		            {
-						bq25703_configure_input_current_limit();
-		            }
+                    }
+                }
+                else// read error, or not allow charging if(ret_val == 0)
+                {
+                    bq25703_configure_input_current_limit();
+                }
 
-			    }
+            }
 
-			//to add charger configration for USB
-		}else if(event.compare("Test::bqdrv_ic_silent_toggle_on") == 0){
-			batteryManagePara.i2c_silent = 1;
-			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
-		}else if(event.compare("Test::bqdrv_ic_silent_toggle_off") == 0){
-			batteryManagePara.i2c_silent = 0;
-			syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
-		}else if(event.find("setval::FaultVal:") != string::npos){
-			OVERHEAT2 = std::stoi(event.substr(17,3));
-			OVERHEAT1 = std::stoi(event.substr(21,3));
-			OVERCOOL2 = std::stoi(event.substr(25,3));
-			OVERCOOL1 = std::stoi(event.substr(29,3));
-			syslog(LOG_DEBUG, "fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
+            //to add charger configration for USB
+        } else if(event.compare("Test::bqdrv_ic_silent_toggle_on") == 0) {
+            batteryManagePara.i2c_silent = 1;
+            syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
+        } else if(event.compare("Test::bqdrv_ic_silent_toggle_off") == 0) {
+            batteryManagePara.i2c_silent = 0;
+            syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
+        } else if(event.find("setval::FaultVal:") != string::npos) {
+            OVERHEAT2 = std::stoi(event.substr(17,3));
+            OVERHEAT1 = std::stoi(event.substr(21,3));
+            OVERCOOL2 = std::stoi(event.substr(25,3));
+            OVERCOOL1 = std::stoi(event.substr(29,3));
+            syslog(LOG_DEBUG, "fault thresh changed to %d, %d, %d, %d\n", OVERHEAT2, OVERHEAT1,OVERCOOL2, OVERCOOL1);
 
-		}else if(event.find("getval::battery") != string::npos){
-	        std::string payload;
-	        std::stringstream ps;
+        } else if(event.find("getval::battery") != string::npos) {
+            std::string payload;
+            std::stringstream ps;
 
-	        ps << "adk-message-send 'system_power_data {battery:\"" <<  batteryManagePara.battery_current << ":" <<  batteryManagePara.battery_voltage
-	        << ":" << batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
+            ps << "adk-message-send 'system_power_data {battery:\"" <<  batteryManagePara.battery_current << ":" <<  batteryManagePara.battery_voltage
+               << ":" << batteryManagePara.battery_temperature << ":" <<  battery_relativeStateOfCharge << "\"}'";
 
-	        std::string s = ps.str();
-	        char payloadstr[strlen(s.c_str()) + 1];
-	        strcpy(payloadstr,s.c_str());
+            std::string s = ps.str();
+            char payloadstr[strlen(s.c_str()) + 1];
+            strcpy(payloadstr,s.c_str());
 
-	        system(payloadstr);
+            system(payloadstr);
 
-		}else if(event.compare("system::Docked:checkBat")== 0){
-			batteryTemperature_handle_Task();
-			printf("sending batchecked\n");
-			//indicate that battery is checked.
-	        system("adk-message-send 'system_mode_management {name: \"charger::bat_checked\"}'");
-		}else{
-			printf("event not identified.\n");
-		}
+        } else if(event.compare("system::Docked:checkBat")== 0) {
+            batteryTemperature_handle_Task();
+            printf("sending batchecked\n");
+            //indicate that battery is checked.
+            system("adk-message-send 'system_mode_management {name: \"charger::bat_checked\"}'");
+        } else {
+            printf("event not identified.\n");
+        }
 
-		if(!batteryManagePara.i2c_silent){
-			led_battery_display_handle();
-		}
-	}
+        if(!batteryManagePara.i2c_silent) {
+            led_battery_display_handle();
+        }
+    }
 }
 
 
@@ -2342,7 +2335,7 @@ int main(int argc, char* argv[])
     pthread_t thread_check_gpiokey_ntid;
 
     pthread_t thread_check_batteryShutdownMode_ntid;
-	printf("Version:developing 002\n");
+    printf("Version:developing 002\n");
     if(argc > 1)
     {
         for(i = 0; i < argc; i++)
@@ -2359,7 +2352,7 @@ int main(int argc, char* argv[])
         }
     }
 
-	 openlog("slog", LOG_PID|LOG_CONS, LOG_USER);
+    openlog("slog", LOG_PID|LOG_CONS, LOG_USER);
 
 
     batteryManagePara_init();
@@ -2370,17 +2363,17 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-/*
-    while(bq25703a_charge_function_init() != 0)
-    {
-        if(err_cnt++ > 3)
+    /*
+        while(bq25703a_charge_function_init() != 0)
         {
-            return -1;
-        }
+            if(err_cnt++ > 3)
+            {
+                return -1;
+            }
 
-        usleep(100*1000);
-    }
-*/
+            usleep(100*1000);
+        }
+    */
 
     if(i2c_open_tps65987() != 0)
     {
@@ -2394,17 +2387,17 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-/*
-    if(init_Chg_OK_Pin() != 0)
-    {
-        printf("init Chg_OK_Pin fail!\n");
-        return -1;
-    }
-*/
+    /*
+        if(init_Chg_OK_Pin() != 0)
+        {
+            printf("init Chg_OK_Pin fail!\n");
+            return -1;
+        }
+    */
     led_battery_display_init();
 
-   // ryder: r1 is otg, tbd
-   // pthread_create(&thread_check_chgok_ntid, NULL, bq25703a_chgok_irq_thread, NULL);
+    // ryder: r1 is otg, tbd
+    // pthread_create(&thread_check_chgok_ntid, NULL, bq25703a_chgok_irq_thread, NULL);
 
     pthread_create(&thread_check_stdin_ntid, NULL, bq25703a_stdin_thread, NULL);
     pthread_create(&thread_check_gpiokey_ntid, NULL, check_gpiokey_thread, NULL);
@@ -2413,22 +2406,22 @@ int main(int argc, char* argv[])
 
     while(1)
     {
-    	if(!batteryManagePara.i2c_silent){
-	        bq25703a_get_ChargeOption0_Setting();
-	        bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
-	        charge_current_set = bq25703a_get_ChargeCurrentSetting();
+        if(!batteryManagePara.i2c_silent) {
+            bq25703a_get_ChargeOption0_Setting();
+            bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
+            charge_current_set = bq25703a_get_ChargeCurrentSetting();
 
-	        check_BatteryFullyCharged_Task();
+            check_BatteryFullyCharged_Task();
 
-	        batteryTemperature_handle_Task();
+            batteryTemperature_handle_Task();
 
-	        led_battery_display_handle();
-    	}
+            led_battery_display_handle();
+        }
         printf("\n\n\n");
 
         sleep(5);
     }
-	closelog();
+    closelog();
 
     return 0;
 }
