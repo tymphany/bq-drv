@@ -1762,7 +1762,7 @@ void led_battery_display_handle(void)
 
     } else {
 
-		if(batteryManagePara.low_battery_flag) {
+		if(batteryManagePara.low_battery_flag && batteryManagePara.battery_is_discharging) {
             /*if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)*/
             led_battery_display(LED_BATTERY_LOW);
         }
