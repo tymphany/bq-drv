@@ -1762,11 +1762,7 @@ void led_battery_display_handle(void)
 
     } else {
 
-        if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
-        {
-            led_battery_display(LED_BATTERY_OFF);
-            batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
-        } else if(batteryManagePara.low_battery_flag) {
+		if(batteryManagePara.low_battery_flag) {
             /*if(batteryManagePara.led_battery_display_state != LED_BATTERY_LOW)*/
             led_battery_display(LED_BATTERY_LOW);
         }
@@ -1779,25 +1775,20 @@ void led_battery_display_handle(void)
                 batteryManagePara.led_battery_display_state = LED_BATTERY_DISCHARGEING;
             }
 
-        } else if(batteryManagePara.battery_fully_charged) {
-            if(batteryManagePara.charger_is_plug_in)
-            {
-
+        } else if(batteryManagePara.battery_fully_charged && batteryManagePara.charger_is_plug_in) {
                 if(batteryManagePara.led_battery_display_state != LED_BATTERY_FULLY_CHARGED)
                 {
                     led_battery_display(LED_BATTERY_FULLY_CHARGED);
                 }
 
                 batteryManagePara.led_battery_display_state = LED_BATTERY_FULLY_CHARGED;
-            } else
-            {
+		}else{
                 if(batteryManagePara.led_battery_display_state != LED_BATTERY_OFF)
                 {
                     led_battery_display(LED_BATTERY_OFF);
                 }
 
                 batteryManagePara.led_battery_display_state = LED_BATTERY_OFF;
-            }
         }
     }
 }
