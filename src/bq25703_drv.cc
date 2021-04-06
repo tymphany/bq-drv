@@ -504,7 +504,7 @@ int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
 {
     int input_voltage_limit = input_voltage_limit_set;
 
-    printf("set charge input voltage limit: %dmA\n",input_voltage_limit + 3200);
+    printf("set charge input voltage limit: %dmV\n",input_voltage_limit + 3200);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -2016,6 +2016,7 @@ void check_usb_disconnected()
                 				 }
                 */
                 if(batteryManagePara.charger_is_plug_in & 0x01) {
+					printf("USB disconnected.\n");
                     batteryManagePara.charger_is_plug_in &= ~0x01;
 
                 } else {
