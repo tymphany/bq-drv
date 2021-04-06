@@ -1987,6 +1987,8 @@ void check_plugged()//USB and POGO not considered plugged at the same time
 			batteryManagePara.charger_is_plug_in |= 0x01;
 		}
 	}
+
+	printf("check_plugged:plugged set to %b\n", batteryManagePara.charger_is_plug_in);
 }
 
 void check_usb_disconnected()
