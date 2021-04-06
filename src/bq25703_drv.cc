@@ -1131,11 +1131,12 @@ void check_BatteryFullyCharged_Task(void)
         break;
 
     case 0:
+		printf("ryder: charge condition: %d, %d, %d\n", batteryManagePara.need_charge_flag,batteryManagePara.temperature_allow_charge, batteryManagePara.charger_is_plug_in);
         if(!batteryManagePara.need_charge_flag)
         {
             if(batteryManagePara.temperature_allow_charge)
             {
-                if(batteryManagePara.charger_is_plug_in & 0x01)
+                if(batteryManagePara.charger_is_plug_in & 0x03)//add docked condition
                 {
                     if(bq25703_enable_charge() != 0)
                     {
@@ -1411,13 +1412,14 @@ int update_fuelgauge_BatteryInfo(void)
                     printf("shipment SOC not not reached\n");
                 }
             }
-
+/*Checked by battary fully charged task
             if(battery_relativeStateOfCharge == 100 && batteryManagePara.charger_is_plug_in)
             {
                 batteryManagePara.battery_fully_charged |= 0x01;
             } else {
                 batteryManagePara.battery_fully_charged &= ~0x01;
             }
+*/
         }
     }
 
