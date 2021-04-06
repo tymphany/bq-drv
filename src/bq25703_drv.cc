@@ -524,7 +524,7 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
 {
     int input_voltage_limit = input_current_limit_set;
 
-    printf("set charge input currnet limit: %dmA\n",( input_current_limit_set >>8 )/50);
+    printf("set charge input currnet limit: %dmA\n",( input_current_limit_set >>8 )*50);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
