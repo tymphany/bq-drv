@@ -508,7 +508,7 @@ int bq25703_disable_OTG()
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
                 OTG_REGISTER_DDR_VALUE_BUF[0],
-                buf),
+                buf,
                 2)
       )
     {
