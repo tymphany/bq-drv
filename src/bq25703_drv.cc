@@ -1963,6 +1963,31 @@ void *check_gpiokey_thread(void *arg)
     }
 }
 
+size_t check_gpio(char * path)
+{
+	std::string line;
+	std::ifstream infile("/sys/class/gpio/gpio115/value");
+	
+	std::getline( infile, line );
+	size_t gpio_value = 0;
+	std::stoi(line, &gpio_value);
+	return gpio__value;
+}
+
+void check_plugged()//USB and POGO not considered plugged at the same time
+{
+	size_t pg_value = check_gpio("/sys/class/gpio/gpio115/value");
+	size_t chargeOK_value = check_gpio("/sys/class/gpio/gpio33/value");	
+
+	if(chargeOK_value == 1){
+		if(pg_value == 0)
+		{
+			batteryManagePara.charger_is_plug_in |= 0x02;
+		}else{
+			batteryManagePara.charger_is_plug_in |= 0x01;
+		}
+	}
+}
 
 void check_usb_disconnected()
 {
@@ -2056,7 +2081,9 @@ void *bq25703a_stdin_thread(void *arg)
     bq25703a_charge_function_init();
     */
 //init USB connect status
+	check_plugged();
     check_usb_disconnected();
+
 
 
     sd_notifyf(0, "READY=1\n"
