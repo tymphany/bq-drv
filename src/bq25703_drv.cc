@@ -500,6 +500,25 @@ int bq25703a_get_ChargeCurrentSetting(void)
 }
 
 
+int bq25703_disable_OTG()
+{
+    printf("disable otg\n");
+	unsigned char buf[2] = {0,0};
+
+    if(0 != bq25703a_i2c_write(
+                BQ_I2C_ADDR,
+                OTG_REGISTER_DDR_VALUE_BUF[0],
+                buf),
+                2)
+      )
+    {
+        printf("disable otg err\n");
+        return -1;
+    }
+
+    return 0;
+}
+
 int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
 {
     int input_voltage_limit = input_voltage_limit_set;
@@ -960,7 +979,7 @@ int bq25703_enable_charge(void)
         return 0;
     }
 
-	bq25703_set_InputVoltageLimit(INPUT_VOLTAGE_LIMIT_4V4);
+
 
     switch(tps65987_TypeC_current_type)
     {
@@ -1026,6 +1045,9 @@ int bq25703_enable_charge(void)
         break;
 
     }
+	bq25703_set_InputVoltageLimit(INPUT_VOLTAGE_LIMIT_4V4);
+	//need to disable otg
+	bq25703_disable_OTG();
 
     return ret;
 
