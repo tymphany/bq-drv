@@ -1971,7 +1971,7 @@ size_t check_gpio(char * path)
 	std::getline( infile, line );
 	size_t gpio_value = 0;
 	std::stoi(line, &gpio_value);
-	return gpio__value;
+	return gpio_value;
 }
 
 void check_plugged()//USB and POGO not considered plugged at the same time
