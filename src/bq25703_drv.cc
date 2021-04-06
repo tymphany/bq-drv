@@ -504,16 +504,16 @@ int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
 {
     int input_voltage_limit = input_voltage_limit_set;
 
-    printf("set charge input voltage limit: %dmV\n",input_voltage_limit + 3200);
+    printf("set charge input voltage limit: %dmV\n", input_voltage_limit + 3200);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
-                CHARGE_CURRENT_REGISTER_WR,
+                INPUT_VOLTAGE_REGISTER_WR,
                 ((unsigned char*)(&input_voltage_limit)),
                 2)
       )
     {
-        printf("write Current eer\n");
+        printf("write voltage err\n");
         return -1;
     }
 
@@ -524,7 +524,7 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
 {
     int input_voltage_limit = input_current_limit_set;
 
-    printf("set charge input currnet limit: %dmA\n",( input_current_limit_set >>8 )*50);
+    printf("set input currnet limit: %dmA\n",( input_current_limit_set >>8 )*50);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -2084,15 +2084,13 @@ void *bq25703a_stdin_thread(void *arg)
     bq25703a_charge_function_init();
     */
 //init USB connect status
-	check_plugged();
-    check_usb_disconnected();
-
-
 
     sd_notifyf(0, "READY=1\n"
                "STATUS=Processing requests...\n"
                "MAINPID=%lu",
                (unsigned long) getpid());
+	check_plugged();
+    check_usb_disconnected();
 
     while (mystream.good())
     {
