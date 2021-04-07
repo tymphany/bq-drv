@@ -1174,14 +1174,13 @@ void check_BatteryFullyCharged_Task(void)
 		
          }else if(batteryManagePara.need_charge_flag && batteryManagePara.charger_is_plug_in){
 				int tps65987_TypeC_current_type = tps65987_get_TypeC_Current();
-				if(++abnormalCounter > 10 && batteryManagePara.low_battery_flag  && batteryManagePara.battery_is_discharging && (tps65987_TypeC_current_type >0 || batteryManagePara.charger_is_plug_in & 0x02){
+				if(++abnormalCounter > 10 && batteryManagePara.low_battery_flag  && batteryManagePara.battery_is_discharging && (tps65987_TypeC_current_type >0 || batteryManagePara.charger_is_plug_in & 0x02)){
 
 					batteryManagePara.need_charge_flag = 0;
 					abnormalCounter = 0;
 					syslog(DEBUG, "adapter OK and need charge,reset need charge flag to enable charge.");
 				}
-			}｝
-        }
+         }
 
         break;
 
@@ -2190,7 +2189,7 @@ void *bq25703a_stdin_thread(void *arg)
                     bq25703_configure_input_current_limit();
                     syslog(LOG_DEBUG, "charge not allowed.");
                 }
-            }else｛{
+            }else{
             
 					batteryManagePara.need_charge_flag = 0;
 			}
