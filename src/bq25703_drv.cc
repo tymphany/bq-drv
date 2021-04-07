@@ -1401,7 +1401,7 @@ int update_fuelgauge_BatteryInfo(void)
         char buff[128];
         char cmd[128];
 
-        snprintf cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
+        snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
         system(cmd);
 
         if(battery_relativeStateOfCharge < 5) {
