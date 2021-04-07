@@ -19,7 +19,7 @@ int export_gpio(int pin_number)
         return -1;
     }
 
-    if (syslog(LOG_DEBUG, p,"%d",pin_number) < 0)
+    if (fprintf(p,"%d",pin_number) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -63,7 +63,7 @@ int set_direction(int pin_number, char *direction)
         return -1;
     }
 
-    if (syslog(LOG_DEBUG, p,"%s",direction) < 0)
+    if (fprintf(p,"%s",direction) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -86,7 +86,7 @@ int set_edge(int pin_number, char *edge)
         return -1;
     }
 
-    if (syslog(LOG_DEBUG, p,"%s",edge) < 0)
+    if (fprintf(p,"%s",edge) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -109,7 +109,7 @@ int set_value(int pin_number, int value)
         return -1;
     }
 
-    if (syslog(LOG_DEBUG, p,"%d",value) < 0)
+    if (fprintf(p,"%d",value) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n", open_path);
         return -1;
@@ -133,7 +133,7 @@ int set_battery_led(char color, int value)
         return -1;
     }
 
-    if (syslog(LOG_DEBUG, p,"%d",value) < 0)
+    if (fprintf(p,"%d",value) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n", open_path);
         return -1;
