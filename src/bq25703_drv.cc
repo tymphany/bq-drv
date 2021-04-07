@@ -1136,6 +1136,7 @@ void batteryManagePara_clear(void)
 
 void check_BatteryFullyCharged_Task(void)
 {
+	static unsigned long abnormalCounter = 0;
     switch(fuelgauge_check_BatteryFullyCharged())
     {
     case 1:
@@ -1166,12 +1167,22 @@ void check_BatteryFullyCharged_Task(void)
                     {
                         return;
                     }
+					batteryManagePara.battery_fully_charged = 0;
+			        batteryManagePara.need_charge_flag = 1;
                 }
             }
+		
+         }else if(batteryManagePara.need_charge_flag && batteryManagePara.charger_is_plug_in){
+				int tps65987_TypeC_current_type = tps65987_get_TypeC_Current();
+				if(++abnormalCounter > 10 && batteryManagePara.low_battery_flag  && batteryManagePara.battery_is_discharging && (tps65987_TypeC_current_type >0 || batteryManagePara.charger_is_plug_in & 0x02){
+
+					batteryManagePara.need_charge_flag = 0;
+					abnormalCounter = 0;
+					syslog(DEBUG, "adapter OK and need charge,reset need charge flag to enable charge.");
+				}
+			}｝
         }
 
-        batteryManagePara.battery_fully_charged = 0;
-        batteryManagePara.need_charge_flag = 1;
         break;
 
     default:
@@ -2047,6 +2058,10 @@ void check_usb_disconnected()
 					syslog(LOG_DEBUG, "USB disconnected.\n");
                     batteryManagePara.charger_is_plug_in &= ~0x01;
 
+				if(batteryManagePara.charger_is_plug_in == 0){
+					batteryManagePara.need_charge_flag = 0;
+				}
+
                 } else {
                     //charger already configured to be unplugged.
                 }
@@ -2076,12 +2091,12 @@ void bq25703_configure_input_current_limit()
     {
     case USB_Default_Current:
         //input current set to 1500mA
-        //bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
+        bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_Default_Limit);
 
         break;
 
     case C_1d5A_Current:
-        //bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
+        bq25703_set_InputCurrentLimit(INPUT_CURRENT__USB_1d5A_Limit);
 
         break;
 
@@ -2175,7 +2190,11 @@ void *bq25703a_stdin_thread(void *arg)
                     bq25703_configure_input_current_limit();
                     syslog(LOG_DEBUG, "charge not allowed.");
                 }
-            }
+            }else｛{
+            
+					batteryManagePara.need_charge_flag = 0;
+			}
+            
 
         } else if(event.compare("trigger::GPIO31falling") == 0) {
             //check usb disconnect event
