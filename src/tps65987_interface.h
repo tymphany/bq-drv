@@ -8,6 +8,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include <syslog.h>
 
 #define  REG_MODE                       0x03
 #define  REG_Version                    0x0F
