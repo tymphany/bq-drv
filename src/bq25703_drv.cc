@@ -1178,7 +1178,7 @@ void check_BatteryFullyCharged_Task(void)
 
 					batteryManagePara.need_charge_flag = 0;
 					abnormalCounter = 0;
-					syslog(DEBUG, "adapter OK and need charge,reset need charge flag to enable charge.");
+					syslog(LOG_DEBUG, "adapter OK and need charge,reset need charge flag to enable charge.");
 				}
          }
 
