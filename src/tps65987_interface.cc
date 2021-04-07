@@ -41,12 +41,12 @@ int check_endian(void)
 
     if(x0 == 0x12)
     {
-        printf("Big-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
+        syslog(LOG_DEBUG, "Big-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
     }
 
     if(x0 == 0x78)
     {
-        printf("Little-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
+        syslog(LOG_DEBUG, "Little-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
     }
 
     return 0;
@@ -73,25 +73,25 @@ int i2c_open_tps65987(void)
         return -1;
     }
 
-    printf("open tps65987 i2c file success, fd is %d\n",fd);
+    syslog(LOG_DEBUG, "open tps65987 i2c file success, fd is %d\n",fd);
 
     ret = ioctl(fd, I2C_SLAVE_FORCE, i2c_addr);
     if (ret < 0)
     {
-        printf("i2c: Failed to set i2c device address 0x%x\n",i2c_addr);
+        syslog(LOG_DEBUG, "i2c: Failed to set i2c device address 0x%x\n",i2c_addr);
         return -1;
     }
 
-    printf("i2c: set i2c device address success\n");
+    syslog(LOG_DEBUG, "i2c: set i2c device address success\n");
 
     val = 3;
     ret = ioctl(fd, I2C_RETRIES, val);
     if(ret < 0)
     {
-        printf("i2c: set i2c retry times err\n");
+        syslog(LOG_DEBUG, "i2c: set i2c retry times err\n");
     }
 
-    printf("i2c: set i2c retry times %d\n",val);
+    syslog(LOG_DEBUG, "i2c: set i2c retry times %d\n",val);
 
     /*
     * use I2C_TIMEOUT default setting, which is HZ, that means 1 second
@@ -122,16 +122,16 @@ static int i2c_write(int fd, unsigned char dev_addr, unsigned char *val, unsigne
 
     if(ret < 0)
     {
-        printf("write ioctl err %d\n",ret);
+        syslog(LOG_DEBUG, "write ioctl err %d\n",ret);
         return ret;
     }
 
-    /*printf("i2c write buf = ");
+    /*syslog(LOG_DEBUG, "i2c write buf = ");
     for(i=0; i< len; i++)
     {
-        printf("%02x ",val[i]);
+        syslog(LOG_DEBUG, "%02x ",val[i]);
     }
-    printf("\n");*/
+    syslog(LOG_DEBUG, "\n");*/
 
     return 0;
 }
@@ -162,17 +162,17 @@ static int i2c_read(int fd, unsigned char addr, unsigned char reg, unsigned char
 
     if(ret < 0)
     {
-        printf("read ioctl err %d\n",ret);
+        syslog(LOG_DEBUG, "read ioctl err %d\n",ret);
 
         return ret;
     }
 
-    /*printf("i2c read buf = ");
+    /*syslog(LOG_DEBUG, "i2c read buf = ");
     for(i = 0; i < len; i++)
     {
-        printf("%02x ",val[i]);
+        syslog(LOG_DEBUG, "%02x ",val[i]);
     }
-    printf("\n");*/
+    syslog(LOG_DEBUG, "\n");*/
 
     return 0;
 }
@@ -187,7 +187,7 @@ int tps65987_i2c_write(unsigned char dev_addr, unsigned char reg, unsigned char 
 
     if(data_len + 2 >= 80)
     {
-        printf("data_len_exceed\n");
+        syslog(LOG_DEBUG, "data_len_exceed\n");
         return -1;
     }
 
@@ -215,19 +215,19 @@ int tps65987_i2c_read(unsigned char addr, unsigned char reg, unsigned char *val,
 
     if(data_len + 1 >= 80)
     {
-        printf("data_len_exceed\n");
+        syslog(LOG_DEBUG, "data_len_exceed\n");
         return -1;
     }
 
     if(i2c_read(fd, addr, reg, buf, data_len+1) == 0)
     {
-        printf("read tps65987 reg 0x%x = ",reg);
+        syslog(LOG_DEBUG, "read tps65987 reg 0x%x = ",reg);
         for(i = 0; i < data_len; i++)
         {
             val[i] = buf[1+i];
-            printf("%02x ",val[i]);
+            syslog(LOG_DEBUG, "%02x ",val[i]);
         }
-        printf("\n");
+        syslog(LOG_DEBUG, "\n");
 
         return 0;
     }
@@ -250,7 +250,7 @@ static int tps65987_send_4CC_Cmd(unsigned char *cmd_ptr, unsigned char *cmd_data
 
         if(ret != 0)
         {
-            printf("write 4CC Cmd Used Data err \n");
+            syslog(LOG_DEBUG, "write 4CC Cmd Used Data err \n");
             return -1;
         }
     }
@@ -260,12 +260,12 @@ static int tps65987_send_4CC_Cmd(unsigned char *cmd_ptr, unsigned char *cmd_data
     val[2] = cmd_ptr[2];
     val[3] = cmd_ptr[3];
 
-    printf("send 4CC Cmd : ");
+    syslog(LOG_DEBUG, "send 4CC Cmd : ");
     for(i=0; i<4; i++)
     {
-        printf("%c",val[i]);
+        syslog(LOG_DEBUG, "%c",val[i]);
     }
-    printf("\n");
+    syslog(LOG_DEBUG, "\n");
 
     //write 4CC Cmd
     return tps65987_i2c_write(I2C_ADDR, 0x08, val, 4);
@@ -291,24 +291,24 @@ static int tps65987_check_4CC_Cmd_executed()
 
         if(memcmp(buf,Cmd_exec_success,4) == 0)
         {
-            printf("4CC Cmd executed, %d\n", i);
+            syslog(LOG_DEBUG, "4CC Cmd executed, %d\n", i);
             return 0;
         }
 
         if(memcmp(buf,Cmd_exec_fail,4) == 0)
         {
-            printf("4CC Cmd exec fail, %d\n", i);
+            syslog(LOG_DEBUG, "4CC Cmd exec fail, %d\n", i);
             return 1;
         }
 
         if(memcmp(buf,Cmd_unrecognized,4) == 0)
         {
-            printf("4CC Cmd unrecognized, %d\n", i);
+            syslog(LOG_DEBUG, "4CC Cmd unrecognized, %d\n", i);
             return -1;
         }
     }
 
-    printf("4CC Cmd exec timeout, %d\n", i);
+    syslog(LOG_DEBUG, "4CC Cmd exec timeout, %d\n", i);
     return -1;
 
 }
@@ -325,7 +325,7 @@ int tps65987_exec_4CC_Cmd(unsigned char *cmd_ptr, unsigned char *cmd_data_in_ptr
 
     if(tps65987_send_4CC_Cmd(cmd_ptr, cmd_data_in_ptr, cmd_data_in_length) != 0)
     {
-        printf("send_4CC_Cmd err\n");
+        syslog(LOG_DEBUG, "send_4CC_Cmd err\n");
         return -1;
     }
 
@@ -337,7 +337,7 @@ int tps65987_exec_4CC_Cmd(unsigned char *cmd_ptr, unsigned char *cmd_data_in_ptr
     {
         if(tps65987_check_4CC_Cmd_executed() != 0)
         {
-            printf("4CC_Cmd exec err\n");
+            syslog(LOG_DEBUG, "4CC_Cmd exec err\n");
             return -1;
         }
     }
@@ -347,7 +347,7 @@ int tps65987_exec_4CC_Cmd(unsigned char *cmd_ptr, unsigned char *cmd_data_in_ptr
     {
         if(tps65987_read_4CC_Cmd_exec_output(cmd_data_out_ptr, cmd_data_out_length) != 0)
         {
-            printf("read 4CC_Cmd exec output err\n");
+            syslog(LOG_DEBUG, "read 4CC_Cmd exec output err\n");
             return -1;
         }
     }
@@ -363,7 +363,7 @@ int ResetPDController()
     /*
     * Execute GAID, and wait for reset to complete
     */
-    printf("Send GAID and Waiting for device to reset\n\r");
+    syslog(LOG_DEBUG, "Send GAID and Waiting for device to reset\n\r");
     tps65987_exec_4CC_Cmd("GAID", NULL, 0, NULL, 0);
 
     usleep(1000000);
@@ -411,38 +411,38 @@ int tps65987_get_Status(s_TPS_status *p_tps_status)
 
     if(tps65987_i2c_read(I2C_ADDR, REG_Status, (unsigned char*)p_tps_status, 8) == 0)
     {
-        printf("get tps65987 Status: \n");
-        printf("PlugPresent: %d\n", p_tps_status->PlugPresent);
-        printf("ConnState: %d\n", p_tps_status->ConnState);
-        printf("PlugOrientation: %d\n", p_tps_status->PlugOrientation);
-        printf("PortRole: ");
+        syslog(LOG_DEBUG, "get tps65987 Status: \n");
+        syslog(LOG_DEBUG, "PlugPresent: %d\n", p_tps_status->PlugPresent);
+        syslog(LOG_DEBUG, "ConnState: %d\n", p_tps_status->ConnState);
+        syslog(LOG_DEBUG, "PlugOrientation: %d\n", p_tps_status->PlugOrientation);
+        syslog(LOG_DEBUG, "PortRole: ");
         switch(p_tps_status->PortRole)
         {
             case 0:
-                printf("Sink, %d\n", p_tps_status->PortRole);
+                syslog(LOG_DEBUG, "Sink, %d\n", p_tps_status->PortRole);
                 break;
 
             case 1:
-                printf("Source, %d\n", p_tps_status->PortRole);
+                syslog(LOG_DEBUG, "Source, %d\n", p_tps_status->PortRole);
                 break;
         }
 
-        printf("DataRole: %d\n", p_tps_status->DataRole);
+        syslog(LOG_DEBUG, "DataRole: %d\n", p_tps_status->DataRole);
         switch(p_tps_status->DataRole)
         {
             case 0:
-                printf("UFP, %d\n", p_tps_status->DataRole);
+                syslog(LOG_DEBUG, "UFP, %d\n", p_tps_status->DataRole);
                 break;
 
             case 1:
-                printf("DFP, %d\n", p_tps_status->DataRole);
+                syslog(LOG_DEBUG, "DFP, %d\n", p_tps_status->DataRole);
                 break;
         }
 
-        printf("VbusStatus: %d\n", p_tps_status->VbusStatus);
-        printf("UsbHostPresent: %d\n", p_tps_status->UsbHostPresent);
-        printf("HighVoltageWarning: %d\n", p_tps_status->HighVoltageWarning);
-        printf("LowVoltageWarning: %d\n", p_tps_status->LowVoltageWarning);
+        syslog(LOG_DEBUG, "VbusStatus: %d\n", p_tps_status->VbusStatus);
+        syslog(LOG_DEBUG, "UsbHostPresent: %d\n", p_tps_status->UsbHostPresent);
+        syslog(LOG_DEBUG, "HighVoltageWarning: %d\n", p_tps_status->HighVoltageWarning);
+        syslog(LOG_DEBUG, "LowVoltageWarning: %d\n", p_tps_status->LowVoltageWarning);
 
         return 0;
     }
@@ -461,38 +461,38 @@ int tps65987_get_PortRole(void)
 
     if(tps65987_i2c_read(I2C_ADDR, REG_Status, (unsigned char*)p_tps_status, 8) == 0)
     {
-        printf("get tps65987 Status: \n");
-        printf("PlugPresent: %d\n", p_tps_status->PlugPresent);
-        printf("ConnState: %d\n", p_tps_status->ConnState);
-        printf("PlugOrientation: %d\n", p_tps_status->PlugOrientation);
-        printf("PortRole: ");
+        syslog(LOG_DEBUG, "get tps65987 Status: \n");
+        syslog(LOG_DEBUG, "PlugPresent: %d\n", p_tps_status->PlugPresent);
+        syslog(LOG_DEBUG, "ConnState: %d\n", p_tps_status->ConnState);
+        syslog(LOG_DEBUG, "PlugOrientation: %d\n", p_tps_status->PlugOrientation);
+        syslog(LOG_DEBUG, "PortRole: ");
         switch(p_tps_status->PortRole)
         {
             case 0:
-                printf("Sink, %d\n", p_tps_status->PortRole);
+                syslog(LOG_DEBUG, "Sink, %d\n", p_tps_status->PortRole);
                 break;
 
             case 1:
-                printf("Source, %d\n", p_tps_status->PortRole);
+                syslog(LOG_DEBUG, "Source, %d\n", p_tps_status->PortRole);
                 break;
         }
 
-        printf("DataRole: %d\n", p_tps_status->DataRole);
+        syslog(LOG_DEBUG, "DataRole: %d\n", p_tps_status->DataRole);
         switch(p_tps_status->DataRole)
         {
             case 0:
-                printf("UFP, %d\n", p_tps_status->DataRole);
+                syslog(LOG_DEBUG, "UFP, %d\n", p_tps_status->DataRole);
                 break;
 
             case 1:
-                printf("DFP, %d\n", p_tps_status->DataRole);
+                syslog(LOG_DEBUG, "DFP, %d\n", p_tps_status->DataRole);
                 break;
         }
 
-        printf("VbusStatus: %d\n", p_tps_status->VbusStatus);
-        printf("UsbHostPresent: %d\n", p_tps_status->UsbHostPresent);
-        printf("HighVoltageWarning: %d\n", p_tps_status->HighVoltageWarning);
-        printf("LowVoltageWarning: %d\n", p_tps_status->LowVoltageWarning);
+        syslog(LOG_DEBUG, "VbusStatus: %d\n", p_tps_status->VbusStatus);
+        syslog(LOG_DEBUG, "UsbHostPresent: %d\n", p_tps_status->UsbHostPresent);
+        syslog(LOG_DEBUG, "HighVoltageWarning: %d\n", p_tps_status->HighVoltageWarning);
+        syslog(LOG_DEBUG, "LowVoltageWarning: %d\n", p_tps_status->LowVoltageWarning);
 
         //return PortRole
         return p_tps_status->PortRole;
@@ -511,13 +511,13 @@ int tps65987_get_RXSourceNumValidPDOs(void)
 
     if(tps65987_i2c_read(I2C_ADDR, REG_RX_Source_Capabilities, buf, 29) != 0)
     {
-        printf("get RXSourceNumValidPDOs err \n");
+        syslog(LOG_DEBUG, "get RXSourceNumValidPDOs err \n");
         return -1;
     }
 
     rx_valid_PDO_num = buf[0] & 0x07;
 
-    printf("get RXSourceNumValidPDOs = %d\n\n", rx_valid_PDO_num);
+    syslog(LOG_DEBUG, "get RXSourceNumValidPDOs = %d\n\n", rx_valid_PDO_num);
 
     return rx_valid_PDO_num;
 }
@@ -535,30 +535,30 @@ int tps65987_get_ActiveContractPDO(void)
 
     if(tps65987_i2c_read(I2C_ADDR, REG_ActiveContractPDO, buf, 6) != 0)
     {
-        printf("\nget ActiveContractPDO err \n");
+        syslog(LOG_DEBUG, "\nget ActiveContractPDO err \n");
         return -1;
     }
 
-    printf("\nget ActiveContractPDO = ");
+    syslog(LOG_DEBUG, "\nget ActiveContractPDO = ");
     for(i = 0; i < 6; i++)
     {
-        printf("%02x ",buf[i]);
+        syslog(LOG_DEBUG, "%02x ",buf[i]);
     }
-    printf("\n");
+    syslog(LOG_DEBUG, "\n");
 
     if(memcmp(buf, PDO_15V_3A, 4) == 0)
     {
-        printf("ActiveContractPDO is 15V/3A\n\n");
+        syslog(LOG_DEBUG, "ActiveContractPDO is 15V/3A\n\n");
 		return INPUT_CURRENT__USB_3A_Limit;
     }
     else if(memcmp(buf, PDO_20V_2d25A, 4) == 0)
     {
-        printf("ActiveContractPDO is 20V/2.25A\n\n");
+        syslog(LOG_DEBUG, "ActiveContractPDO is 20V/2.25A\n\n");
 		return INPUT_CURRENT__USB_2d25A_Limit;
     }
     else if(memcmp(buf, PDO_20V_3d25A, 4) == 0)
     {
-        printf("ActiveContractPDO is 20V/3.25A\n\n");
+        syslog(LOG_DEBUG, "ActiveContractPDO is 20V/3.25A\n\n");
 		return INPUT_CURRENT__USB_3d25A_Limit;	
     }
 
@@ -576,42 +576,42 @@ int tps65987_get_TypeC_Current(void)
 
     if(tps65987_i2c_read(I2C_ADDR, REG_Power_Status, (unsigned char*)p_tps_power_status, 2) == 0)
     {
-        printf("get tps65987 Power Status: \n");
-        printf("PowerConnection: %d\n", p_tps_power_status->PowerConnection);
-        printf("SourceSink: ");
+        syslog(LOG_DEBUG, "get tps65987 Power Status: \n");
+        syslog(LOG_DEBUG, "PowerConnection: %d\n", p_tps_power_status->PowerConnection);
+        syslog(LOG_DEBUG, "SourceSink: ");
         switch(p_tps_power_status->SourceSink)
         {
             case 0:
-                printf("PD Controller as source, %d\n", p_tps_power_status->SourceSink);
+                syslog(LOG_DEBUG, "PD Controller as source, %d\n", p_tps_power_status->SourceSink);
                 break;
 
             case 1:
-                printf("PD Controller as sink, %d\n", p_tps_power_status->SourceSink);
+                syslog(LOG_DEBUG, "PD Controller as sink, %d\n", p_tps_power_status->SourceSink);
                 break;
         }
 
-        printf("TypeC_Current: ");
+        syslog(LOG_DEBUG, "TypeC_Current: ");
         switch(p_tps_power_status->TypeC_Current)
         {
             case USB_Default_Current:
-                printf("USB Default Current, %d\n", p_tps_power_status->TypeC_Current);
+                syslog(LOG_DEBUG, "USB Default Current, %d\n", p_tps_power_status->TypeC_Current);
                 break;
 
             case C_1d5A_Current:
-                printf("1.5A, %d\n", p_tps_power_status->TypeC_Current);
+                syslog(LOG_DEBUG, "1.5A, %d\n", p_tps_power_status->TypeC_Current);
                 break;
 
             case C_3A_Current:
-                printf("3A, %d\n", p_tps_power_status->TypeC_Current);
+                syslog(LOG_DEBUG, "3A, %d\n", p_tps_power_status->TypeC_Current);
                 break;
 
             case PD_contract_negotiated:
-                printf("PD contract negotiated, %d\n", p_tps_power_status->TypeC_Current);
+                syslog(LOG_DEBUG, "PD contract negotiated, %d\n", p_tps_power_status->TypeC_Current);
                 break;
         }
 
-        printf("Charger Detect Status: %d\n", p_tps_power_status->Charger_Detect_Status);
-        printf("Charger_AdvertiseStatus: %d\n", p_tps_power_status->Charger_AdvertiseStatus);
+        syslog(LOG_DEBUG, "Charger Detect Status: %d\n", p_tps_power_status->Charger_Detect_Status);
+        syslog(LOG_DEBUG, "Charger_AdvertiseStatus: %d\n", p_tps_power_status->Charger_AdvertiseStatus);
 
         //return TypeC_Current
         return p_tps_power_status->TypeC_Current;

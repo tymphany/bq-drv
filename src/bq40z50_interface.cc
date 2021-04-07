@@ -51,12 +51,12 @@ static int check_endian(void)
 
     if(x0 == 0x12)
     {
-        printf("Big-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
+        syslog(LOG_DEBUG, "Big-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
     }
 
     if(x0 == 0x78)
     {
-        printf("Little-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
+        syslog(LOG_DEBUG, "Little-endian, x0=0x%x,x1=0x%x,x2=0x%x,x3=0x%x\n",x0,x1,x2,x3);
     }
 
     return 0;
@@ -80,25 +80,25 @@ int i2c_open_fuelgauge(void)
         return -1;
     }
 
-    printf("open fuelgauge i2c file success, fd is %d\n",fd);
+    syslog(LOG_DEBUG, "open fuelgauge i2c file success, fd is %d\n",fd);
 
     ret = ioctl(fd, I2C_SLAVE_FORCE, i2c_addr);
     if (ret < 0)
     {
-        printf("i2c: Failed to set i2c device address 0x%x\n",i2c_addr);
+        syslog(LOG_DEBUG, "i2c: Failed to set i2c device address 0x%x\n",i2c_addr);
         return -1;
     }
 
-    printf("i2c: set i2c device address success\n");
+    syslog(LOG_DEBUG, "i2c: set i2c device address success\n");
 
     val = 3;
     ret = ioctl(fd, I2C_RETRIES, val);
     if(ret < 0)
     {
-        printf("i2c: set i2c retry times err\n");
+        syslog(LOG_DEBUG, "i2c: set i2c retry times err\n");
     }
 
-    printf("i2c: set i2c retry times %d\n",val);
+    syslog(LOG_DEBUG, "i2c: set i2c retry times %d\n",val);
 
     /*
     * use I2C_TIMEOUT default setting, which is HZ, that means 1 second
@@ -129,16 +129,16 @@ static int i2c_write(int fd, unsigned char dev_addr, unsigned char *val, unsigne
 
     if(ret < 0)
     {
-        printf("write ioctl err %d\n",ret);
+        syslog(LOG_DEBUG, "write ioctl err %d\n",ret);
         return ret;
     }
 
-    /*printf("i2c write buf = ");
+    /*syslog(LOG_DEBUG, "i2c write buf = ");
     for(i=0; i< len; i++)
     {
-        printf("%02x ",val[i]);
+        syslog(LOG_DEBUG, "%02x ",val[i]);
     }
-    printf("\n");*/
+    syslog(LOG_DEBUG, "\n");*/
 
     return 0;
 }
@@ -171,17 +171,17 @@ static int i2c_read(int fd, unsigned char addr, unsigned char *reg_w_list, unsig
 
     if(ret < 0)
     {
-        printf("read ioctl err %d\n",ret);
+        syslog(LOG_DEBUG, "read ioctl err %d\n",ret);
         //i2c_read_err_count++;
         return ret;
     }
 
-    /*printf("i2c read buf = ");
+    /*syslog(LOG_DEBUG, "i2c read buf = ");
     for(i = 0; i < len; i++)
     {
-        printf("%02x ",val[i]);
+        syslog(LOG_DEBUG, "%02x ",val[i]);
     }
-    printf("\n");*/
+    syslog(LOG_DEBUG, "\n");*/
 
     return 0;
 }
@@ -196,13 +196,13 @@ static int bq40z50_i2c_write(unsigned char dev_addr, unsigned char reg, unsigned
 
     if(disable_communication_flag)
     {
-        printf("fuelgauge communication disabled\n");
+        syslog(LOG_DEBUG, "fuelgauge communication disabled\n");
         return -1;
     }
 
     if(data_len + 2 >= 80)
     {
-        printf("data_len_exceed\n");
+        syslog(LOG_DEBUG, "data_len_exceed\n");
         return -1;
     }
 
@@ -215,12 +215,12 @@ static int bq40z50_i2c_write(unsigned char dev_addr, unsigned char reg, unsigned
 
     if(i2c_write(fd, dev_addr, buf, data_len+1) == 0)
     {
-        printf("bq40z50 write reg 0x%02x = ",buf[0]);
+        syslog(LOG_DEBUG, "bq40z50 write reg 0x%02x = ",buf[0]);
         for(i = 1; i < data_len+1; i++)
         {
-            printf("%02x ",buf[i]);
+            syslog(LOG_DEBUG, "%02x ",buf[i]);
         }
-        printf("\n");
+        syslog(LOG_DEBUG, "\n");
 
         return 0;
     }
@@ -236,25 +236,25 @@ static int bq40z50_i2c_read(unsigned char addr, unsigned char *reg_w_list, unsig
 
     if(disable_communication_flag)
     {
-        printf("fuelgauge communication disabled\n");
+        syslog(LOG_DEBUG, "fuelgauge communication disabled\n");
         return -1;
     }
 
     if(data_len + 1 >= 80)
     {
-        printf("data_len_exceed\n");
+        syslog(LOG_DEBUG, "data_len_exceed\n");
         return -1;
     }
 
     if(i2c_read(fd, addr, reg_w_list, reg_w_len, buf, data_len) == 0)
     {
-        printf("bq40z50 read reg 0x%x = ",reg_w_list[0]);
+        syslog(LOG_DEBUG, "bq40z50 read reg 0x%x = ",reg_w_list[0]);
         for(i = 0; i < data_len; i++)
         {
             val[i] = buf[i];
-            printf("%02x ",val[i]);
+            syslog(LOG_DEBUG, "%02x ",val[i]);
         }
-        printf("\n");
+        syslog(LOG_DEBUG, "\n");
 
         return 0;
     }
@@ -265,11 +265,11 @@ static int bq40z50_i2c_read(unsigned char addr, unsigned char *reg_w_list, unsig
 
 static int bq40z50_ManufacturerAccess_Send(unsigned char* w_data, unsigned int len)
 {
-    printf("bq40z50 ManufacturerAccess Send\n");
+    syslog(LOG_DEBUG, "bq40z50 ManufacturerAccess Send\n");
 
     if(bq40z50_i2c_write(I2C_ADDR, ManufacturerAccess_REG, w_data, len) != 0)
     {
-        printf("bq40z50 ManufacturerAccess Send err\n");
+        syslog(LOG_DEBUG, "bq40z50 ManufacturerAccess Send err\n");
         return -1;
     }
 
@@ -283,11 +283,11 @@ static int bq40z50_ManufacturerAccess_Read(unsigned char *r_data, unsigned int l
 
     write_val[0] = ManufacturerData_REG;
 
-    printf("bq40z50 ManufacturerAccess Read\n");
+    syslog(LOG_DEBUG, "bq40z50 ManufacturerAccess Read\n");
 
     if(bq40z50_i2c_read(I2C_ADDR, write_val, 1, r_data, len) != 0)
     {
-        printf("bq40z50 ManufacturerAccess Read err\n");
+        syslog(LOG_DEBUG, "bq40z50 ManufacturerAccess Read err\n");
         return -1;
     }
 
@@ -308,12 +308,12 @@ void fuelgauge_read_FirmwareVersion(void)
     bq40z50_ManufacturerAccess_Send(w_buf, 2);
     bq40z50_ManufacturerAccess_Read(r_buf, 1 + 11); //the first byte is length
 
-    printf("bq40z50 read FirmwareVersion:");
+    syslog(LOG_DEBUG, "bq40z50 read FirmwareVersion:");
     for(i=0; i<16; i++)
     {
-        printf("%02x",r_buf[i]);
+        syslog(LOG_DEBUG, "%02x",r_buf[i]);
     }
-    printf("\n\n");
+    syslog(LOG_DEBUG, "\n\n");
 }
 
 void fuelgauge_read_Chemical_ID(void)
@@ -329,25 +329,25 @@ void fuelgauge_read_Chemical_ID(void)
     bq40z50_ManufacturerAccess_Send(w_buf, 2);
     bq40z50_ManufacturerAccess_Read(r_buf, 1 + 2); //the first byte is length
 
-    printf("bq40z50 read Chemical_ID:");
+    syslog(LOG_DEBUG, "bq40z50 read Chemical_ID:");
     for(i=0; i<16; i++)
     {
-        printf("%02x",r_buf[i]);
+        syslog(LOG_DEBUG, "%02x",r_buf[i]);
     }
-    printf("\n\n");
+    syslog(LOG_DEBUG, "\n\n");
 }
 
 
 void fuelgauge_disable_communication(void)
 {
     disable_communication_flag = 1;
-    printf("fuelgauge disable_communication\n");
+    syslog(LOG_DEBUG, "fuelgauge disable_communication\n");
 }
 
 void fuelgauge_enable_communication(void)
 {
     disable_communication_flag = 0;
-    printf("fuelgauge enable_communication\n");
+    syslog(LOG_DEBUG, "fuelgauge enable_communication\n");
 }
 
 int fuelgauge_battery_enter_shutdown_mode(void)
@@ -357,12 +357,12 @@ int fuelgauge_battery_enter_shutdown_mode(void)
     w_buf[0] = 0x10;
     w_buf[1] = 0x00;
 
-    printf("fuelgauge_battery_enter_shutdown_mode\n");
+    syslog(LOG_DEBUG, "fuelgauge_battery_enter_shutdown_mode\n");
 
     //write cmd twice in 4 seconds
     if(bq40z50_ManufacturerAccess_Send(w_buf, 2) != 0)
     {
-        printf("first write err\n");
+        syslog(LOG_DEBUG, "first write err\n");
         return -1;
     }
 
@@ -370,7 +370,7 @@ int fuelgauge_battery_enter_shutdown_mode(void)
 
     if(bq40z50_ManufacturerAccess_Send(w_buf, 2) != 0)
     {
-        printf("second write err\n");
+        syslog(LOG_DEBUG, "second write err\n");
         return -1;
     }
 
@@ -380,7 +380,7 @@ int fuelgauge_battery_enter_shutdown_mode(void)
 
 void check_fuelgauge_iic_readErrCnt(void)
 {
-    printf("read fuelgauge iic err times: %d / %d\n", i2c_read_err_count, i2c_read_count);
+    syslog(LOG_DEBUG, "read fuelgauge iic err times: %d / %d\n", i2c_read_err_count, i2c_read_count);
 }
 
 
@@ -405,7 +405,7 @@ int fuelgauge_get_Battery_Temperature(void)
     //convent to °C
     battery_temperature = temp/10 - 273;
 
-    printf("get battery Temperature %d * 0.1K, %dC\n\n", temp, battery_temperature);
+    syslog(LOG_DEBUG, "get battery Temperature %d * 0.1K, %dC\n\n", temp, battery_temperature);
 
     return battery_temperature;
 
@@ -427,15 +427,15 @@ int fuelgauge_get_Battery_Temperature(void)
 
     ret = fread(t_buf,1,16,fp);
 
-    printf("read %d data from file:", ret);
+    syslog(LOG_DEBUG, "read %d data from file:", ret);
     for(i=0; i<ret; i++)
     {
-        printf("%c",t_buf[i]);
+        syslog(LOG_DEBUG, "%c",t_buf[i]);
     }
-    printf("\n");
+    syslog(LOG_DEBUG, "\n");
 
     battery_temperature = atoi(t_buf);
-    printf("get batt temp: %d\n", battery_temperature);
+    syslog(LOG_DEBUG, "get batt temp: %d\n", battery_temperature);
 
     return battery_temperature;*/
 }
@@ -457,7 +457,7 @@ int fuelgauge_get_Battery_Voltage(void)
 
     battery_voltage = (buf[1]<<8) | buf[0];
 
-    printf("get battery Voltage %dmV\n\n", battery_voltage);
+    syslog(LOG_DEBUG, "get battery Voltage %dmV\n\n", battery_voltage);
 
     return battery_voltage;
 }
@@ -479,7 +479,7 @@ int fuelgauge_get_Battery_Current(void)
 
     battery_current = (signed short)((buf[1]<<8) | buf[0]);
 
-    printf("get battery Current %dmA\n\n", battery_current);
+    syslog(LOG_DEBUG, "get battery Current %dmA\n\n", battery_current);
 
     return battery_current;
 }
@@ -501,7 +501,7 @@ int fuelgauge_get_RelativeStateOfCharge(void)
 
     relative_state_of_charge = (buf[1]<<8) | buf[0];
 
-    printf("get RelativeStateOfCharge %d%%\n\n", relative_state_of_charge);
+    syslog(LOG_DEBUG, "get RelativeStateOfCharge %d%%\n\n", relative_state_of_charge);
 
     return relative_state_of_charge;
 }
@@ -523,7 +523,7 @@ int fuelgauge_get_AbsoluteStateOfCharge(void)
 
     absolute_state_of_charge = (buf[1]<<8) | buf[0];
 
-    printf("get Absolute State Of Charge %d%%\n\n", absolute_state_of_charge);
+    syslog(LOG_DEBUG, "get Absolute State Of Charge %d%%\n\n", absolute_state_of_charge);
 
     return absolute_state_of_charge;
 }
@@ -545,7 +545,7 @@ int fuelgauge_get_Battery_ChargingCurrent(void)
 
     battery_charge_current = (signed short)((buf[1]<<8) | buf[0]);
 
-    printf("get battery charge Current %dmA\n\n", battery_charge_current);
+    syslog(LOG_DEBUG, "get battery charge Current %dmA\n\n", battery_charge_current);
 
     return battery_charge_current;
 }
@@ -567,7 +567,7 @@ int fuelgauge_get_Battery_ChargingVoltage(void)
 
     battery_charge_voltage = (signed short)((buf[1]<<8) | buf[0]);
 
-    printf("get battery charge Voltage %dmV\n\n", battery_charge_voltage);
+    syslog(LOG_DEBUG, "get battery charge Voltage %dmV\n\n", battery_charge_voltage);
 
     return battery_charge_voltage;
 }
@@ -584,13 +584,13 @@ int fuelgauge_get_BatteryStatus(void)
     reg = 0x16;
     if(bq40z50_i2c_read(I2C_ADDR, &reg, 1, buf, 2) != 0)
     {
-        printf("get BatteryStatus err\n");
+        syslog(LOG_DEBUG, "get BatteryStatus err\n");
         return -1;
     }
 
     battery_status = (buf[1]<<8) | buf[0];
 
-    printf("get BatteryStatus %04x\n\n", battery_status);
+    syslog(LOG_DEBUG, "get BatteryStatus %04x\n\n", battery_status);
 
     return battery_status;
 }
@@ -608,7 +608,7 @@ int fuelgauge_check_BatteryFullyCharged(void)
 
     if(battery_status & 0x0020)
     {
-        printf("Battery fully charged\n\n");
+        syslog(LOG_DEBUG, "Battery fully charged\n\n");
         return 1;
     }
 

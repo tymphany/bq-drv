@@ -203,7 +203,7 @@ int i2c_open_bq25703(void)
         return -1;
     }
 
-    printf("open bq25703 i2c file success,fd is %d\n",fd_i2c);
+    syslog(LOG_DEBUG, "open bq25703 i2c file success,fd is %d\n",fd_i2c);
 
     ret = ioctl(fd_i2c, I2C_SLAVE_FORCE, BQ_I2C_ADDR);
     if (ret < 0)
@@ -212,16 +212,16 @@ int i2c_open_bq25703(void)
         return -1;
     }
 
-    printf("i2c: set i2c device address success\n");
+    syslog(LOG_DEBUG, "i2c: set i2c device address success\n");
 
     val = 3;
     ret = ioctl(fd_i2c, I2C_RETRIES, val);
     if(ret < 0)
     {
-        printf("i2c: set i2c retry times err\n");
+        syslog(LOG_DEBUG, "i2c: set i2c retry times err\n");
     }
 
-    printf("i2c: set i2c retry times %d\n",val);
+    syslog(LOG_DEBUG, "i2c: set i2c retry times %d\n",val);
 
     return 0;
 }
@@ -247,16 +247,16 @@ static int i2c_write(unsigned char dev_addr, unsigned char *val, unsigned char l
 
     if(ioctl(fd_i2c, I2C_RDWR, &data) < 0)
     {
-        printf("write ioctl err %d\n",fd_i2c);
+        syslog(LOG_DEBUG, "write ioctl err %d\n",fd_i2c);
         return -1;
     }
 
-    printf("i2c write buf = ");
+    syslog(LOG_DEBUG, "i2c write buf = ");
     for(i=0; i< len; i++)
     {
-        printf("%02x ",val[i]);
+        syslog(LOG_DEBUG, "%02x ",val[i]);
     }
-    printf("\n");
+    syslog(LOG_DEBUG, "\n");
 
     return 0;
 }
@@ -286,17 +286,17 @@ static int i2c_read(unsigned char addr, unsigned char reg, unsigned char *val, u
     if(ioctl(fd_i2c, I2C_RDWR, &data) < 0)
     {
         perror("---");
-        printf("read ioctl err %d\n",fd_i2c);
+        syslog(LOG_DEBUG, "read ioctl err %d\n",fd_i2c);
 
         return -1;
     }
 
-    /*printf("i2c read buf = ");
+    /*syslog(LOG_DEBUG, "i2c read buf = ");
     for(i = 0; i < len; i++)
     {
-        printf("%02x ",val[i]);
+        syslog(LOG_DEBUG, "%02x ",val[i]);
     }
-    printf("\n");*/
+    syslog(LOG_DEBUG, "\n");*/
 
     return 0;
 }
@@ -309,7 +309,7 @@ static int bq25703a_i2c_write(unsigned char dev_addr, unsigned char reg, unsigne
 
     if(data_len + 1 >= 80)
     {
-        printf("data_len_exceed\n");
+        syslog(LOG_DEBUG, "data_len_exceed\n");
         return 1;
     }
 
@@ -335,19 +335,19 @@ int bq25703a_otg_function_init()
 {
     int i = 0;
 
-    printf("OTG_REGISTER_DDR_VALUE_BUF:\n");
+    syslog(LOG_DEBUG, "OTG_REGISTER_DDR_VALUE_BUF:\n");
     for (i = 0; i < sizeof(OTG_REGISTER_DDR_VALUE_BUF)/sizeof(uint16_t); i = i + 2)
     {
-        printf("%02x, %04x\n",OTG_REGISTER_DDR_VALUE_BUF[i],OTG_REGISTER_DDR_VALUE_BUF[i+1]);
+        syslog(LOG_DEBUG, "%02x, %04x\n",OTG_REGISTER_DDR_VALUE_BUF[i],OTG_REGISTER_DDR_VALUE_BUF[i+1]);
 
         if(bq25703a_i2c_write(BQ_I2C_ADDR,OTG_REGISTER_DDR_VALUE_BUF[i],((unsigned char*)(&OTG_REGISTER_DDR_VALUE_BUF[i+1])),2) != 0)
         {
-            printf("write reg %02x eer\n",OTG_REGISTER_DDR_VALUE_BUF[i]);
+            syslog(LOG_DEBUG, "write reg %02x eer\n",OTG_REGISTER_DDR_VALUE_BUF[i]);
             return -1;
         }
     }
 
-    printf("bq25703a OTG function init success");
+    syslog(LOG_DEBUG, "bq25703a OTG function init success");
 
     return 0;
 }
@@ -367,7 +367,7 @@ int bq25703a_set_otg_vol_and_current()
                 2)
       )
     {
-        printf("write %d eer\n",OTG_REGISTER_DDR_VALUE_BUF[2]);
+        syslog(LOG_DEBUG, "write %d eer\n",OTG_REGISTER_DDR_VALUE_BUF[2]);
         return -1;
     }
 
@@ -378,7 +378,7 @@ int bq25703a_set_otg_vol_and_current()
                 2)
       )
     {
-        printf("write register addr %d eer\n",OTG_REGISTER_DDR_VALUE_BUF[4]);
+        syslog(LOG_DEBUG, "write register addr %d eer\n",OTG_REGISTER_DDR_VALUE_BUF[4]);
         return -1;
     }
     return 0;
@@ -389,19 +389,19 @@ int bq25703a_charge_function_init()
 {
     int i = 0;
 
-    printf("CHARGE_REGISTER_DDR_VALUE_BUF:\n");
+    syslog(LOG_DEBUG, "CHARGE_REGISTER_DDR_VALUE_BUF:\n");
     for (i = 0; i < sizeof(CHARGE_REGISTER_DDR_VALUE_BUF)/sizeof(uint16_t); i = i + 2)
     {
-        printf("%02x, %04x\n",CHARGE_REGISTER_DDR_VALUE_BUF[i],CHARGE_REGISTER_DDR_VALUE_BUF[i+1]);
+        syslog(LOG_DEBUG, "%02x, %04x\n",CHARGE_REGISTER_DDR_VALUE_BUF[i],CHARGE_REGISTER_DDR_VALUE_BUF[i+1]);
 
         if(bq25703a_i2c_write(BQ_I2C_ADDR,CHARGE_REGISTER_DDR_VALUE_BUF[i],((unsigned char*)(&CHARGE_REGISTER_DDR_VALUE_BUF[i+1])),2) != 0)
         {
-            printf("write reg %x eer\n",CHARGE_REGISTER_DDR_VALUE_BUF[i]);
+            syslog(LOG_DEBUG, "write reg %x eer\n",CHARGE_REGISTER_DDR_VALUE_BUF[i]);
             return -1;
         }
     }
 
-    printf("bq25703a charge_function init success\n");
+    syslog(LOG_DEBUG, "bq25703a charge_function init success\n");
 
     return 0;
 }
@@ -412,7 +412,7 @@ int bq25703_set_ChargeCurrent(unsigned int charge_current_set)
     int charge_current = charge_current_set;
     int charge_vol = MAX_CHARGE_VOLTAGE;
 
-    printf("set charge current: %dmA\n",charge_current);
+    syslog(LOG_DEBUG, "set charge current: %dmA\n",charge_current);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -421,12 +421,12 @@ int bq25703_set_ChargeCurrent(unsigned int charge_current_set)
                 2)
       )
     {
-        printf("write Current err\n");
+        syslog(LOG_DEBUG, "write Current err\n");
         return -1;
     }
 
 
-    /*printf("set charge voltage: %dmA\n\n",charge_vol);
+    /*syslog(LOG_DEBUG, "set charge voltage: %dmA\n\n",charge_vol);
 
     if(0 != bq25703a_i2c_write(
            BQ_I2C_ADDR,
@@ -435,7 +435,7 @@ int bq25703_set_ChargeCurrent(unsigned int charge_current_set)
            2)
       )
     {
-        printf("write VOLTAGE eer\n");
+        syslog(LOG_DEBUG, "write VOLTAGE eer\n");
         return -1;
     }*/
 
@@ -455,7 +455,7 @@ int bq25703a_get_ChargeCurrentSetting(void)
     }
     else
     {
-        printf("read charge_current_reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
+        syslog(LOG_DEBUG, "read charge_current_reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
 
         if(buf[0] & 0x40)
         {
@@ -492,7 +492,7 @@ int bq25703a_get_ChargeCurrentSetting(void)
             charge_current += 4096;
         }
 
-        printf("Charge Current Max: %dmA\n\n",charge_current);
+        syslog(LOG_DEBUG, "Charge Current Max: %dmA\n\n",charge_current);
 
         return charge_current;
     }
@@ -502,7 +502,7 @@ int bq25703a_get_ChargeCurrentSetting(void)
 
 int bq25703_disable_OTG()
 {
-    printf("disable otg\n");
+    syslog(LOG_DEBUG, "disable otg\n");
 	unsigned char buf[2] = {0,0};
 
     if(0 != bq25703a_i2c_write(
@@ -512,7 +512,7 @@ int bq25703_disable_OTG()
                 2)
       )
     {
-        printf("disable otg err\n");
+        syslog(LOG_DEBUG, "disable otg err\n");
         return -1;
     }
 
@@ -523,7 +523,7 @@ int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
 {
     int input_voltage_limit = input_voltage_limit_set;
 
-    printf("set charge input voltage limit: %dmV\n", input_voltage_limit + 3200);
+    syslog(LOG_DEBUG, "set charge input voltage limit: %dmV\n", input_voltage_limit + 3200);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -532,7 +532,7 @@ int bq25703_set_InputVoltageLimit(unsigned int input_voltage_limit_set)
                 2)
       )
     {
-        printf("write voltage err\n");
+        syslog(LOG_DEBUG, "write voltage err\n");
         return -1;
     }
 
@@ -543,7 +543,7 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
 {
     int input_voltage_limit = input_current_limit_set;
 
-    printf("set input currnet limit: %dmA\n",( input_current_limit_set >>8 )*50);
+    syslog(LOG_DEBUG, "set input currnet limit: %dmA\n",( input_current_limit_set >>8 )*50);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -552,7 +552,7 @@ int bq25703_set_InputCurrentLimit(unsigned int input_current_limit_set)
                 2)
       )
     {
-        printf("write Current eer\n");
+        syslog(LOG_DEBUG, "write Current eer\n");
         return -1;
     }
 
@@ -572,7 +572,7 @@ int bq25703a_get_InputVoltageLimit(void)
     }
     else
     {
-        printf("read input voltage limit reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
+        syslog(LOG_DEBUG, "read input voltage limit reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
 
         if(buf[0] & 0x40)
         {
@@ -609,7 +609,7 @@ int bq25703a_get_InputVoltageLimit(void)
             input_voltage_limit += 4096;
         }
 
-        printf("Input Voltage Limit: %dmV\n\n",input_voltage_limit);
+        syslog(LOG_DEBUG, "Input Voltage Limit: %dmV\n\n",input_voltage_limit);
 
         return input_voltage_limit;
     }
@@ -627,14 +627,14 @@ int bq25703a_get_BatteryVol_and_SystemVol(unsigned int *p_BatteryVol, unsigned i
     }
     else
     {
-        printf("read SYSTEM_AND_BATTERY_VOL reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
+        syslog(LOG_DEBUG, "read SYSTEM_AND_BATTERY_VOL reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
 
         //vol = 2880mv + buf[1]*64
         *p_BatteryVol = 2880 + buf[0] * 64;
         *p_SystemVol = 2880 + buf[1] * 64;
 
-        printf("Battery Voltage: %dmV\n",*p_BatteryVol);
-        printf("System Voltage: %dmV\n\n",*p_SystemVol);
+        syslog(LOG_DEBUG, "Battery Voltage: %dmV\n",*p_BatteryVol);
+        syslog(LOG_DEBUG, "System Voltage: %dmV\n\n",*p_SystemVol);
     }
 
     return 0;
@@ -651,7 +651,7 @@ int bq25703a_get_PSYS_and_VBUS(unsigned int *p_PSYS_vol, unsigned int *p_VBUS_vo
     }
     else
     {
-        printf("read PSYS_and_VBUS reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
+        syslog(LOG_DEBUG, "read PSYS_and_VBUS reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
 
         //psys = value*12
         *p_PSYS_vol = buf[0] * 12;
@@ -659,8 +659,8 @@ int bq25703a_get_PSYS_and_VBUS(unsigned int *p_PSYS_vol, unsigned int *p_VBUS_vo
         //vbus = 3200mv + value*64
         *p_VBUS_vol = 3200 + buf[1] * 64;
 
-        printf("PSYS: %dmV\n",*p_PSYS_vol);
-        printf("VBUS: %dmV\n\n",*p_VBUS_vol);
+        syslog(LOG_DEBUG, "PSYS: %dmV\n",*p_PSYS_vol);
+        syslog(LOG_DEBUG, "VBUS: %dmV\n\n",*p_VBUS_vol);
     }
 
     return 0;
@@ -677,7 +677,7 @@ int bq25703a_get_CMPINVol_and_InputCurrent(unsigned int *p_CMPIN_vol, unsigned i
     }
     else
     {
-        printf("read CMPINVol_and_InputCurrent reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
+        syslog(LOG_DEBUG, "read CMPINVol_and_InputCurrent reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
 
         //CMPIN: Full range: 3.06 V, LSB: 12 mV
         *p_CMPIN_vol = buf[0] * 12;
@@ -685,8 +685,8 @@ int bq25703a_get_CMPINVol_and_InputCurrent(unsigned int *p_CMPIN_vol, unsigned i
         //Iuput Current: Full range: 12.75 A, LSB: 50 mA
         *p_input_current = buf[1] * 50;
 
-        printf("CMPIN Voltage: %dmV\n",*p_CMPIN_vol);
-        printf("Input Current: %dmA\n\n",*p_input_current);
+        syslog(LOG_DEBUG, "CMPIN Voltage: %dmV\n",*p_CMPIN_vol);
+        syslog(LOG_DEBUG, "Input Current: %dmA\n\n",*p_input_current);
     }
 
     return 0;
@@ -703,7 +703,7 @@ int bq25703a_get_Battery_Current(unsigned int *p_battery_discharge_current, unsi
     }
     else
     {
-        printf("read Battery_Current reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
+        syslog(LOG_DEBUG, "read Battery_Current reg: 0x%02x 0x%02x\n",buf[0],buf[1]);
 
         //IDCHG: Full range: 32.512 A, LSB: 256 mA
         *p_battery_discharge_current = buf[0] * 256;
@@ -711,8 +711,8 @@ int bq25703a_get_Battery_Current(unsigned int *p_battery_discharge_current, unsi
         //ICHG: Full range: 8.128 A, LSB: 64 mA
         *p_battery_charge_current = buf[1] * 64;
 
-        printf("Battery discharge current: %dmA\n",*p_battery_discharge_current);
-        printf("Battery charge current: %dmA\n\n",*p_battery_charge_current);
+        syslog(LOG_DEBUG, "Battery discharge current: %dmA\n",*p_battery_discharge_current);
+        syslog(LOG_DEBUG, "Battery charge current: %dmA\n\n",*p_battery_charge_current);
     }
 
     return 0;
@@ -732,21 +732,21 @@ int bq25703a_get_Charger_Status(void)
         return -1;
     }
 
-    printf("get bq25703 Charger Status: \n");
-    printf("Fault_OTG_UCP: %d\n", p_bq_charger_status->Fault_OTG_UCP);
-    printf("Fault_OTG_OVP: %d\n", p_bq_charger_status->Fault_OTG_OVP);
-    printf("Fault_Latchoff: %d\n", p_bq_charger_status->Fault_Latchoff);
-    printf("SYSOVP_STAT: %d\n", p_bq_charger_status->SYSOVP_STAT);
-    printf("Fault_ACOC: %d\n", p_bq_charger_status->Fault_ACOC);
-    printf("Fault_BATOC: %d\n", p_bq_charger_status->Fault_BATOC);
-    printf("Fault_ACOV: %d\n", p_bq_charger_status->Fault_ACOV);
-    printf("IN_OTG: %d\n", p_bq_charger_status->IN_OTG);
-    printf("IN_PCHRG: %d\n", p_bq_charger_status->IN_PCHRG);
-    printf("IN_FCHRG: %d\n", p_bq_charger_status->IN_FCHRG);
-    printf("IN_IINDPM: %d\n", p_bq_charger_status->IN_IINDPM);
-    printf("IN_VINDPM: %d\n", p_bq_charger_status->IN_VINDPM);
-    printf("ICO_DONE: %d\n", p_bq_charger_status->ICO_DONE);
-    printf("AC_STAT: %d\n\n", p_bq_charger_status->AC_STAT);
+    syslog(LOG_DEBUG, "get bq25703 Charger Status: \n");
+    syslog(LOG_DEBUG, "Fault_OTG_UCP: %d\n", p_bq_charger_status->Fault_OTG_UCP);
+    syslog(LOG_DEBUG, "Fault_OTG_OVP: %d\n", p_bq_charger_status->Fault_OTG_OVP);
+    syslog(LOG_DEBUG, "Fault_Latchoff: %d\n", p_bq_charger_status->Fault_Latchoff);
+    syslog(LOG_DEBUG, "SYSOVP_STAT: %d\n", p_bq_charger_status->SYSOVP_STAT);
+    syslog(LOG_DEBUG, "Fault_ACOC: %d\n", p_bq_charger_status->Fault_ACOC);
+    syslog(LOG_DEBUG, "Fault_BATOC: %d\n", p_bq_charger_status->Fault_BATOC);
+    syslog(LOG_DEBUG, "Fault_ACOV: %d\n", p_bq_charger_status->Fault_ACOV);
+    syslog(LOG_DEBUG, "IN_OTG: %d\n", p_bq_charger_status->IN_OTG);
+    syslog(LOG_DEBUG, "IN_PCHRG: %d\n", p_bq_charger_status->IN_PCHRG);
+    syslog(LOG_DEBUG, "IN_FCHRG: %d\n", p_bq_charger_status->IN_FCHRG);
+    syslog(LOG_DEBUG, "IN_IINDPM: %d\n", p_bq_charger_status->IN_IINDPM);
+    syslog(LOG_DEBUG, "IN_VINDPM: %d\n", p_bq_charger_status->IN_VINDPM);
+    syslog(LOG_DEBUG, "ICO_DONE: %d\n", p_bq_charger_status->ICO_DONE);
+    syslog(LOG_DEBUG, "AC_STAT: %d\n\n", p_bq_charger_status->AC_STAT);
 
     return 0;
 }
@@ -756,7 +756,7 @@ int bq25703_init_ChargeOption_0(void)
 {
     int charge_option_0_setting = CHARGE_OPTION_0_SETTING;
 
-    printf("charge_option_0_setting: %04x\n",charge_option_0_setting);
+    syslog(LOG_DEBUG, "charge_option_0_setting: %04x\n",charge_option_0_setting);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -765,7 +765,7 @@ int bq25703_init_ChargeOption_0(void)
                 2)
       )
     {
-        printf("write reg eer\n");
+        syslog(LOG_DEBUG, "write reg eer\n");
         return -1;
     }
 
@@ -784,7 +784,7 @@ int bq25703_enter_LEARN_Mode(void)
 {
     int charge_option_0_setting = CHARGE_OPTION_0_SETTING | EN_LEARN;
 
-    printf("charge_option_0_setting: %04x\n",charge_option_0_setting);
+    syslog(LOG_DEBUG, "charge_option_0_setting: %04x\n",charge_option_0_setting);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -793,11 +793,11 @@ int bq25703_enter_LEARN_Mode(void)
                 2)
       )
     {
-        printf("write reg eer\n");
+        syslog(LOG_DEBUG, "write reg eer\n");
         return -1;
     }
 
-    printf("\nbq25703 enter LEARN_Mode\n\n\n");
+    syslog(LOG_DEBUG, "\nbq25703 enter LEARN_Mode\n\n\n");
 
     return 0;
 }
@@ -807,7 +807,7 @@ int bq25703_enter_LowPowerMode(void)
 {
     int charge_option_0_setting = CHARGE_OPTION_0_SETTING | EN_LWPWR;
 
-    printf("charge_option_0_setting: %04x\n",charge_option_0_setting);
+    syslog(LOG_DEBUG, "charge_option_0_setting: %04x\n",charge_option_0_setting);
 
     if(0 != bq25703a_i2c_write(
                 BQ_I2C_ADDR,
@@ -816,11 +816,11 @@ int bq25703_enter_LowPowerMode(void)
                 2)
       )
     {
-        printf("write reg eer\n");
+        syslog(LOG_DEBUG, "write reg eer\n");
         return -1;
     }
 
-    printf("\nbq25703 enter Low Power Mode\n\n\n");
+    syslog(LOG_DEBUG, "\nbq25703 enter Low Power Mode\n\n\n");
 
     return 0;
 }
@@ -835,16 +835,16 @@ int bq25703a_get_ChargeOption0_Setting(void)
         return -1;
     }
 
-    printf("get ChargeOption0 setting: 0x%02x%02x\n",buf[1],buf[0]);
+    syslog(LOG_DEBUG, "get ChargeOption0 setting: 0x%02x%02x\n",buf[1],buf[0]);
 
     if(buf[1] & 0x80)
     {
-        printf("Low Power Mode is enabled\n\n");
+        syslog(LOG_DEBUG, "Low Power Mode is enabled\n\n");
     }
 
     if(buf[0] & 0x20)
     {
-        printf("LEARN_Mode is enabled\n\n");
+        syslog(LOG_DEBUG, "LEARN_Mode is enabled\n\n");
     }
 
     return 0;
@@ -921,7 +921,7 @@ int decide_the_ChargeCurrent(void)
 
     charge_level = decide_the_ChargeLevel();
 
-    printf("\ndecide_the_ChargeLevel: %d by voltage: %dmV, temperature: %dC\n",charge_level, batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
+    syslog(LOG_DEBUG, "\ndecide_the_ChargeLevel: %d by voltage: %dmV, temperature: %dC\n",charge_level, batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
 
     switch(charge_level)
     {
@@ -943,7 +943,7 @@ int decide_the_ChargeCurrent(void)
         break;
     }
 
-    printf("decide_the_ChargeCurrent: %dmA\n",charge_current);
+    syslog(LOG_DEBUG, "decide_the_ChargeCurrent: %dmA\n",charge_current);
 
     return charge_current;
 }
@@ -961,7 +961,7 @@ int bq25703_enable_charge(void)
     int charge_current = CHARGE_CURRENT_0;
 
     bq25703a_get_PSYS_and_VBUS(&PSys_vol, &VBus_vol);
-    printf("get VBus_vol = %d\n",VBus_vol);
+    syslog(LOG_DEBUG, "get VBus_vol = %d\n",VBus_vol);
 
 
     if(bq25703_init_ChargeOption_0() != 0)
@@ -1065,12 +1065,12 @@ int init_Chg_OK_Pin(void)
     //set_edge(pin_number, "rising");
     set_edge(pin_number, "both");
 
-    sprintf(file_path, "/sys/class/gpio/gpio%d/value", pin_number);
+    ssyslog(LOG_DEBUG, file_path, "/sys/class/gpio/gpio%d/value", pin_number);
 
     fd_chg_ok_pin = open(file_path, O_RDONLY);
     if(fd_chg_ok_pin < 0)
     {
-        printf("can't open %s!\n", file_path);
+        syslog(LOG_DEBUG, "can't open %s!\n", file_path);
         return -1;
     }
 
@@ -1085,12 +1085,12 @@ int get_Chg_OK_Pin_value(void)
 
     if(lseek(fd_chg_ok_pin, 0, SEEK_SET) == -1)
     {
-        printf("lseek failed!\n");
+        syslog(LOG_DEBUG, "lseek failed!\n");
         return -1;
     }
 
     n = read(fd_chg_ok_pin, value, sizeof(value));
-    printf("read %d bytes %c %c\n", n, value[0],value[1]);
+    syslog(LOG_DEBUG, "read %d bytes %c %c\n", n, value[0],value[1]);
 
     return value[0];
 }
@@ -1146,7 +1146,7 @@ void check_BatteryFullyCharged_Task(void)
                 break;
             }
 
-            printf("fully charged, stop charging!\n");
+            syslog(LOG_DEBUG, "fully charged, stop charging!\n");
         }
 
         batteryManagePara.battery_fully_charged = 1;
@@ -1155,7 +1155,7 @@ void check_BatteryFullyCharged_Task(void)
         break;
 
     case 0:
-		printf("ryder: charge condition: %d, %d, %d\n", batteryManagePara.need_charge_flag,batteryManagePara.temperature_allow_charge, batteryManagePara.charger_is_plug_in);
+		syslog(LOG_DEBUG, "ryder: charge condition: %d, %d, %d\n", batteryManagePara.need_charge_flag,batteryManagePara.temperature_allow_charge, batteryManagePara.charger_is_plug_in);
         if(!batteryManagePara.need_charge_flag)
         {
             if(batteryManagePara.temperature_allow_charge)
@@ -1273,11 +1273,11 @@ int check_Battery_allow_charge(void)
     if(batteryTemperature_is_in_ChargeAllowThreshold(batteryManagePara.battery_temperature)
             && (!batteryVoltage_is_over_MaxThreshold(batteryManagePara.battery_voltage)))
     {
-        printf("battery allow charging!, temperature %d, voltage %dmV\n",batteryManagePara.battery_temperature, batteryManagePara.battery_voltage);
+        syslog(LOG_DEBUG, "battery allow charging!, temperature %d, voltage %dmV\n",batteryManagePara.battery_temperature, batteryManagePara.battery_voltage);
         return 1;
     }
 
-    printf("battery not allow charging!, temperature %d, voltage %dmV\n",batteryManagePara.battery_temperature, batteryManagePara.battery_voltage);
+    syslog(LOG_DEBUG, "battery not allow charging!, temperature %d, voltage %dmV\n",batteryManagePara.battery_temperature, batteryManagePara.battery_voltage);
     return 0;
 }
 
@@ -1316,13 +1316,13 @@ int create_batteryTemperture_logFile(void)
     fp_batt_temp = fopen("/data/battery_temperature_log","a+");
     if(fp_batt_temp == NULL)
     {
-        printf("fail to create battery_temperature_log\n");
+        syslog(LOG_DEBUG, "fail to create battery_temperature_log\n");
         return -1;
     }
 
     log_batt_temp_flag = 1;
 
-    printf("open battery_temperature_log file success, fd is %d\n", fileno(fp_batt_temp));
+    syslog(LOG_DEBUG, "open battery_temperature_log file success, fd is %d\n", fileno(fp_batt_temp));
 
     time_t nSeconds;
     struct tm * pTM;
@@ -1330,7 +1330,7 @@ int create_batteryTemperture_logFile(void)
     time(&nSeconds);
     pTM = localtime(&nSeconds);
 
-    if(fprintf(fp_batt_temp, "\n\nstart_new_log: %04d-%02d-%02d %02d:%02d:%02d\n",
+    if(fsyslog(LOG_DEBUG, fp_batt_temp, "\n\nstart_new_log: %04d-%02d-%02d %02d:%02d:%02d\n",
                pTM->tm_year + 1900, pTM->tm_mon + 1, pTM->tm_mday,
                pTM->tm_hour, pTM->tm_min, pTM->tm_sec) >= 0)
     {
@@ -1338,7 +1338,7 @@ int create_batteryTemperture_logFile(void)
     }
     else
     {
-        printf("write file error");
+        syslog(LOG_DEBUG, "write file error");
     }
 
     return 0;
@@ -1354,7 +1354,7 @@ int system_power_off(void)
 
     set_value(pin_number, 1);
 
-    printf("shutdown system\n");
+    syslog(LOG_DEBUG, "shutdown system\n");
     system("shutdown 0");
     return 0;
 }
@@ -1391,7 +1391,7 @@ int update_fuelgauge_BatteryInfo(void)
     {
         batteryManagePara.battery_is_charging = 1;
         batteryManagePara.battery_is_discharging = 0;
-        printf("Battery is charging, current is %d", battery_current);
+        syslog(LOG_DEBUG, "Battery is charging, current is %d", battery_current);
     }
 
     battery_relativeStateOfCharge = fuelgauge_get_RelativeStateOfCharge();
@@ -1401,7 +1401,7 @@ int update_fuelgauge_BatteryInfo(void)
         char buff[128];
         char cmd[128];
 
-        snprintf(cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
+        snsyslog(LOG_DEBUG, cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
         system(cmd);
 
         if(battery_relativeStateOfCharge < 5) {
@@ -1426,14 +1426,14 @@ int update_fuelgauge_BatteryInfo(void)
             {
                 fgets(buff, 128, (FILE*)fp);
                 fclose(fp);
-                printf("get shipment SOC %d",atoi(buff));
+                syslog(LOG_DEBUG, "get shipment SOC %d",atoi(buff));
                 if(battery_relativeStateOfCharge >= atoi(buff))
                 {
                     batteryManagePara.factory_shipment_charge_complete_flag = 1;
-                    printf("shipment SOC reached\n");
+                    syslog(LOG_DEBUG, "shipment SOC reached\n");
                 } else
                 {
-                    printf("shipment SOC not not reached\n");
+                    syslog(LOG_DEBUG, "shipment SOC not not reached\n");
                 }
             }
 /*Checked by battary fully charged task
@@ -1472,7 +1472,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                 return;
             }
 
-            printf("battery temperature %d, is over threshold, stop charging!\n",battery_temperature);
+            syslog(LOG_DEBUG, "battery temperature %d, is over threshold, stop charging!\n",battery_temperature);
         }
 
         batteryManagePara.temperature_stop_charge = 1;
@@ -1496,7 +1496,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                         break;
                     }
 
-                    printf("\ndecide_the_ChargeLevel 1 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
+                    syslog(LOG_DEBUG, "\ndecide_the_ChargeLevel 1 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
 
                     if(bq25703_enable_charge() != 0)
                     {
@@ -1512,7 +1512,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                         break;
                     }
 
-                    printf("\ndecide_the_ChargeLevel 2 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
+                    syslog(LOG_DEBUG, "\ndecide_the_ChargeLevel 2 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
 
                     if(bq25703_enable_charge() != 0)
                     {
@@ -1528,7 +1528,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                         break;
                     }
 
-                    printf("\ndecide_the_ChargeLevel 3 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
+                    syslog(LOG_DEBUG, "\ndecide_the_ChargeLevel 3 by voltage: %dmV, temperature: %dC\n",batteryManagePara.battery_voltage, batteryManagePara.battery_temperature);
 
                     if(bq25703_enable_charge() != 0)
                     {
@@ -1557,7 +1557,7 @@ void batteryCharge_handle_Task(int battery_temperature)
 
 void batteryFault_handle_Task(int battery_temperature)
 {
-    printf("temrature is %d\n", battery_temperature);
+    syslog(LOG_DEBUG, "temrature is %d\n", battery_temperature);
 
     if(battery_temperature > OVERHEAT2 && batteryManagePara.fault != Overheat2)
     {
@@ -1576,7 +1576,7 @@ void batteryFault_handle_Task(int battery_temperature)
         batteryManagePara.fault = No_Fault;
         system("adk-message-send 'system_mode_management {name: \"batfault::nofault\"}'");
     } else {
-        printf("fault status not changed.\n");
+        syslog(LOG_DEBUG, "fault status not changed.\n");
     }
 
     return;
@@ -1592,7 +1592,7 @@ void batteryDisCharge_handle_Task(int battery_temperature)
             if(!batteryManagePara.adjust_eq_flag)
             {
                 //adjust EQ
-                printf("battery temperature %d, overstep AdjustEQThreshold, adjust EQ\n",battery_temperature);
+                syslog(LOG_DEBUG, "battery temperature %d, overstep AdjustEQThreshold, adjust EQ\n",battery_temperature);
             }
 
             batteryManagePara.adjust_eq_flag = 1;
@@ -1602,7 +1602,7 @@ void batteryDisCharge_handle_Task(int battery_temperature)
             if(batteryManagePara.adjust_eq_flag)
             {
                 //recovery EQ
-                printf("battery temperature %d, in RecoveryEQThreshold, recovery EQ\n",battery_temperature);
+                syslog(LOG_DEBUG, "battery temperature %d, in RecoveryEQThreshold, recovery EQ\n",battery_temperature);
             }
 
             batteryManagePara.adjust_eq_flag = 0;
@@ -1614,7 +1614,7 @@ void batteryDisCharge_handle_Task(int battery_temperature)
         //power off
         if(system_power_off() != 0)
         {
-            printf("system power_off fail\n\n");
+            syslog(LOG_DEBUG, "system power_off fail\n\n");
         }
     }
 }
@@ -1630,13 +1630,13 @@ void batteryTemperature_handle_Task(void)
     if(log_batt_temp_flag)
     {
         //log the battery_temperature for debug
-        if(fprintf(fp_batt_temp, "%d\n", batteryManagePara.battery_temperature) >= 0)
+        if(fsyslog(LOG_DEBUG, fp_batt_temp, "%d\n", batteryManagePara.battery_temperature) >= 0)
         {
             fflush(fp_batt_temp);
         }
         else
         {
-            printf("write file error");
+            syslog(LOG_DEBUG, "write file error");
         }
     }
 
@@ -1666,43 +1666,43 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
     switch(type)
     {
     case LED_BATTERY_FULLY_CHARGED:
-        system("adk-message-send 'led_start_pattern{pattern:32}'");
+        system("adk-message-send 'system_mode_management{name:\"bqdrv::led:32\"}'");
 
         //now the 0/1 is reversed
         /*set_battery_led('r', 0);
         set_battery_led('g', 0);
         set_battery_led('b', 0);*/
 
-        printf("display LED_BATTERY_FULLY_CHARGED\n\n");
+        syslog(LOG_DEBUG, "display LED_BATTERY_FULLY_CHARGED\n\n");
         break;
 
     case LED_BATTERY_CHARGEING:
-        system("adk-message-send 'led_start_pattern{pattern:30}'");
+        system("adk-message-send 'system_mode_management{name:\"bqdrv::led:30\"}'");
 
         /*set_battery_led('r', 1);
         set_battery_led('g', 0);
         set_battery_led('b', 1);*/
 
-        printf("display LED_BATTERY_CHARGEING\n\n");
+        syslog(LOG_DEBUG, "display LED_BATTERY_CHARGEING\n\n");
         break;
 
     case LED_BATTERY_DISCHARGEING:
-        system("adk-message-send 'led_start_pattern{pattern:31}'");
+        system("adk-message-send 'system_mode_management{name:\"bqdrv::led:31\"}'");
 
         /*set_battery_led('r', 1);
         set_battery_led('g', 0);
         set_battery_led('b', 1);*/
 
-        printf("display LED_BATTERY_DISCHARGEING\n\n");
+        syslog(LOG_DEBUG, "display LED_BATTERY_DISCHARGEING\n\n");
         break;
 
     case LED_BATTERY_LOW:
-        //system("adk-message-send 'led_start_pattern{pattern:33}'");
+        //system("adk-message-send 'system_mode_management{name:\"bqdrv::led:33}'");
         ;
         static struct timeval last_time = {.tv_sec = 0, .tv_usec = 0};
         struct timeval current_time;
         gettimeofday(&current_time, NULL);
-        printf("seconds : %ld\nmicro seconds : %ld",
+        syslog(LOG_DEBUG, "seconds : %ld\nmicro seconds : %ld",
                current_time.tv_sec, current_time.tv_usec);
         if(last_time.tv_sec == 0) {
             last_time = current_time;
@@ -1728,18 +1728,18 @@ void led_battery_display(LED_BATTERY_DISPLAY_STATE type)
         set_battery_led('g', 1);
         set_battery_led('b', 1);*/
 
-        printf("display LED_BATTERY_LOW\n\n");
+        syslog(LOG_DEBUG, "display LED_BATTERY_LOW\n\n");
         break;
 
     case LED_BATTERY_OFF:
         //ryder: light off charging indication
-        system("adk-message-send 'led_start_pattern{pattern:33}'");
+        system("adk-message-send 'system_mode_management{name:\"bqdrv::led:33\"}'");
 
         /*set_battery_led('r', 1);
         set_battery_led('g', 1);
         set_battery_led('b', 1);*/
 
-        printf("display LED_BATTERY_OFF\n\n");
+        syslog(LOG_DEBUG, "display LED_BATTERY_OFF\n\n");
         break;
 
     default:
@@ -1758,7 +1758,7 @@ void led_battery_display_handle(void)
     	{
     		   fgets(buff, 128, (FILE*)fp);
     		   fclose(fp);
-    		   printf("system state %s",buff);
+    		   syslog(LOG_DEBUG, "system state %s",buff);
     			if(strcmp(buff, "Docked") == 0)
     			{
     				batteryManagePara.battery_is_charging = 1;
@@ -1767,9 +1767,9 @@ void led_battery_display_handle(void)
     */
 //ryder:if charge for shipment, send message to set shipment mode.
 
-    printf("ryder: battery display state is %d",batteryManagePara.led_battery_display_state);
-    printf("ryder: battery charging state is %d",batteryManagePara.battery_is_charging);
-    printf("ryder: battery plugged state is %d",batteryManagePara.charger_is_plug_in);
+    syslog(LOG_DEBUG, "ryder: battery display state is %d",batteryManagePara.led_battery_display_state);
+    syslog(LOG_DEBUG, "ryder: battery charging state is %d",batteryManagePara.battery_is_charging);
+    syslog(LOG_DEBUG, "ryder: battery plugged state is %d",batteryManagePara.charger_is_plug_in);
 
 
     if(batteryManagePara.factory_shipment_charge_complete_flag)
@@ -1865,9 +1865,9 @@ void *check_batteryShutdownMode_thread(void *arg)
         {
             if(event->mask & IN_CREATE)
             {
-                printf("file %s create\n", event->name);
+                syslog(LOG_DEBUG, "file %s create\n", event->name);
 
-                printf("make battery enter shutdown mode\n");
+                syslog(LOG_DEBUG, "make battery enter shutdown mode\n");
 
                 if(bq25703_stop_charge() != 0)
                 {
@@ -1878,7 +1878,7 @@ void *check_batteryShutdownMode_thread(void *arg)
 
                 if(fuelgauge_battery_enter_shutdown_mode() != 0)
                 {
-                    printf("battery enter_shutdown_mode err\n");
+                    syslog(LOG_DEBUG, "battery enter_shutdown_mode err\n");
                     continue;
                 }
 
@@ -1887,7 +1887,7 @@ void *check_batteryShutdownMode_thread(void *arg)
 
             if(event->mask & IN_DELETE)
             {
-                printf("file %s delete\n", event->name);
+                syslog(LOG_DEBUG, "file %s delete\n", event->name);
 
                 fuelgauge_enable_communication();
             }
@@ -1921,7 +1921,7 @@ void *check_gpiokey_thread(void *arg)
         return;
     }
 
-    printf("open INPUT_DEV file success, fd in thread is %d\n",fd);
+    syslog(LOG_DEBUG, "open INPUT_DEV file success, fd in thread is %d\n",fd);
 
     while(1)
     {
@@ -1935,7 +1935,7 @@ void *check_gpiokey_thread(void *arg)
 
         if(event.type != EV_SYN)
         {
-            printf("type:%d, code:%d, value:%d\n", event.type, event.code, event.value);
+            syslog(LOG_DEBUG, "type:%d, code:%d, value:%d\n", event.type, event.code, event.value);
 
             if(event.code == KEY_POWER)
             {
@@ -1960,13 +1960,13 @@ void *check_gpiokey_thread(void *arg)
                     fCostTime = 1000000*(tEndTime.tv_sec-tBeginTime.tv_sec) + (tEndTime.tv_usec-tBeginTime.tv_usec);
                     fCostTime /= 1000000;
 
-                    printf("[gettimeofday]Cost Time = %fSec\n", fCostTime);
+                    syslog(LOG_DEBUG, "[gettimeofday]Cost Time = %fSec\n", fCostTime);
 
                     if(fCostTime > 5 && fCostTime < 10)
                     {
-                        printf("system power_off\n\n");
+                        syslog(LOG_DEBUG, "system power_off\n\n");
 
-                        system("adk-message-send 'led_start_pattern{pattern:35}'");
+                        system("adk-message-send 'system_mode_management{name:\"bqdrv::led:35\"}'");
 
                         for(err_cnt = 0; bq25703_enter_LowPowerMode()!= 0; err_cnt++)
                         {
@@ -2010,7 +2010,7 @@ void check_plugged()//USB and POGO not considered plugged at the same time
 		}
 	}
 
-	printf("check_plugged:plugged set to %b\n", batteryManagePara.charger_is_plug_in);
+	syslog(LOG_DEBUG, "check_plugged:plugged set to %b\n", batteryManagePara.charger_is_plug_in);
 }
 
 void check_usb_disconnected()
@@ -2038,7 +2038,7 @@ void check_usb_disconnected()
                 				 }
                 */
                 if(batteryManagePara.charger_is_plug_in & 0x01) {
-					printf("USB disconnected.\n");
+					syslog(LOG_DEBUG, "USB disconnected.\n");
                     batteryManagePara.charger_is_plug_in &= ~0x01;
 
                 } else {
@@ -2117,19 +2117,19 @@ void *bq25703a_stdin_thread(void *arg)
     while (mystream.good())
     {
         getline(mystream, event);
-        printf("got event: %s\n", event.c_str());
+        syslog(LOG_DEBUG, "got event: %s\n", event.c_str());
         if(event.compare("button_LANTERN_DP") == 0)
         {
             if(battery_relativeStateOfCharge <= 100)
             {
                 if(battery_relativeStateOfCharge >= 75)
                 {
-                    system("adk-message-send 'led_start_pattern{pattern:34}'");
+                    system("adk-message-send 'system_mode_management{name:\"bqdrv::led:34\"}'");
                 } else if(battery_relativeStateOfCharge >= 35) {
-                    system("adk-message-send 'led_start_pattern{pattern:35}'");
+                    system("adk-message-send 'system_mode_management{name:\"bqdrv::led:35\"}'");
 
                 } else {
-                    system("adk-message-send 'led_start_pattern{pattern:36}'");
+                    system("adk-message-send 'system_mode_management{name:\"bqdrv::led:36\"}'");
 
                 }
 
@@ -2181,7 +2181,7 @@ void *bq25703a_stdin_thread(void *arg)
             (event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
         )
         {
-            //printf("usb connected.\n");
+            //syslog(LOG_DEBUG, "usb connected.\n");
 
             std::string line;
             std::ifstream infile("/sys/class/gpio/gpio115/value");
@@ -2250,11 +2250,11 @@ void *bq25703a_stdin_thread(void *arg)
 
         } else if(event.compare("system::Docked:checkBat")== 0) {
             batteryTemperature_handle_Task();
-            printf("sending batchecked\n");
+            syslog(LOG_DEBUG, "sending batchecked\n");
             //indicate that battery is checked.
             system("adk-message-send 'system_mode_management {name: \"charger::bat_checked\"}'");
         } else {
-            printf("event not identified.\n");
+            syslog(LOG_DEBUG, "event not identified.\n");
         }
 
         if(!batteryManagePara.i2c_silent) {
@@ -2284,13 +2284,13 @@ void *bq25703a_chgok_irq_thread(void *arg)
 
         //wait for CHRG_OK Pin to be RISING HIGH
         ret = poll(fds_chg_ok_pin, 1, -1);
-        printf("poll rising return = %d\n",ret);
+        syslog(LOG_DEBUG, "poll rising return = %d\n",ret);
 
         if(ret > 0)
         {
             if(fds_chg_ok_pin[0].revents & POLLPRI)
             {
-                printf("CHRG_OK Edge detect, count = %d\n", j++);
+                syslog(LOG_DEBUG, "CHRG_OK Edge detect, count = %d\n", j++);
 
                 usleep(50*1000); //wait for a while
 
@@ -2380,12 +2380,12 @@ int main(int argc, char* argv[])
     pthread_t thread_check_gpiokey_ntid;
 
     pthread_t thread_check_batteryShutdownMode_ntid;
-    printf("Version:developing 002\n");
+    syslog(LOG_DEBUG, "Version:developing 002\n");
     if(argc > 1)
     {
         for(i = 0; i < argc; i++)
         {
-            printf("Argument %d is %s\n", i, argv[i]);
+            syslog(LOG_DEBUG, "Argument %d is %s\n", i, argv[i]);
         }
 
         if(strcmp(argv[1],"log_batt_temp") == 0)
@@ -2404,7 +2404,7 @@ int main(int argc, char* argv[])
 
     if(i2c_open_bq25703() != 0)
     {
-        printf("i2c can't open bq25703!\n");
+        syslog(LOG_DEBUG, "i2c can't open bq25703!\n");
         return -1;
     }
 
@@ -2422,20 +2422,20 @@ int main(int argc, char* argv[])
 
     if(i2c_open_tps65987() != 0)
     {
-        printf("i2c can't open tps65987!\n");
+        syslog(LOG_DEBUG, "i2c can't open tps65987!\n");
         return -1;
     }
 
     if(i2c_open_fuelgauge() != 0)
     {
-        printf("i2c can't open fuelgauge!\n");
+        syslog(LOG_DEBUG, "i2c can't open fuelgauge!\n");
         return -1;
     }
 
     /*
         if(init_Chg_OK_Pin() != 0)
         {
-            printf("init Chg_OK_Pin fail!\n");
+            syslog(LOG_DEBUG, "init Chg_OK_Pin fail!\n");
             return -1;
         }
     */
@@ -2462,7 +2462,7 @@ int main(int argc, char* argv[])
 
             led_battery_display_handle();
         }
-        printf("\n\n\n");
+        syslog(LOG_DEBUG, "\n\n\n");
 
         sleep(5);
     }
