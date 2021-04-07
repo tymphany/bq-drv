@@ -40,7 +40,7 @@ int unexport_gpio(int pin_number)
         return -1;
     }
 
-    if (syslog(LOG_DEBUG, p,"%d",pin_number) < 0)
+    if (fprintf(p,"%d",pin_number) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
