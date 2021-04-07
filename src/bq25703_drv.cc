@@ -1330,7 +1330,7 @@ int create_batteryTemperture_logFile(void)
     time(&nSeconds);
     pTM = localtime(&nSeconds);
 
-    if(syslog(LOG_DEBUG, fp_batt_temp, "\n\nstart_new_log: %04d-%02d-%02d %02d:%02d:%02d\n",
+    if(fprintf(fp_batt_temp, "\n\nstart_new_log: %04d-%02d-%02d %02d:%02d:%02d\n",
                pTM->tm_year + 1900, pTM->tm_mon + 1, pTM->tm_mday,
                pTM->tm_hour, pTM->tm_min, pTM->tm_sec) >= 0)
     {
@@ -1401,7 +1401,7 @@ int update_fuelgauge_BatteryInfo(void)
         char buff[128];
         char cmd[128];
 
-        snsyslog(LOG_DEBUG, cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
+        snprintf cmd, 128, "echo %d > /dev/shm/bq-drv-r1-SOC", battery_relativeStateOfCharge);
         system(cmd);
 
         if(battery_relativeStateOfCharge < 5) {
@@ -1635,7 +1635,7 @@ void batteryTemperature_handle_Task(void)
     if(log_batt_temp_flag)
     {
         //log the battery_temperature for debug
-        if(syslog(LOG_DEBUG, fp_batt_temp, "%d\n", batteryManagePara.battery_temperature) >= 0)
+        if(fprintf(fp_batt_temp, "%d\n", batteryManagePara.battery_temperature) >= 0)
         {
             fflush(fp_batt_temp);
         }
