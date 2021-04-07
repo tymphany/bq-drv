@@ -1471,6 +1471,8 @@ void batteryCharge_handle_Task(int battery_temperature)
             {
                 return;
             }
+			
+			batteryManagePara.need_charge_flag = 0;
 
             syslog(LOG_DEBUG, "battery temperature %d, is over threshold, stop charging!\n",battery_temperature);
         }
@@ -1480,9 +1482,9 @@ void batteryCharge_handle_Task(int battery_temperature)
     }
     else if(batteryTemperature_is_in_ChargeAllowThreshold(battery_temperature))
     {
-        if(!batteryManagePara.battery_fully_charged)
+        if(!batteryManagePara.battery_fully_charged && !batteryManagePara.need_charge_flag)
         {
-            if(batteryManagePara.charger_is_plug_in & 0x01)
+            if(batteryManagePara.charger_is_plug_in & 0x03)
             {
                 unsigned char charge_level = 0;
 
@@ -1502,6 +1504,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                     {
                         break;
                     }
+					batteryManagePara.need_charge_flag = 1;
 
                     batteryManagePara.charge_level = 1;
                     break;
@@ -1518,6 +1521,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                     {
                         break;
                     }
+					batteryManagePara.need_charge_flag = 1;
 
                     batteryManagePara.charge_level = 2;
                     break;
@@ -1534,6 +1538,7 @@ void batteryCharge_handle_Task(int battery_temperature)
                     {
                         break;
                     }
+					batteryManagePara.need_charge_flag = 1;
 
                     batteryManagePara.charge_level = 3;
                     break;
@@ -1873,6 +1878,7 @@ void *check_batteryShutdownMode_thread(void *arg)
                 {
                     continue;
                 }
+				batteryManagePara.need_charge_flag = 0;
 
                 usleep(100*1000);
 
@@ -2154,12 +2160,12 @@ void *bq25703a_stdin_thread(void *arg)
                 */
                 int ret_val = check_Battery_allow_charge();
 
-                if(ret_val == 1)
+                if(ret_val == 1 && !batteryManagePara.need_charge_flag)
                 {
 
                     if(bq25703_enable_charge() == 0)
                     {
-
+						batteryManagePara.need_charge_flag = 1;
                     } else {
                         syslog(LOG_ERR, "USB　charge configuration Error.");
                     }
@@ -2212,7 +2218,9 @@ void *bq25703a_stdin_thread(void *arg)
                     {
                         syslog(LOG_DEBUG, "USB CHARGE configuration error");
 
-                    }
+                    }else{
+						batteryManagePara.need_charge_flag = 1;
+                     }
                 }
                 else// read error, or not allow charging if(ret_val == 0)
                 {
