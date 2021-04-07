@@ -1065,7 +1065,7 @@ int init_Chg_OK_Pin(void)
     //set_edge(pin_number, "rising");
     set_edge(pin_number, "both");
 
-    ssyslog(LOG_DEBUG, file_path, "/sys/class/gpio/gpio%d/value", pin_number);
+    syslog(LOG_DEBUG, file_path, "/sys/class/gpio/gpio%d/value", pin_number);
 
     fd_chg_ok_pin = open(file_path, O_RDONLY);
     if(fd_chg_ok_pin < 0)
@@ -1330,7 +1330,7 @@ int create_batteryTemperture_logFile(void)
     time(&nSeconds);
     pTM = localtime(&nSeconds);
 
-    if(fsyslog(LOG_DEBUG, fp_batt_temp, "\n\nstart_new_log: %04d-%02d-%02d %02d:%02d:%02d\n",
+    if(syslog(LOG_DEBUG, fp_batt_temp, "\n\nstart_new_log: %04d-%02d-%02d %02d:%02d:%02d\n",
                pTM->tm_year + 1900, pTM->tm_mon + 1, pTM->tm_mday,
                pTM->tm_hour, pTM->tm_min, pTM->tm_sec) >= 0)
     {
@@ -1635,7 +1635,7 @@ void batteryTemperature_handle_Task(void)
     if(log_batt_temp_flag)
     {
         //log the battery_temperature for debug
-        if(fsyslog(LOG_DEBUG, fp_batt_temp, "%d\n", batteryManagePara.battery_temperature) >= 0)
+        if(syslog(LOG_DEBUG, fp_batt_temp, "%d\n", batteryManagePara.battery_temperature) >= 0)
         {
             fflush(fp_batt_temp);
         }

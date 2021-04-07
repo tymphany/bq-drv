@@ -19,7 +19,7 @@ int export_gpio(int pin_number)
         return -1;
     }
 
-    if (fsyslog(LOG_DEBUG, p,"%d",pin_number) < 0)
+    if (syslog(LOG_DEBUG, p,"%d",pin_number) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -40,7 +40,7 @@ int unexport_gpio(int pin_number)
         return -1;
     }
 
-    if (fsyslog(LOG_DEBUG, p,"%d",pin_number) < 0)
+    if (syslog(LOG_DEBUG, p,"%d",pin_number) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -55,7 +55,7 @@ int set_direction(int pin_number, char *direction)
     FILE *p=NULL;
     char open_path[64]= {0};
 
-    ssyslog(LOG_DEBUG, open_path, "/sys/class/gpio/gpio%d/direction",pin_number);
+    syslog(LOG_DEBUG, open_path, "/sys/class/gpio/gpio%d/direction",pin_number);
     p = fopen(open_path,"w");
     if (p == NULL)
     {
@@ -63,7 +63,7 @@ int set_direction(int pin_number, char *direction)
         return -1;
     }
 
-    if (fsyslog(LOG_DEBUG, p,"%s",direction) < 0)
+    if (syslog(LOG_DEBUG, p,"%s",direction) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -78,7 +78,7 @@ int set_edge(int pin_number, char *edge)
     FILE *p=NULL;
     char open_path[64]= {0};
 
-    ssyslog(LOG_DEBUG, open_path, "/sys/class/gpio/gpio%d/edge",pin_number);
+    syslog(LOG_DEBUG, open_path, "/sys/class/gpio/gpio%d/edge",pin_number);
     p = fopen(open_path,"w");
     if (p == NULL)
     {
@@ -86,7 +86,7 @@ int set_edge(int pin_number, char *edge)
         return -1;
     }
 
-    if (fsyslog(LOG_DEBUG, p,"%s",edge) < 0)
+    if (syslog(LOG_DEBUG, p,"%s",edge) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n",open_path);
         return -1;
@@ -101,7 +101,7 @@ int set_value(int pin_number, int value)
     FILE *p=NULL;
     char open_path[64]= {0};
 
-    ssyslog(LOG_DEBUG, open_path, "/sys/class/gpio/gpio%d/value", pin_number);
+    syslog(LOG_DEBUG, open_path, "/sys/class/gpio/gpio%d/value", pin_number);
     p = fopen(open_path,"w");
     if (p == NULL)
     {
@@ -109,7 +109,7 @@ int set_value(int pin_number, int value)
         return -1;
     }
 
-    if (fsyslog(LOG_DEBUG, p,"%d",value) < 0)
+    if (syslog(LOG_DEBUG, p,"%d",value) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n", open_path);
         return -1;
@@ -125,7 +125,7 @@ int set_battery_led(char color, int value)
     FILE *p=NULL;
     char open_path[64]= {0};
 
-    ssyslog(LOG_DEBUG, open_path, "/sys/class/leds/power_led_%c/brightness", color);
+    syslog(LOG_DEBUG, open_path, "/sys/class/leds/power_led_%c/brightness", color);
     p = fopen(open_path,"w");
     if (p == NULL)
     {
@@ -133,7 +133,7 @@ int set_battery_led(char color, int value)
         return -1;
     }
 
-    if (fsyslog(LOG_DEBUG, p,"%d",value) < 0)
+    if (syslog(LOG_DEBUG, p,"%d",value) < 0)
     {
         syslog(LOG_DEBUG, "write '%s' error\n", open_path);
         return -1;
