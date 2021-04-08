@@ -2139,7 +2139,7 @@ void *bq25703a_stdin_thread(void *arg)
     {
         getline(mystream, event);
 		
-	    pthread_mutex_lock(mtx);
+	    pthread_mutex_lock(&mtx);
         syslog(LOG_DEBUG, "got event: %s\n", event.c_str());
         if(event.compare("button_LANTERN_DP") == 0)
         {
@@ -2291,7 +2291,7 @@ void *bq25703a_stdin_thread(void *arg)
         }
 
 		
-	pthread_mutex_unlock(mtx);
+	pthread_mutex_unlock(&mtx);
     }
 }
 
@@ -2483,7 +2483,7 @@ int main(int argc, char* argv[])
 
     while(1)
     {
-	    pthread_mutex_lock(mtx);
+	    pthread_mutex_lock(&mtx);
         if(!batteryManagePara.i2c_silent) {
             bq25703a_get_ChargeOption0_Setting();
             bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
@@ -2495,7 +2495,7 @@ int main(int argc, char* argv[])
 
             led_battery_display_handle();
         }
-		pthread_mutex_unlock(mtx);
+		pthread_mutex_unlock(&mtx);
 
         sleep(5);
     }
