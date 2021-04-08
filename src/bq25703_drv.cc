@@ -2198,15 +2198,13 @@ void *bq25703a_stdin_thread(void *arg)
 			}
             
 
-        } else if(event.compare("trigger::GPIO31falling") == 0) {
+        } else if(event.compare("trigger::USB_DISCONNECTED") == 0) {
             //check usb disconnect event
             //clear all interrupts
-            check_usb_disconnected();
+            batteryManagePara.charger_is_plug_in &= ~0x01;
+            batteryManagePara.need_charge_flag = 0;
 
-        } else if(
-            (event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
-            (event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
-        )
+        } else if(event.compare("trigger::USB_CONNECTED") == 0)
         {
             //syslog(LOG_DEBUG, "usb connected.\n");
 

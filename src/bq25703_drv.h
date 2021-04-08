@@ -30,7 +30,7 @@
 
 
 //12.592V for 3-cell
-#define MAX_CHARGE_VOLTAGE  0x2a30 //12592mV ryder
+#define MAX_CHARGE_VOLTAGE  0x2a30 //10800 mV ryder
 
 #define INPUT_VOLTAGE_LIMIT_4V8   0x0640 //4224mV
 #define INPUT_VOLTAGE_LIMIT_4V4   0x04C0 //4224mV
