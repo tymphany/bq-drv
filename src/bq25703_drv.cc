@@ -47,6 +47,7 @@ struct pollfd fds_chg_ok_pin[1];
 
 FILE *fp_batt_temp;
 int log_batt_temp_flag = 0;
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 
 //BQ25703 REGISTER_ADDR
@@ -2137,6 +2138,8 @@ void *bq25703a_stdin_thread(void *arg)
     while (mystream.good())
     {
         getline(mystream, event);
+		
+	    pthread_mutex_lock(mtx);
         syslog(LOG_DEBUG, "got event: %s\n", event.c_str());
         if(event.compare("button_LANTERN_DP") == 0)
         {
@@ -2286,6 +2289,9 @@ void *bq25703a_stdin_thread(void *arg)
         if(!batteryManagePara.i2c_silent) {
             led_battery_display_handle();
         }
+
+		
+	pthread_mutex_unlock(mtx);
     }
 }
 
@@ -2471,12 +2477,13 @@ int main(int argc, char* argv[])
     // pthread_create(&thread_check_chgok_ntid, NULL, bq25703a_chgok_irq_thread, NULL);
 
     pthread_create(&thread_check_stdin_ntid, NULL, bq25703a_stdin_thread, NULL);
-    pthread_create(&thread_check_gpiokey_ntid, NULL, check_gpiokey_thread, NULL);
+   // pthread_create(&thread_check_gpiokey_ntid, NULL, check_gpiokey_thread, NULL);
 
-    pthread_create(&thread_check_batteryShutdownMode_ntid, NULL, check_batteryShutdownMode_thread, NULL);
+   //pthread_create(&thread_check_batteryShutdownMode_ntid, NULL, check_batteryShutdownMode_thread, NULL);
 
     while(1)
     {
+	    pthread_mutex_lock(mtx);
         if(!batteryManagePara.i2c_silent) {
             bq25703a_get_ChargeOption0_Setting();
             bq25703a_get_PSYS_and_VBUS(&PSYS_vol, &VBUS_vol);
@@ -2488,7 +2495,7 @@ int main(int argc, char* argv[])
 
             led_battery_display_handle();
         }
-        syslog(LOG_DEBUG, "\n\n\n");
+		pthread_mutex_unlock(mtx);
 
         sleep(5);
     }
