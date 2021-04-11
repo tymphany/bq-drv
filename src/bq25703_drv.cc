@@ -966,6 +966,8 @@ int bq25703_enable_charge(void)
     bq25703a_get_PSYS_and_VBUS(&PSys_vol, &VBus_vol);
     syslog(LOG_DEBUG, "get VBus_vol = %d\n",VBus_vol);
 
+	bq25703_disable_OTG();
+
 	if(bq25703_enter_LEARN_Mode() != 0)
 	{
 	   return -1;
@@ -1050,7 +1052,6 @@ int bq25703_enable_charge(void)
     }
 	bq25703_set_InputVoltageLimit(INPUT_VOLTAGE_LIMIT_4V8);
 	//need to disable otg
-	bq25703_disable_OTG();
 
 	
     if(bq25703_init_ChargeOption_0() != 0)
