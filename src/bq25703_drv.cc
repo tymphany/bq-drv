@@ -88,12 +88,14 @@ unsigned int battery_relativeStateOfCharge = 0xff;
 
 uint16_t CHARGE_REGISTER_DDR_VALUE_BUF[]= //POGO PIN or USB
 {
-    CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING,
+    CHARGE_OPTION_0_WR,         CHARGE_OPTION_0_SETTING|EN_LEARN,
     INPUT_VOLTAGE_REGISTER_WR,  INPUT_VOLTAGE_LIMIT_4V8, //here should use the default value:0x0000, means 3200mV
     MINIMUM_SYSTEM_VOLTAGE_WR,  0x1e00, //The charger provides minimum system voltage, means 9216mV
     INPUT_CURRENT_REGISTER_WR,  0x1e00, //Ryder: here only for POGO Pin configuration
     CHARGE_CURRENT_REGISTER_WR, CHARGE_CURRENT_1856mA,
     MaxChargeVoltage_REGISTER_WR, MAX_CHARGE_VOLTAGE,
+	CHARGE_OPTION_0_WR, 		CHARGE_OPTION_0_SETTING,
+
 //    OTG_VOLTAGE_REGISTER_WR,    0x0000,
 //    OTG_CURRENT_REGISTER_WR,    0x0000,
 
@@ -964,11 +966,11 @@ int bq25703_enable_charge(void)
     bq25703a_get_PSYS_and_VBUS(&PSys_vol, &VBus_vol);
     syslog(LOG_DEBUG, "get VBus_vol = %d\n",VBus_vol);
 
+	if(bq25703_enter_LEARN_Mode() != 0)
+	{
+	   return -1;
+	}
 
-    if(bq25703_init_ChargeOption_0() != 0)
-    {
-        return -1;
-    }
 
 
     //check TypeC Current type to decide the charge current
@@ -1049,6 +1051,12 @@ int bq25703_enable_charge(void)
 	bq25703_set_InputVoltageLimit(INPUT_VOLTAGE_LIMIT_4V8);
 	//need to disable otg
 	bq25703_disable_OTG();
+
+	
+    if(bq25703_init_ChargeOption_0() != 0)
+    {
+        return -1;
+    }
 
     return ret;
 
@@ -2196,7 +2204,6 @@ void *bq25703a_stdin_thread(void *arg)
             
 					batteryManagePara.need_charge_flag = 0;
 			}
-            
 
         } else if(event.compare("trigger::USB_DISCONNECTED") == 0) {
             //check usb disconnect event
