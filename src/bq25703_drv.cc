@@ -2246,7 +2246,7 @@ void *bq25703a_stdin_thread(void *arg)
                         syslog(LOG_DEBUG, "USB CHARGE configuration error");
 
                     }else{
-						batteryManagePara.need_charge_flag = 1;
+						//batteryManagePara.need_charge_flag = 1;
                      }
                 }
                 else// read error, or not allow charging if(ret_val == 0)
