@@ -1641,8 +1641,9 @@ void batteryDisCharge_handle_Task(int battery_temperature)
         {
             syslog(LOG_DEBUG, "system power_off fail\n\n");
         }
-    }
 */
+    }
+
 }
 
 
