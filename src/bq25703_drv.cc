@@ -2070,11 +2070,8 @@ void check_usb_disconnected()
                 */
                 if(batteryManagePara.charger_is_plug_in & 0x01) {
 					syslog(LOG_DEBUG, "USB disconnected.\n");
-                    batteryManagePara.charger_is_plug_in &= ~0x01;
-
-				if(batteryManagePara.charger_is_plug_in == 0){
+					batteryManagePara.charger_is_plug_in &= ~0x01;
 					batteryManagePara.need_charge_flag = 0;
-				}
 
                 } else {
                     //charger already configured to be unplugged.
@@ -2211,14 +2208,14 @@ void *bq25703a_stdin_thread(void *arg)
 					batteryManagePara.need_charge_flag = 0;
 			}
 
-        } else if(event.compare("trigger::USB_DISCONNECTED") == 0) {
-            //check usb disconnect event
+			} else if(event.compare("trigger::GPIO31falling") == 0) {
+			//check usb disconnect event
             //clear all interrupts
-            batteryManagePara.charger_is_plug_in &= ~0x01;
-            batteryManagePara.need_charge_flag = 0;
-
-        } else if(event.compare("trigger::USB_CONNECTED") == 0)
-        {
+			check_usb_disconnected();
+		} else if(
+		(event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
+		(event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
+		) {
             //syslog(LOG_DEBUG, "usb connected.\n");
 
             std::string line;
