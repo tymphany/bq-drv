@@ -1636,12 +1636,13 @@ void batteryDisCharge_handle_Task(int battery_temperature)
 
     if(batteryTemperature_is_overstep_DischargeStopThreshold(battery_temperature))
     {
-        //power off
-        if(system_power_off() != 0)
+        //Ryder: Comment temporarily
+/*        if(system_power_off() != 0)
         {
             syslog(LOG_DEBUG, "system power_off fail\n\n");
         }
     }
+*/
 }
 
 
