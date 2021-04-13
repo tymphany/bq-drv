@@ -2143,8 +2143,8 @@ void *bq25703a_stdin_thread(void *arg)
                "STATUS=Processing requests...\n"
                "MAINPID=%lu",
                (unsigned long) getpid());
-	check_plugged();
-    check_usb_disconnected();
+//	check_plugged();
+//    check_usb_disconnected();
 
     while (mystream.good())
     {
@@ -2208,14 +2208,18 @@ void *bq25703a_stdin_thread(void *arg)
 				  batteryManagePara.need_charge_flag = 0;
 			}
 
-			} else if(event.compare("trigger::GPIO31falling") == 0) {
+			} else if(event.compare("PD::DisConn") == 0) {
 			//check usb disconnect event
             //clear all interrupts
-			check_usb_disconnected();
-		} else if(
-		(event.compare("trigger::USB_CONNECTED") == 0 && (batteryManagePara.charger_is_plug_in & 0x02))||
-		(event.compare("trigger::GPIO33rising")== 0 && ((batteryManagePara.charger_is_plug_in & 0x02) == 0))
-		) {
+			if(batteryManagePara.charger_is_plug_in & 0x01) {
+				syslog(LOG_DEBUG, "USB disconnected.\n");
+				batteryManagePara.charger_is_plug_in &= ~0x01;
+				batteryManagePara.need_charge_flag = 0;
+			
+			} else {
+				//charger already configured to be unplugged.
+			}
+		} else if(event.compare("PD::ConnHost") == 0) {
             //syslog(LOG_DEBUG, "usb connected.\n");
 
             std::string line;
@@ -2259,7 +2263,9 @@ void *bq25703a_stdin_thread(void *arg)
             }
 
             //to add charger configration for USB
-        } else if(event.compare("Test::bqdrv_ic_silent_toggle_on") == 0) {
+        }else if(event.compare("PD::ConnDevice") == 0) {
+	        bq25703a_otg_function_init();
+        }else if(event.compare("Test::bqdrv_ic_silent_toggle_on") == 0) {
             batteryManagePara.i2c_silent = 1;
             syslog(LOG_DEBUG, "i2c silent value is %d", batteryManagePara.i2c_silent);
         } else if(event.compare("Test::bqdrv_ic_silent_toggle_off") == 0) {
