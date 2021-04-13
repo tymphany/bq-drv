@@ -2204,8 +2204,8 @@ void *bq25703a_stdin_thread(void *arg)
                     syslog(LOG_DEBUG, "charge not allowed.");
                 }
             }else{
-            
-					batteryManagePara.need_charge_flag = 0;
+		          bq25703a_otg_function_init();
+				  batteryManagePara.need_charge_flag = 0;
 			}
 
 			} else if(event.compare("trigger::GPIO31falling") == 0) {
